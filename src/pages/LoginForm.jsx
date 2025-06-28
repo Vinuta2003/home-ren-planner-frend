@@ -30,7 +30,7 @@ export default function LoginForm() {
   };
 
   useEffect(() => {
-    console.log("AuthState : ", authState)
+    console.log("AuthState of Login Page: ", authState)
   },[authState])
 
   const handleSubmit = async (e) => {

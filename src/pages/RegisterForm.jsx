@@ -47,6 +47,17 @@ export default function RegisterForm() {
 
       console.log("Response from Server : ", responseData);
 
+      if(responseData){
+        authDispatch({
+          type:"LOGIN",
+          payload: {
+            email : responseData?.email,
+            role: responseData?.role,
+            accessToken: responseData?.accessToken
+          }
+        })
+      }
+
       responseData?.message === "SUCCESS"
         ? toast.success(`Registration successful! Welcome ${formData.name}!`)
         : toast.error(`Registration Unsuccessful! Please Try Again!`);
