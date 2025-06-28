@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { toast } from "react-toastify";
 
 export default function RegisterForm() {
   const [isVendor, setIsVendor] = useState(false);
@@ -27,6 +28,9 @@ export default function RegisterForm() {
     };
 
     console.log("Submitted payload:", payload);
+    
+    // Show success toast notification
+    toast.success(`Registration successful! Welcome ${formData.name}!`);
   };
 
   return (
@@ -78,17 +82,18 @@ export default function RegisterForm() {
           <button
             type="button"
             onClick={() => setIsVendor(false)}
-            className={`w-[48%] py-2 font-semibold rounded ${
-              !isVendor ? "bg-blue-600 text-white" : "bg-blue-100 text-blue-700"
+            className={`w-[48%] py-2 font-semibold rounded hover:cursor-pointer ${
+              !isVendor ? "bg-blue-600 text-white hover:bg-blue-700 transition" : "bg-blue-100 text-blue-700 hover:bg-blue-200 transition"
             }`}
+            
           >
             Register as Customer
           </button>
           <button
             type="button"
             onClick={() => setIsVendor(true)}
-            className={`w-[48%] py-2 font-semibold rounded ${
-              isVendor ? "bg-blue-600 text-white" : "bg-blue-100 text-blue-700"
+            className={`w-[48%] py-2 font-semibold rounded hover:cursor-pointer ${
+              isVendor ? "bg-blue-600 text-white hover:bg-blue-700 transition" : "bg-blue-100 text-blue-700 hover:bg-blue-200 transition"
             }`}
           >
             Register as Vendor
@@ -116,9 +121,9 @@ export default function RegisterForm() {
               <input
                 type="checkbox"
                 name="available"
-                checked={available} // Assume you have `available` in state
+                checked={available}
                 onChange={(e) => setAvailable(e.target.checked)}
-                className="h-4 w-4 text-blue-500 border-gray-300 rounded focus:ring-blue-500"
+                className="h-4 w-4 text-blue-500 border-gray-300 rounded focus:ring-blue-500 hover:cursor-pointer"
               />
               <span className="font-medium text-gray-600">Available</span>
             </label>
@@ -162,6 +167,7 @@ export default function RegisterForm() {
                   type="number"
                   placeholder="Base Price"
                   value={skill.basePrice}
+                  disabled={!skill.skillName}
                   required
                   onChange={(e) =>
                     handleSkillChange(index, "basePrice", e.target.value)
@@ -173,7 +179,7 @@ export default function RegisterForm() {
             <button
               type="button"
               onClick={addSkill}
-              className="text-blue-500 mt-2 text-sm underline"
+              className="text-blue-600 mt-2 text-sm font-medium hover:text-blue-700 hover:bg-blue-50 px-3 py-1.5 rounded-md transition-colors duration-200 border border-blue-200 hover:border-blue-300 hover:cursor-pointer"
             >
               + Add Skill
             </button>
@@ -182,7 +188,7 @@ export default function RegisterForm() {
 
         <button
           type="submit"
-          className="mt-6 w-full bg-blue-600 text-white py-2 rounded font-semibold hover:bg-blue-700 transition"
+          className="mt-6 w-full bg-blue-600 text-white py-2 rounded font-semibold hover:bg-blue-700 transition hover:cursor-pointer"
         >
           Submit
         </button>

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { toast } from "react-toastify";
 
 export default function LoginForm() {
   const [formData, setFormData] = useState({ email: "", password: "" });
@@ -25,6 +26,16 @@ export default function LoginForm() {
       return;
     }
     console.log("Login Submitted", formData);
+    
+    // Show success toast notification
+    toast.success("Login successful! Welcome back!", {
+      position: "top-right",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+    });
   };
 
   return (
@@ -63,7 +74,7 @@ export default function LoginForm() {
 
         <button
           type="submit"
-          className="w-full bg-blue-600 text-white py-2 rounded font-semibold hover:bg-blue-700 transition"
+          className="w-full bg-blue-600 text-white py-2 rounded font-semibold hover:bg-blue-700 transition hover:cursor-pointer"
         >
           Login
         </button>
