@@ -1,60 +1,73 @@
 import axios from "axios";
 
 const axiosInstance = axios.create({
-    baseURL: "http://localhost:8080",
-    timeout: 10000,
-    headers: {
-        "Content-Type": "application/json",
-    },
-    withCredentials: true,  // To Send Cookies to the server
+  baseURL: "http://localhost:8080",
+  timeout: 10000,
+  headers: {
+    "Content-Type": "application/json",
+  },
+  withCredentials: true, // To Send Cookies to the server
 });
 
-// Request interceptor to add auth token to requests
+
+// ✅ Request Interceptor – Attach accessToken from localStorage
 axiosInstance.interceptors.request.use(
-    (config) => {
-        const token = localStorage.getItem('accessToken');
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
-        }
-        return config;
-    },
-    (error) => {
-        return Promise.reject(error);
+  (config) => {
+    const authState = JSON.parse(localStorage.getItem("authState"));
+    const token = authState?.accessToken;
+
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
     }
+    return config;
+  },
+  (error) => Promise.reject(error)
 );
 
-// Response interceptor to handle token refresh
+// ✅ Response Interceptor – Refresh token if accessToken expired
 axiosInstance.interceptors.response.use(
-    (response) => {
-        return response;
-    },
-    async (error) => {
-        const originalRequest = error.config;
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config;
 
-        if (error.response?.status === 401 && !originalRequest._retry) {
-            originalRequest._retry = true;
+    // If 401 error and token not already retried
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
 
-            try {
-                const response = await axiosInstance.post('/auth/refreshAccessToken');
+      try {
+        // Refresh token request
+        const refreshResponse = await axios.post(
+          "http://localhost:8080/auth/refreshAccessToken", 
+          {}, 
+          { withCredentials: true }
+        );
 
-                if (response.data.accessToken) {
-                    localStorage.setItem('accessToken', response.data.accessToken);
-                }
+        const newAccessToken = refreshResponse?.data.accessToken;
 
-                originalRequest.headers.Authorization = `Bearer ${response.data.accessToken}`;
+        if (newAccessToken) {
+          // ✅ Update localStorage with new access token
+          const existingState = JSON.parse(localStorage.getItem("authState")) || {};
+          const updatedState = {
+            ...existingState,
+            accessToken: newAccessToken
+          };
+          localStorage.setItem("authState", JSON.stringify(updatedState));
 
-                return axiosInstance(originalRequest);
-
-            } catch (refreshError) {
-                localStorage.removeItem('accessToken');
-                document.cookie = 'refreshToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-                window.location.href = '/login';
-                return Promise.reject(refreshError);
-            }
+          // ✅ Retry the original request with new token
+          originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+          return axiosInstance(originalRequest);
         }
-
-        return Promise.reject(error);
+      } catch (refreshError) {
+        // Refresh failed → Clear auth and redirect to login
+        localStorage.removeItem("authState");
+        window.location.href = "/login";
+        return Promise.reject(refreshError);
+      }
     }
+
+    return Promise.reject(error);
+  }
 );
+
 
 export default axiosInstance;

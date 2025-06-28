@@ -1,11 +1,13 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import axiosInstance from "../axios/axiosInstance";
+import { RootState } from "../context/AuthProvider";
 
 export default function LoginForm() {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState({});
 
+  const {authState, authDispatch} = RootState()
 
   const validate = () => {
   const newErrors = {};
@@ -27,6 +29,10 @@ export default function LoginForm() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  useEffect(() => {
+    console.log("AuthState : ", authState)
+  },[authState])
+
   const handleSubmit = async (e) => {
     try{
       e.preventDefault();
@@ -39,8 +45,19 @@ export default function LoginForm() {
       console.log("Login Submitted", formData);
 
       const response = await axiosInstance.post("/auth/login", formData);
-      const responseData = response.data;
+      const responseData = response?.data;
       console.log("Response", responseData);
+
+      if(responseData){
+        authDispatch({
+          type:"LOGIN",
+          payload: {
+            email : responseData?.email,
+            role: responseData?.role,
+            accessToken: responseData?.accessToken
+          }
+        })
+      }
       responseData?.message === "SUCCESS"? toast.success("Login successful! Welcome back!") : toast.error("Login Unsuccessful!");
     }
     catch(e){
@@ -51,6 +68,7 @@ export default function LoginForm() {
           toast.error("Login Unsuccessful!");
         }
     }
+
   };
 
   return (

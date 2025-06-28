@@ -1,11 +1,18 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import axiosInstance from "../axios/axiosInstance";
+import { RootState } from "../context/AuthProvider";
 
 export default function RegisterForm() {
   const [isVendor, setIsVendor] = useState(false);
   const [skills, setSkills] = useState([]);
   const [available, setAvailable] = useState(false);
+
+  const { authState, authDispatch } = RootState()
+
+  useEffect(() => {
+    console.log("Auth State in Register Form", authState)
+  },[authState])
 
   const handleSkillChange = (index, field, value) => {
     const updatedSkills = [...skills];
