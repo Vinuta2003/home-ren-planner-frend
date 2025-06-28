@@ -1,41 +1,56 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
+import axiosInstance from "../axios/axiosInstance";
 
 export default function LoginForm() {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState({});
 
+
   const validate = () => {
-    const newErrors = {};
-    if (!formData.email.includes("@")) newErrors.email = "Enter a valid email";
-    if (formData.password.length < 8)
-      newErrors.password = "Password must be at least 8 characters";
-    return newErrors;
-  };
+  const newErrors = {};
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  if (!emailRegex.test(formData.email)) {
+    newErrors.email = "Enter a valid email address";
+  }
+
+  if (formData.password.length < 8) {
+    newErrors.password = "Password must be at least 8 characters";
+  }
+
+  return newErrors;
+};
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const validationErrors = validate();
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-      return;
+  const handleSubmit = async (e) => {
+    try{
+      e.preventDefault();
+      const validationErrors = validate();
+      if (Object.keys(validationErrors).length > 0) {
+        setErrors(validationErrors);
+        return;
+      }
+
+      console.log("Login Submitted", formData);
+
+      const response = await axiosInstance.post("/auth/login", formData);
+      const responseData = response.data;
+      console.log("Response", responseData);
+      responseData?.message === "SUCCESS"? toast.success("Login successful! Welcome back!") : toast.error("Login Unsuccessful!");
     }
-    console.log("Login Submitted", formData);
-    
-    // Show success toast notification
-    toast.success("Login successful! Welcome back!", {
-      position: "top-right",
-      autoClose: 3000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-    });
+    catch(e){
+        if (e.response && e.response.data) {
+          console.log("Error Response", e.response.data);
+          toast.error(e.response.data.message || "Login Unsuccessful!");
+        } else {
+          toast.error("Login Unsuccessful!");
+        }
+    }
   };
 
   return (

@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
+import axiosInstance from "../axios/axiosInstance";
 
 export default function RegisterForm() {
   const [isVendor, setIsVendor] = useState(false);
-  const [skills, setSkills] = useState([{ skillName: "", basePrice: "" }]);
+  const [skills, setSkills] = useState([]);
   const [available, setAvailable] = useState(false);
 
   const handleSkillChange = (index, field, value) => {
@@ -16,21 +17,40 @@ export default function RegisterForm() {
     setSkills([...skills, { skillName: "", basePrice: "" }]);
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const data = new FormData(e.target);
-    const formData = Object.fromEntries(data.entries());
+  const handleSubmit = async (e) => {
+    try {
+      e.preventDefault();
+      const data = new FormData(e.target);
+      const formData = Object.fromEntries(data.entries());
 
-    const payload = {
-      ...formData,
-      role: isVendor ? "VENDOR" : "CUSTOMER",
-      skills: isVendor ? skills : [],
-    };
+      const payload = {
+        ...formData,
+        role: isVendor ? "VENDOR" : "CUSTOMER",
+      };
 
-    console.log("Submitted payload:", payload);
-    
-    // Show success toast notification
-    toast.success(`Registration successful! Welcome ${formData.name}!`);
+      if (isVendor) {
+        payload.skills = skills;
+        payload.available = available;
+      }
+
+      console.log("Submitted payload:", payload);
+      const response = await axiosInstance.post("/auth/register", payload);
+
+      const responseData = response.data;
+
+      console.log("Response from Server : ", responseData);
+
+      responseData?.message === "SUCCESS"
+        ? toast.success(`Registration successful! Welcome ${formData.name}!`)
+        : toast.error(`Registration Unsuccessful! Please Try Again!`);
+    } catch (e) {
+      if (e.response && e.response.data) {
+        console.log("Error Response", e.response.data);
+        toast.error(e.response.data.message || "Login Unsuccessful!");
+      } else {
+        toast.error("Login Unsuccessful!");
+      }
+    }
   };
 
   return (
@@ -57,6 +77,8 @@ export default function RegisterForm() {
           name="email"
           placeholder="Email"
           required
+          pattern="^[^\s@]+@[^\s@]+\.[^\s@]+$"
+          title="Please enter a valid email address"
           className="w-full px-4 py-2 border border-gray-300 rounded mb-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
         <input
@@ -83,9 +105,10 @@ export default function RegisterForm() {
             type="button"
             onClick={() => setIsVendor(false)}
             className={`w-[48%] py-2 font-semibold rounded hover:cursor-pointer ${
-              !isVendor ? "bg-blue-600 text-white hover:bg-blue-700 transition" : "bg-blue-100 text-blue-700 hover:bg-blue-200 transition"
+              !isVendor
+                ? "bg-blue-600 text-white hover:bg-blue-700 transition"
+                : "bg-blue-100 text-blue-700 hover:bg-blue-200 transition"
             }`}
-            
           >
             Register as Customer
           </button>
@@ -93,7 +116,9 @@ export default function RegisterForm() {
             type="button"
             onClick={() => setIsVendor(true)}
             className={`w-[48%] py-2 font-semibold rounded hover:cursor-pointer ${
-              isVendor ? "bg-blue-600 text-white hover:bg-blue-700 transition" : "bg-blue-100 text-blue-700 hover:bg-blue-200 transition"
+              isVendor
+                ? "bg-blue-600 text-white hover:bg-blue-700 transition"
+                : "bg-blue-100 text-blue-700 hover:bg-blue-200 transition"
             }`}
           >
             Register as Vendor

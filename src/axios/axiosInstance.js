@@ -1,5 +1,4 @@
 import axios from "axios";
-import { cookieUtils } from './cookieUtils';
 
 const axiosInstance = axios.create({
     baseURL: "http://localhost:8080",
