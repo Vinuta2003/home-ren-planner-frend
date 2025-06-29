@@ -1,6 +1,7 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { getPhaseById, updatePhaseMaterialQuantity } from "../app/features/phaseSlice";
+import { getPhaseById, getPhaseMaterialsByPhaseId} from "../app/features/phaseSlice";
+import { deletePhaseMaterial, updatePhaseMaterialQuantity } from "../app/apis/phaseApis";
 
 export function PhaseMaterial(props){
     const {phaseMaterial} = props;
@@ -15,8 +16,10 @@ export function PhaseMaterial(props){
         updateEditMode(true);
     }
 
-    const deleteButtonOnClickHandler = ()=>{
+    const deleteButtonOnClickHandler = async()=>{
+        await deletePhaseMaterial(phaseMaterial.exposedId);
 
+        await dispatch(getPhaseMaterialsByPhaseId(phaseMaterial.phaseResponse.id));
     }
 
     const incrementButtonOnClickListener = ()=>{
@@ -34,18 +37,12 @@ export function PhaseMaterial(props){
     }
 
     const saveButtonOnClickHandler = async ()=>{
-        await dispatch(updatePhaseMaterialQuantity({
-            phaseMaterialId : phaseMaterial.exposedId,
-            newQuantity : quantity
-        }));
+        await updatePhaseMaterialQuantity(phaseMaterial.exposedId,quantity);
 
         updateEditMode(false);
 
-        await dispatch(getPhaseById(phaseMaterial.phaseResponse.id));
-
-        
-
-        
+        await dispatch(getPhaseMaterialsByPhaseId(phaseMaterial.phaseResponse.id));
+       
     }
 
     const cancelButtonOnClickHandler = ()=>{
