@@ -1,14 +1,16 @@
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import axiosInstance from "../axios/axiosInstance";
-import { RootState } from "../context/AuthProvider";
+import { useDispatch, useSelector } from 'react-redux';
+import { login } from '../redux/auth/authSlice';
 
 export default function RegisterForm() {
+  const dispatch = useDispatch();
+  const authState = useSelector((state) => state.auth);
+
   const [isVendor, setIsVendor] = useState(false);
   const [skills, setSkills] = useState([]);
   const [available, setAvailable] = useState(false);
-
-  const { authState, authDispatch } = RootState()
 
   useEffect(() => {
     console.log("Auth State in Register Form", authState)
@@ -48,14 +50,13 @@ export default function RegisterForm() {
       console.log("Response from Server : ", responseData);
 
       if(responseData){
-        authDispatch({
-          type:"LOGIN",
-          payload: {
-            email : responseData?.email,
+        dispatch(
+          login({
+            email: responseData?.email,
             role: responseData?.role,
-            accessToken: responseData?.accessToken
-          }
-        })
+            accessToken: responseData?.accessToken,
+          })
+        )
       }
 
       responseData?.message === "SUCCESS"

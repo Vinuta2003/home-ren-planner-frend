@@ -1,28 +1,31 @@
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import axiosInstance from "../axios/axiosInstance";
-import { RootState } from "../context/AuthProvider";
+import { useDispatch, useSelector } from 'react-redux';
+import { login, logout } from '../redux/auth/authSlice';
 
 export default function LoginForm() {
+  const dispatch = useDispatch();
+  const authState = useSelector((state) => state.auth);
+
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState({});
 
-  const {authState, authDispatch} = RootState()
 
   const validate = () => {
-  const newErrors = {};
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const newErrors = {};
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-  if (!emailRegex.test(formData.email)) {
-    newErrors.email = "Enter a valid email address";
-  }
+    if (!emailRegex.test(formData.email)) {
+      newErrors.email = "Enter a valid email address";
+    }
 
-  if (formData.password.length < 8) {
-    newErrors.password = "Password must be at least 8 characters";
-  }
+    if (formData.password.length < 8) {
+      newErrors.password = "Password must be at least 8 characters";
+    }
 
-  return newErrors;
-};
+    return newErrors;
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -30,11 +33,11 @@ export default function LoginForm() {
   };
 
   useEffect(() => {
-    console.log("AuthState of Login Page: ", authState)
-  },[authState])
+    console.log("AuthState of Login Page: ", authState);
+  }, [authState]);
 
   const handleSubmit = async (e) => {
-    try{
+    try {
       e.preventDefault();
       const validationErrors = validate();
       if (Object.keys(validationErrors).length > 0) {
@@ -45,30 +48,31 @@ export default function LoginForm() {
       console.log("Login Submitted", formData);
 
       const response = await axiosInstance.post("/auth/login", formData);
+      
       const responseData = response?.data;
       console.log("Response", responseData);
 
-      if(responseData){
-        authDispatch({
-          type:"LOGIN",
-          payload: {
-            email : responseData?.email,
+      if (responseData) {
+        dispatch(
+          login({
+            email: responseData?.email,
             role: responseData?.role,
-            accessToken: responseData?.accessToken
-          }
-        })
+            accessToken: responseData?.accessToken,
+          })
+        );
       }
-      responseData?.message === "SUCCESS"? toast.success("Login successful! Welcome back!") : toast.error("Login Unsuccessful!");
+      responseData?.message === "SUCCESS"
+        ? toast.success("Login successful! Welcome back!")
+        : toast.error("Login Unsuccessful!");
+    } catch (e) {
+      if (e.response && e.response.data) {
+        console.log("Error Response", e.response.data);
+        toast.error(e.response.data.message || "Login Unsuccessful!");
+      } else {
+        toast.error("Login Unsuccessful!");
+      }
     }
-    catch(e){
-        if (e.response && e.response.data) {
-          console.log("Error Response", e.response.data);
-          toast.error(e.response.data.message || "Login Unsuccessful!");
-        } else {
-          toast.error("Login Unsuccessful!");
-        }
-    }
-
+    
   };
 
   return (
