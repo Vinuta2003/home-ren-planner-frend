@@ -9,12 +9,6 @@ export const getPhaseById = createAsyncThunk('getPhaseById',async(phaseId)=>{
     return data;
 })
 
-// export const getPhaseMaterialsByPhaseId = createAsyncThunk('getPhaseMaterialsByPhaseId', async(phaseId)=>{
-//     const res = await axios.get(`http://localhost:8080/api/user/phase/${phaseId}/phase-materials`)
-//     const data = res.data;
-//     return data;
-// })
-
 export const addPhaseMaterialsToPhase = createAsyncThunk('addPhaseMaterialsToPhase', async(phaseId,{getState})=>{
     const {chosenMaterialsList} = getState().phase;
     const res = await axios.post(`http://localhost:8080/api/user/phase/${phaseId}/phase-materials`,chosenMaterialsList);
