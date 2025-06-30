@@ -1,20 +1,22 @@
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import axiosInstance from "../axios/axiosInstance";
-import { useDispatch, useSelector } from 'react-redux';
-import { login } from '../redux/auth/authSlice';
+import { useDispatch, useSelector } from "react-redux";
+import { login } from "../redux/auth/authSlice";
+import { useNavigate } from "react-router-dom";
 
 export default function RegisterForm() {
   const dispatch = useDispatch();
   const authState = useSelector((state) => state.auth);
+  const navigate = useNavigate();
 
   const [isVendor, setIsVendor] = useState(false);
   const [skills, setSkills] = useState([]);
   const [available, setAvailable] = useState(false);
 
   useEffect(() => {
-    console.log("Auth State in Register Form", authState)
-  },[authState])
+    console.log("Auth State in Register Form", authState);
+  }, [authState]);
 
   const handleSkillChange = (index, field, value) => {
     const updatedSkills = [...skills];
@@ -38,7 +40,10 @@ export default function RegisterForm() {
       };
 
       if (isVendor) {
-        payload.skills = skills;
+        payload.skills = skills.map((skill) => ({
+          skillName: skill.skillName,
+          basePrice: Number(skill.basePrice),
+        }));
         payload.available = available;
       }
 
@@ -49,25 +54,31 @@ export default function RegisterForm() {
 
       console.log("Response from Server : ", responseData);
 
-      if(responseData){
+      if (responseData) {
         dispatch(
           login({
             email: responseData?.email,
             role: responseData?.role,
             accessToken: responseData?.accessToken,
           })
-        )
+        );
       }
 
-      responseData?.message === "SUCCESS"
-        ? toast.success(`Registration successful! Welcome ${formData.name}!`)
-        : toast.error(`Registration Unsuccessful! Please Try Again!`);
+      if (responseData?.message === "SUCCESS") {
+        toast.success("Registration Successful", {
+          // onClose: () => {
+          //   if (responseData?.role === "VENDOR") navigate("/vendor-dashboard");
+          //   else navigate("/user-dashboard");
+          // },
+          // autoClose: 3000,
+        });
+      } else toast.message("Registration Unsuccessful!");
     } catch (e) {
       if (e.response && e.response.data) {
         console.log("Error Response", e.response.data);
-        toast.error(e.response.data.message || "Login Unsuccessful!");
+        toast.error(e.response.data.message || "Registration Unsuccessful!");
       } else {
-        toast.error("Login Unsuccessful!");
+        toast.error("Registration Unsuccessful!");
       }
     }
   };
@@ -190,22 +201,8 @@ export default function RegisterForm() {
                   <option value="ELECTRICAL">Electrical</option>
                   <option value="PAINTING">Painting</option>
                   <option value="CARPENTRY">Carpentry</option>
-                  <option value="FLOORING">Flooring</option>
-                  <option value="TILING">Tiling</option>
-                  <option value="ROOFING">Roofing</option>
-                  <option value="HVAC">HVAC</option>
-                  <option value="INTERIOR_DESIGN">Interior Design</option>
-                  <option value="MASONRY">Masonry</option>
-                  <option value="WATERPROOFING">Waterproofing</option>
-                  <option value="LANDSCAPING">Landscaping</option>
-                  <option value="GLASS_WORK">Glass Work</option>
-                  <option value="FALSE_CEILING">False Ceiling</option>
-                  <option value="MODULAR_KITCHEN">Modular Kitchen</option>
-                  <option value="SECURITY_SYSTEMS">Security Systems</option>
-                  <option value="SMART_HOME_SETUP">Smart Home Setup</option>
-                  <option value="CLEANING_SERVICES">Cleaning Services</option>
-                  <option value="DEMOLITION">Demolition</option>
-                  <option value="PEST_CONTROL">Pest Control</option>
+                  <option value="TILING">Flooring</option>
+                  <option value="CIVIL">Tiling</option>
                 </select>
                 <input
                   type="number"

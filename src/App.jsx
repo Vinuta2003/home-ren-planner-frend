@@ -4,16 +4,13 @@ import 'react-toastify/dist/ReactToastify.css'
 import './App.css'
 import RegisterForm from './pages/RegisterForm'
 import LoginForm from './pages/LoginForm'
+import AdminDashboard from './pages/AdminDashboard'
 
 function App() {
 
   return (
     <Router>
-      <Routes>
-        <Route path="/" element = {<RegisterForm/>}/>
-        {/* <Route path="/register" element = {RegisterForm}/> */}
-        <Route path="/login" element = {<LoginForm/>}/>
-      </Routes>
+      
       <ToastContainer
         position="top-right"
         autoClose={3000}
@@ -26,6 +23,15 @@ function App() {
         pauseOnHover
         theme="light"
       />
+      
+      <Routes>
+        <Route path="/" element = {<AdminDashboard/>}/>
+        <Route path="/register" element = {<RegisterForm/>}/>
+        <Route path="/login" element = {<LoginForm/>}/>
+        <Route path="/vendor-dashboard"/>
+        {/* <Route path="/admin-dashboard" element = {<AdminDashboard/>}/> */}
+
+      </Routes>
     </Router>
   )
 }
