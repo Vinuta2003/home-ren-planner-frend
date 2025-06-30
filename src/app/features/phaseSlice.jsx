@@ -9,11 +9,11 @@ export const getPhaseById = createAsyncThunk('getPhaseById',async(phaseId)=>{
     return data;
 })
 
-export const getPhaseMaterialsByPhaseId = createAsyncThunk('getPhaseMaterialsByPhaseId', async(phaseId)=>{
-    const res = await axios.get(`http://localhost:8080/api/user/phase/${phaseId}/phase-materials`)
-    const data = res.data;
-    return data;
-})
+// export const getPhaseMaterialsByPhaseId = createAsyncThunk('getPhaseMaterialsByPhaseId', async(phaseId)=>{
+//     const res = await axios.get(`http://localhost:8080/api/user/phase/${phaseId}/phase-materials`)
+//     const data = res.data;
+//     return data;
+// })
 
 export const addPhaseMaterialsToPhase = createAsyncThunk('addPhaseMaterialsToPhase', async(phaseId,{getState})=>{
     const {chosenMaterialsList} = getState().phase;
@@ -44,7 +44,7 @@ const phaseSlice = createSlice({
         deleteMaterial : function(state,action){
             state.chosenMaterialsList = state.chosenMaterialsList.filter((val)=>val.materialExposedId!=action.payload)
         },
-        clearChosenMaterialList : function(state,action){
+        clearChosenMaterialsList : function(state,action){
             state.chosenMaterialsList = [];
         }
     },
@@ -52,8 +52,6 @@ const phaseSlice = createSlice({
         builder.addCase(getPhaseById.fulfilled,(state,action)=>{
             state.phaseMaterialsList = action.payload;
             state.loaded = true;
-        }).addCase(getPhaseMaterialsByPhaseId.fulfilled,(state,action)=>{
-            state.phaseMaterialsList = action.payload;
         }).addCase(addPhaseMaterialsToPhase.fulfilled,(state,action)=>{
             state.chosenMaterialsList = [];
         })
@@ -63,5 +61,5 @@ const phaseSlice = createSlice({
 
 });
 
-export const {addMaterial,updateMaterialQuantity,deleteMaterial,clearChosenMaterialList} = phaseSlice.actions;
+export const {addMaterial,updateMaterialQuantity,deleteMaterial,clearChosenMaterialsList} = phaseSlice.actions;
 export const phaseReducer = phaseSlice.reducer;

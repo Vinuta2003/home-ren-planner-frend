@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom"
-import { addPhaseMaterialsToPhase, clearChosenMaterialList, getPhaseById } from "../app/features/phaseSlice";
+import { addPhaseMaterialsToPhase, clearChosenMaterialsList, getPhaseById } from "../app/features/phaseSlice";
 import { PhaseMaterial } from "../components/phaseMaterial";
 import { getMaterialsByPhaseType } from "../app/apis/phaseApis";
 import { Material } from "../components/Material";
@@ -15,31 +15,37 @@ export function PhasePage(props){
     const phaseType = useSelector((state)=>state.phase.phaseType);
     const chosenMaterialsList = useSelector((state)=>state.phase.chosenMaterialsList);
     const [addMode,updateAddMode] = useState(false)
-    const [existingMaterialIds, updateExistingMaterialIds] = useState([]);
     const [newMaterialsList, updateNewMaterialsList] = useState([]);
     
 
     useEffect(()=>{
+        dispatch(clearChosenMaterialsList());
         dispatch(getPhaseById(phaseId));
     },[phaseId])
 
     useEffect(()=>{
-        updateExistingMaterialIds(phaseMaterialsList.map((val)=>val.materialUserResponse.exposedId));
-    },[phaseMaterialsList])
+        const handleMaterials = async()=>{
+            if(!addMode){
+                return;
+            }
+            const currentMaterialIds = phaseMaterialsList.map((val)=>val.materialUserResponse.exposedId);
+            const materials = await getMaterialsByPhaseType(phaseType);
+            console.log("material list",materials);
+            console.log("phase materials ids",currentMaterialIds);
+            const newMaterials = materials.filter((val)=> !currentMaterialIds.includes(val.exposedId))
+            console.log("new materials ids",newMaterials);       
+            updateNewMaterialsList(newMaterials);
+        }
+        handleMaterials();
+    },[addMode,phaseMaterialsList.length,phaseId])
 
     const addButtonOnClickHandler = async()=>{
-        const materials = await getMaterialsByPhaseType(phaseType);
-        console.log("material list",materials);
-        console.log("phase materials ids",existingMaterialIds);
-        const newMaterials = materials.filter((val)=> !existingMaterialIds.includes(val.exposedId))
-        console.log("new materials ids",newMaterials);       
-        updateNewMaterialsList(newMaterials);
         updateAddMode(true)
     }
 
     const cancelButtonOnClickHandler = ()=>{
         updateAddMode(false);
-        dispatch(clearChosenMaterialList());
+        dispatch(clearChosenMaterialsList());
     }
 
     const addPhaseMaterialsOnClickHandler = async()=>{
