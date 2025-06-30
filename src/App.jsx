@@ -7,6 +7,7 @@ import LoginForm from './pages/LoginForm'
 import PhaseForm from './pages/PhaseForm'
 import ProjectPage from './pages/ProjectDashboard'
 import PhasePage from './pages/PhasePage'
+import PhaseList from './pages/PhaseList'
 
 function App() {
 
@@ -18,8 +19,8 @@ function App() {
         <Route path="/login" element = {<LoginForm/>}/>
         <Route path="/phase-form" element={<PhaseForm />} /> 
         <Route path="/" element={<ProjectPage />} />
-<Route path="/project/:projectId" element={<PhasePage />} />
-
+        <Route path="/phaselist" element={<PhaseList />} />
+        <Route path="/phase/project/:projectId" element={<PhaseList />} />
       </Routes>
       <ToastContainer
         position="top-right"

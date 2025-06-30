@@ -17,7 +17,7 @@ function ProjectPage() {
         <div
           key={project.id}
           className="bg-white p-4 rounded shadow mb-4 hover:bg-blue-100 cursor-pointer"
-          onClick={() => navigate(`/project/${project.id}`)}
+          onClick={() => navigate(`/phase/project/${project.id}`)}
         >
           {project.name}
         </div>

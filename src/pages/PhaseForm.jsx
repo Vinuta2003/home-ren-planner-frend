@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import axiosInstance from "../axios/axiosInstance";
+import { useDispatch } from "react-redux";
+import { createPhase } from "../app/features/phaseListSlice";
+import axios from "axios";
 
 function PhaseForm() {
-  const { projectId } = useParams();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [selectedRenovationType, setSelectedRenovationType] = useState('');
   const [phaseTypes, setPhaseTypes] = useState([]);
@@ -18,19 +20,19 @@ function PhaseForm() {
     start_date: "",
     end_date: "",
     vendor: "",
-    project: projectId || ""
+    project: ""
   });
 
   useEffect(() => {
-    axiosInstance.get("/api/enums/phase-statuses")
+    axios.get("http://localhost:8080/api/enums/phase-statuses")
       .then(res => setPhaseStatuses(res.data))
       .catch(err => console.error(err));
   }, []);
 
   useEffect(() => {
     if (selectedRenovationType) {
-      axiosInstance
-        .get(`/phase/phases/by-renovation-type/${selectedRenovationType}`)
+      axios
+        .get(`http://localhost:8080/phase/phases/by-renovation-type/${selectedRenovationType}`)
         .then(res => setPhaseTypes(res.data))
         .catch(err => console.error(err));
     } else {
@@ -47,7 +49,7 @@ function PhaseForm() {
 
     const payload = {
       vendor: { id: formData.vendor },
-      project: { id: projectId },
+      project: { id: formData.project },
       phaseName: formData.phaseName,
       description: formData.description,
       startDate: formData.start_date,
@@ -56,9 +58,9 @@ function PhaseForm() {
       phaseStatus: formData.phaseStatus,
     };
 
-    axiosInstance.post("/phase", payload)
-      .then(() => navigate(`/project/${projectId}`))
-      .catch(err => console.error("Error:", err));
+    dispatch(createPhase(payload))
+      .then(() => navigate(`/phase/project/${formData.project}`))
+      .catch((err) => console.error("Error creating phase:", err));
   };
 
   return (
@@ -72,7 +74,7 @@ function PhaseForm() {
           placeholder="Phase Name"
           value={formData.phaseName}
           onChange={handleChange}
-          className="w-full px-4 py-2 border border-gray-300 rounded mb-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-4 py-2 border border-gray-300 rounded mb-3"
         />
 
         <textarea
@@ -80,7 +82,7 @@ function PhaseForm() {
           placeholder="Description"
           value={formData.description}
           onChange={handleChange}
-          className="w-full px-4 py-2 border border-gray-300 rounded mb-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-4 py-2 border border-gray-300 rounded mb-3"
         />
 
         <input
@@ -88,7 +90,7 @@ function PhaseForm() {
           name="start_date"
           value={formData.start_date}
           onChange={handleChange}
-          className="w-full px-4 py-2 border border-gray-300 rounded mb-3 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-4 py-2 border border-gray-300 rounded mb-3 text-gray-500"
         />
 
         <input
@@ -96,25 +98,30 @@ function PhaseForm() {
           name="end_date"
           value={formData.end_date}
           onChange={handleChange}
-          className="w-full px-4 py-2 border border-gray-300 rounded mb-3 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-4 py-2 border border-gray-300 rounded mb-3 text-gray-500"
         />
 
-      <label>Project ID:</label>
-      <input type="text" name="project" value={formData.project} onChange={handleChange} /><br />
-      
+<input
+          type="text"
+          name="project"
+          placeholder="Project ID"
+          value={formData.project}
+          onChange={handleChange}
+          className="w-full px-4 py-2 border border-gray-300 rounded mb-3"
+        />
         <input
           type="text"
           name="vendor"
           placeholder="Vendor ID"
           value={formData.vendor}
           onChange={handleChange}
-          className="w-full px-4 py-2 border border-gray-300 rounded mb-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-4 py-2 border border-gray-300 rounded mb-3"
         />
 
         <select
           value={selectedRenovationType}
           onChange={(e) => setSelectedRenovationType(e.target.value)}
-          className="w-full px-4 py-2 border border-gray-300 rounded mb-3 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-4 py-2 border border-gray-300 rounded mb-3 bg-white"
         >
           <option value="">-- Select Renovation Type --</option>
           <option value="KITCHEN_RENOVATION">Kitchen Renovation</option>
@@ -126,7 +133,7 @@ function PhaseForm() {
           name="phaseType"
           value={formData.phaseType}
           onChange={handleChange}
-          className="w-full px-4 py-2 border border-gray-300 rounded mb-3 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-4 py-2 border border-gray-300 rounded mb-3 bg-white"
         >
           <option value="">-- Select Phase Type --</option>
           {phaseTypes.map((type) => (
@@ -138,7 +145,7 @@ function PhaseForm() {
           name="phaseStatus"
           value={formData.phaseStatus}
           onChange={handleChange}
-          className="w-full px-4 py-2 border border-gray-300 rounded mb-5 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-4 py-2 border border-gray-300 rounded mb-5 bg-white"
         >
           <option value="">-- Select Phase Status --</option>
           {phaseStatuses.map((status) => (
@@ -148,7 +155,7 @@ function PhaseForm() {
 
         <button
           type="submit"
-          className="w-full bg-blue-600 text-white py-2 rounded font-semibold hover:bg-blue-700 transition hover:cursor-pointer"
+          className="w-full bg-blue-600 text-white py-2 rounded font-semibold hover:bg-blue-700 transition"
         >
           Create Phase
         </button>
