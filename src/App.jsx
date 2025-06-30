@@ -5,16 +5,21 @@ import './App.css'
 import RegisterForm from './pages/RegisterForm'
 import LoginForm from './pages/LoginForm'
 import PhaseForm from './pages/PhaseForm'
+import ProjectPage from './pages/ProjectDashboard'
+import PhasePage from './pages/PhasePage'
 
 function App() {
 
   return (
     <Router>
       <Routes>
-        <Route path="/" element = {<RegisterForm/>}/>
+        {/* <Route path="/" element = {<RegisterForm/>}/> */}
         {/* <Route path="/register" element = {RegisterForm}/> */}
         <Route path="/login" element = {<LoginForm/>}/>
         <Route path="/phase-form" element={<PhaseForm />} /> 
+        <Route path="/" element={<ProjectPage />} />
+<Route path="/project/:projectId" element={<PhasePage />} />
+
       </Routes>
       <ToastContainer
         position="top-right"
