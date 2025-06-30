@@ -43,6 +43,9 @@ const phaseSlice = createSlice({
         },
         deleteMaterial : function(state,action){
             state.chosenMaterialsList = state.chosenMaterialsList.filter((val)=>val.materialExposedId!=action.payload)
+        },
+        clearChosenMaterialList : function(state,action){
+            state.chosenMaterialsList = [];
         }
     },
     extraReducers:(builder)=>{
@@ -60,5 +63,5 @@ const phaseSlice = createSlice({
 
 });
 
-export const {addMaterial,updateMaterialQuantity,deleteMaterial} = phaseSlice.actions;
+export const {addMaterial,updateMaterialQuantity,deleteMaterial,clearChosenMaterialList} = phaseSlice.actions;
 export const phaseReducer = phaseSlice.reducer;

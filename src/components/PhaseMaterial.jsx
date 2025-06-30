@@ -19,7 +19,9 @@ export function PhaseMaterial(props){
     const deleteButtonOnClickHandler = async()=>{
         await deletePhaseMaterial(phaseMaterial.exposedId);
 
-        await dispatch(getPhaseMaterialsByPhaseId(phaseMaterial.phaseResponse.id));
+        await dispatch(getPhaseById(phaseMaterial.phaseResponse.id));
+
+        
     }
 
     const incrementButtonOnClickListener = ()=>{
@@ -41,7 +43,7 @@ export function PhaseMaterial(props){
 
         updateEditMode(false);
 
-        await dispatch(getPhaseMaterialsByPhaseId(phaseMaterial.phaseResponse.id));
+        await dispatch(getPhaseById(phaseMaterial.phaseResponse.id));
        
     }
 

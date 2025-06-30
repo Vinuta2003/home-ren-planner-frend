@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom"
-import { addPhaseMaterialsToPhase, getPhaseById, getPhaseMaterialsByPhaseId } from "../app/features/phaseSlice";
+import { addPhaseMaterialsToPhase, clearChosenMaterialList, getPhaseById } from "../app/features/phaseSlice";
 import { PhaseMaterial } from "../components/phaseMaterial";
 import { getMaterialsByPhaseType } from "../app/apis/phaseApis";
 import { Material } from "../components/Material";
@@ -39,6 +39,7 @@ export function PhasePage(props){
 
     const cancelButtonOnClickHandler = ()=>{
         updateAddMode(false);
+        dispatch(clearChosenMaterialList());
     }
 
     const addPhaseMaterialsOnClickHandler = async()=>{
@@ -46,7 +47,7 @@ export function PhasePage(props){
             updateAddMode(false);
             updateNewMaterialsList([]);
             await dispatch(addPhaseMaterialsToPhase(phaseId));
-            await dispatch(getPhaseMaterialsByPhaseId(phaseId));
+            await dispatch(getPhaseById(phaseId));
         }
     }
 
