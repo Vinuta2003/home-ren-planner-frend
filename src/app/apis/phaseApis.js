@@ -23,3 +23,15 @@ export const deletePhaseMaterial = async(phaseMaterialId)=>{
     }
     
 }
+
+export const getMaterialsByPhaseType = async(phaseType)=>{
+    try{
+        const res = await axios.get(`http://localhost:8080/api/user/materials?phaseType=${phaseType}`)
+        const data = res.data;
+        return data;
+    }
+    catch(e){
+        console.log("failed to fetch materials", e)
+    }
+    
+}

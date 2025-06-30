@@ -15,18 +15,34 @@ export const getPhaseMaterialsByPhaseId = createAsyncThunk('getPhaseMaterialsByP
     return data;
 })
 
+export const addPhaseMaterialsToPhase = createAsyncThunk('addPhaseMaterialsToPhase', async(phaseId,{getState})=>{
+    const {chosenMaterialsList} = getState().phase;
+    const res = await axios.post(`http://localhost:8080/api/user/phase/${phaseId}/phase-materials`,chosenMaterialsList);
+    const data = res.data;
+    return data;
+
+})
+
 const phaseSlice = createSlice({
     name:"phaseSlice",
     initialState:{
+        phaseType : "ELECTRICAL",
         phaseMaterialsList : [],
+        chosenMaterialsList : [],
         loaded : false
     },
     reducers:{
-        addPhaseMaterials : function(state,action){
-            state.phaseMaterialsList.push(...action.payload);
+        addMaterial : function(state,action){
+            state.chosenMaterialsList.push(action.payload);
         },
-        deletePhaseMaterial : function(state,action){
-            state.phaseMaterialsList = state.phaseMaterialsList.filter((val)=>val.exposedId!=action.payload);
+        updateMaterialQuantity : function(state,action){
+            const material = state.chosenMaterialsList.find((val)=>val.materialExposedId==action.payload.materialExposedId)
+            if(material){
+                material.quantity = action.payload.quantity;
+            }
+        },
+        deleteMaterial : function(state,action){
+            state.chosenMaterialsList = state.chosenMaterialsList.filter((val)=>val.materialExposedId!=action.payload)
         }
     },
     extraReducers:(builder)=>{
@@ -35,6 +51,8 @@ const phaseSlice = createSlice({
             state.loaded = true;
         }).addCase(getPhaseMaterialsByPhaseId.fulfilled,(state,action)=>{
             state.phaseMaterialsList = action.payload;
+        }).addCase(addPhaseMaterialsToPhase.fulfilled,(state,action)=>{
+            state.chosenMaterialsList = [];
         })
 
     }
@@ -42,5 +60,5 @@ const phaseSlice = createSlice({
 
 });
 
-export const {addPhaseMaterials,deletePhaseMaterial} = phaseSlice.actions;
+export const {addMaterial,updateMaterialQuantity,deleteMaterial} = phaseSlice.actions;
 export const phaseReducer = phaseSlice.reducer;
