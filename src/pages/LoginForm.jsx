@@ -70,11 +70,11 @@ export default function LoginForm() {
         setFormData({ email: "", password: "" });
         setErrors({});
         toast.success("Login successful! Welcome back!", {
-          // onClose: () => {
-          //   if(responseData?.role === "ADMIN") navigate("/admin-dashboard")
-          //   else if(responseData?.role === "VENDOR") navigate("/vendor-dashboard")
-          //   else navigate("/user-dashboard")
-          // },
+          onClose: () => {
+            if(responseData?.role === "ADMIN") navigate("/admin-dashboard")
+            else if(responseData?.role === "VENDOR") navigate("/vendor-dashboard")
+            else navigate("/user-dashboard")
+          },
           autoClose: 3000
         })
       }

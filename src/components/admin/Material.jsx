@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import axiosInstance from "../../axios/axiosInstance";
-import { Pencil, Trash2, PlusCircle, XCircle } from "lucide-react";
+import { Pencil, Trash2, PlusCircle, XCircle, AlertCircle, Loader2 } from "lucide-react";
 import { toast } from "react-toastify";
 
 export default function Material() {
-  const [materials, setMaterials] = useState([]);
+  const [materials, setMaterials] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [editId, setEditId] = useState(null);
   const [form, setForm] = useState({
@@ -18,9 +18,13 @@ export default function Material() {
   const [pageSize, setPageSize] = useState(10);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [materialToDelete, setMaterialToDelete] = useState(null);
+  const [materialToRemove, setMaterialToRemove] = useState(null);
+  const [showRemoveModal, setShowRemoveModal] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const units = ["KG", "UNITS", "L"];
-  const phaseTypes = ["ELECTRICAL", "PLUMBING", "CARPENTARY", "CIVIL", "TILING", "PAINTING"];
+  const phaseTypes = ["ELECTRICAL", "PLUMBING", "CARPENTRY", "CIVIL", "TILING", "PAINTING"];
 
   useEffect(() => {
     setPage(0);
@@ -37,6 +41,9 @@ export default function Material() {
       setTotalPages(res.data.totalPages);
     } catch (err) {
       console.error("Fetch failed", err);
+      setError("Error occurred while fetching materials.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -115,6 +122,33 @@ export default function Material() {
       pricePerQuantity: material.pricePerQuantity,
     });
     setShowForm(true);
+  };
+
+  const handlePermanentRemove = (id) => {
+    setMaterialToRemove(id);
+    setShowRemoveModal(true);
+  };
+
+  const confirmPermanentRemove = async () => {
+    if (!materialToRemove) return;
+    try {
+      const response = await axiosInstance.delete(`/admin/materials/hard/${materialToRemove}`);
+      if (response?.data?.message === "SUCCESS") {
+        toast.success("Material removed permanently.");
+        fetchMaterials();
+      } else {
+        toast.error("Failed to remove material permanently.");
+      }
+    } catch (err) {
+      toast.error("Error occurred while removing permanently.");
+    }
+    setShowRemoveModal(false);
+    setMaterialToRemove(null);
+  };
+
+  const handleCancelRemove = () => {
+    setShowRemoveModal(false);
+    setMaterialToRemove(null);
   };
 
   return (
@@ -235,7 +269,7 @@ export default function Material() {
               </tr>
             </thead>
             <tbody>
-              {materials.map((material) => (
+              {materials?.map((material) => (
                 <tr key={material.exposedId} className="border-t border-blue-100 hover:bg-white">
                   <td className="p-3 text-center align-middle whitespace-normal break-words">{material.name}</td>
                   <td className="p-3 text-center align-middle whitespace-normal break-words">{material.unit}</td>
@@ -250,20 +284,38 @@ export default function Material() {
                   </td>
                   <td className="p-3 text-center align-middle">
                     <div className="flex gap-2 justify-center">
-                      <button
-                        className="flex items-center gap-1 bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600 cursor-pointer"
-                        onClick={() => handleEdit(material)}
-                        disabled={material.deleted}
-                      >
-                        <Pencil size={16} /> Edit
-                      </button>
-                      <button
-                        className={`px-3 py-1 rounded flex items-center gap-2 cursor-pointer ${material.deleted ? "bg-green-600 hover:bg-green-700 text-white" : "bg-red-600 hover:bg-red-700 text-white"}`}
-                        onClick={() => handleDeleteOrRestore(material.exposedId, material.deleted)}
-                      >
-                        {material.deleted ? <PlusCircle size={16} /> : <Trash2 size={16} />}
-                        {material.deleted ? "Restore" : "Delete"}
-                      </button>
+                      {material.deleted ? (
+                        <>
+                          <button
+                            className="px-3 py-1 rounded flex items-center gap-2 cursor-pointer bg-green-600 hover:bg-green-700 text-white"
+                            onClick={() => handleDeleteOrRestore(material.exposedId, true)}
+                          >
+                            <PlusCircle size={16} /> Restore
+                          </button>
+                          <button
+                            className="px-3 py-1 rounded flex items-center gap-2 cursor-pointer bg-red-600 hover:bg-red-700 text-white"
+                            onClick={() => handlePermanentRemove(material.exposedId)}
+                          >
+                            <Trash2 size={16} /> Remove
+                          </button>
+                        </>
+                      ) : (
+                        <>
+                          <button
+                            className="flex items-center gap-1 bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600 cursor-pointer"
+                            onClick={() => handleEdit(material)}
+                            disabled={material.deleted}
+                          >
+                            <Pencil size={16} /> Edit
+                          </button>
+                          <button
+                            className="px-3 py-1 rounded flex items-center gap-2 cursor-pointer bg-red-600 hover:bg-red-700 text-white"
+                            onClick={() => handleDeleteOrRestore(material.exposedId, false)}
+                          >
+                            <Trash2 size={16} /> Delete
+                          </button>
+                        </>
+                      )}
                     </div>
                   </td>
                 </tr>
@@ -315,6 +367,47 @@ export default function Material() {
               </div>
             </div>
           </div>
+        )}
+
+        {/* Modal for permanent remove confirmation */}
+        {showRemoveModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70">
+            <div className="bg-white rounded-lg shadow-lg p-8 max-w-sm w-full">
+              <h3 className="text-lg font-semibold text-red-700 mb-4">Remove Material</h3>
+              <p className="mb-6 text-gray-700">Are you sure you want to remove this material permanently? This action cannot be undone.</p>
+              <div className="flex justify-end gap-3">
+                <button
+                  className="px-4 py-2 rounded bg-gray-200 text-gray-700 hover:bg-gray-300 font-semibold cursor-pointer"
+                  onClick={handleCancelRemove}
+                >
+                  Cancel
+                </button>
+                <button
+                  className="px-4 py-2 rounded bg-red-700 text-white hover:bg-red-800 font-semibold cursor-pointer"
+                  onClick={confirmPermanentRemove}
+                >
+                  Remove
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {loading && (
+          <div className="flex justify-center items-center py-8">
+            <Loader2 className="animate-spin text-blue-600" size={36} />
+          </div>
+        )}
+        {error && (
+          <div className="flex items-center justify-center mt-4">
+            <div className="flex items-center gap-2 bg-red-100 border border-red-300 text-red-700 px-4 py-2 rounded shadow-sm font-semibold">
+              <AlertCircle size={18} className="text-red-500" />
+              {error}
+            </div>
+          </div>
+        )}
+        {materials && materials?.length === 0 && (
+          <p className="flex items-center justify-center text-gray-400 italic text-md gap-1 mt-1"><AlertCircle size={14} /> No materials found.</p>
         )}
       </div>
     </div>

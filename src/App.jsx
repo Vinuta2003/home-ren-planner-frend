@@ -14,7 +14,7 @@ function App() {
       
       <ToastContainer
         position="top-right"
-        autoClose={3000}
+        autoClose={1500}
         hideProgressBar={false}
         newestOnTop={false}
         closeOnClick
@@ -26,10 +26,10 @@ function App() {
       />
       
       <Routes>
-        <Route path="/" element = {<RegisterForm/>}/>
-        {/* <Route path="/register" element = {<RegisterForm/>}/> */}
+        <Route path="/register" element = {<RegisterForm/>}/>
         <Route path="/login" element = {<LoginForm/>}/>
         
+        <Route path="/user-dashboard"/>
         <Route path="/vendor-dashboard"/>
 
         <Route path="/admin-dashboard" element = {

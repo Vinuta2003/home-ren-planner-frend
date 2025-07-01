@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import axiosInstance from "../../axios/axiosInstance";
-import { Trash2 } from "lucide-react";
+import { Trash2, AlertCircle, Loader2 } from "lucide-react";
 
 export default function Customer() {
-  const [customers, setCustomers] = useState([]);
+  const [customers, setCustomers] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [page, setPage] = useState(0);
@@ -45,7 +45,7 @@ export default function Customer() {
     if (!customerToDelete) return;
     try {
       const response = await axiosInstance.delete(`/admin/users/${customerToDelete}`);
-      if(response?.data?.message === "SUCCESS"){
+      if (response?.data?.message === "SUCCESS") {
         toast.success("Customer Deleted Successfully")
         setCustomers((prev) => prev.filter((c) => c.exposedId !== customerToDelete));
       }
@@ -81,12 +81,6 @@ export default function Customer() {
           </select>
         </div>
 
-        {loading && <p className="text-blue-700">Loading...</p>}
-        {error && <p className="text-red-600">{error}</p>}
-
-        {!loading && customers.length === 0 && <p>No customers found.</p>}
-
-        {!loading && customers.length > 0 && (
           <div className="overflow-x-auto rounded-lg shadow border border-blue-100 bg-blue-50">
             <table className="w-full table-fixed">
               <thead className="bg-blue-100 text-blue-900">
@@ -99,38 +93,38 @@ export default function Customer() {
                 </tr>
               </thead>
               <tbody>
-                {customers.map((user, index) => (
-                  <tr key={user.exposedId} className="border-t border-blue-100 hover:bg-white">
-                    <td className="p-3 text-center align-middle">
-                      <img
-                        src={user?.pic || "https://img.icons8.com/?size=100&id=12438&format=png&color=000000"}
-                        alt="Profile"
-                        className="w-10 h-10 rounded-lg mx-auto"
-                      />
-                    </td>
-                    <td className="p-3 text-center align-middle whitespace-normal break-words">{user.name}</td>
-                    <td className="p-3 text-center align-middle whitespace-normal break-words">{user.email}</td>
-                    <td className="p-3 text-center align-middle whitespace-normal break-words">{user.contact}</td>
-                    <td className="p-3 text-center items-center justify-center align-middle">
-                      <div className="flex justify-center">
-                        <button
-                          onClick={() => deleteCustomer(user.exposedId)}
-                          className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 flex items-center gap-2 cursor-pointer"
-                        >
-                          <Trash2 size={16} />
-                          Delete
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
+                {!loading && !error && customers?.length > 0 && (
+                  customers.map((user) => (
+                    <tr key={user.exposedId} className="border-t border-blue-100 hover:bg-white">
+                      <td className="p-3 text-center align-middle">
+                        <img
+                          src={user?.pic || "https://img.icons8.com/?size=100&id=12438&format=png&color=000000"}
+                          alt="Profile"
+                          className="w-10 h-10 rounded-lg mx-auto"
+                        />
+                      </td>
+                      <td className="p-3 text-center align-middle whitespace-normal break-words">{user.name}</td>
+                      <td className="p-3 text-center align-middle whitespace-normal break-words">{user.email}</td>
+                      <td className="p-3 text-center align-middle whitespace-normal break-words">{user.contact}</td>
+                      <td className="p-3 text-center items-center justify-center align-middle">
+                        <div className="flex justify-center">
+                          <button
+                            onClick={() => deleteCustomer(user.exposedId)}
+                            className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 flex items-center gap-2 cursor-pointer"
+                          >
+                            <Trash2 size={16} />
+                            Delete
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
-
             </table>
           </div>
-        )}
         {/* Pagination Controls */}
-        {!loading && customers.length > 0 && (
+        {!loading && customers?.length > 0 && !error && (
           <div className="flex justify-center items-center gap-4 mt-6">
             <button
               className="px-3 py-1 rounded bg-blue-100 text-blue-700 font-semibold disabled:opacity-50 cursor-pointer"
@@ -147,6 +141,27 @@ export default function Customer() {
             >
               Next &gt;&gt;
             </button>
+          </div>
+        )}
+        {loading && (
+          <div className="flex justify-center items-center py-8">
+            <Loader2 className="animate-spin text-blue-600" size={36} />
+          </div>
+        )}
+        {error && (
+          <div className="p-3 text-center">
+            <span className="inline-flex items-center gap-2 bg-red-100 border border-red-300 text-red-700 px-4 py-2 rounded shadow-sm font-semibold mx-auto">
+              <AlertCircle size={18} className="text-red-500" />
+              {error}
+            </span>
+          </div>
+        )}
+        {!error && customers?.length === 0 && (
+          <div className="p-3 text-center">
+            <span className="inline-flex items-center text-gray-400 italic text-md gap-1 mx-auto">
+              <AlertCircle size={14} />
+              No customers found.
+            </span>
           </div>
         )}
       </div>

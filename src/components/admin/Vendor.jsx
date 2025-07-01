@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, Loader2 } from "lucide-react";
 import { toast } from "react-toastify";
 import axiosInstance from "../../axios/axiosInstance";
 import VendorCard from "./VendorCard";
@@ -148,10 +148,20 @@ export default function Vendor() {
           </button>
         </div>
 
-        {loading && <p className="text-blue-700">Loading...</p>}
-        {error && <p className="text-red-600">{error}</p>}
-
-        {!loading && activeTab === 'approval' && (
+        {loading && (
+          <div className="flex justify-center items-center py-8">
+            <Loader2 className="animate-spin text-blue-600" size={36} />
+          </div>
+        )}
+        {!loading && error && (
+          <div className="flex items-center justify-center py-8">
+            <span className="inline-flex items-center gap-2 bg-red-100 border border-red-300 text-red-700 px-4 py-2 rounded shadow-sm font-semibold mx-auto">
+              <AlertCircle size={18} className="text-red-500" />
+              {error}
+            </span>
+          </div>
+        )}
+        {!loading && !error && activeTab === 'approval' && (
           pendingVendors.length === 0 ? (
             <div className="flex items-center justify-center text-gray-400 italic text-md gap-1 mt-1">
               <AlertCircle size={14} />
@@ -189,7 +199,7 @@ export default function Vendor() {
             </>
           )
         )}
-        {!loading && activeTab === 'approved' && (
+        {!loading && !error && activeTab === 'approved' && (
           approvedVendors.length === 0 ? (
             <div className="flex items-center justify-center text-gray-400 italic text-md gap-1 mt-1">
               <AlertCircle size={14} />
