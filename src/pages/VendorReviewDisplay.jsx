@@ -3,91 +3,30 @@ import axios from 'axios';
 import { Star } from 'lucide-react';
 import toast, { Toaster } from 'react-hot-toast';
 
-const skillOptions = ['Electrical', 'Plumbing', 'Painting', 'Construction'];
-const userId = 'aaaaaaa1-aaaa-aaaa-aaaa-aaaaaaaaaaaa'; // Replace with actual logged-in user ID
+const skillOptions = ['ELECTRICITY', 'PLUMBING', 'PAINTING', 'STRUCTURAL_WORK','TILING','CARPENTRY'];
 
 export default function VendorReviewDisplay() {
-  const [skill, setSkill] = useState('Electrical');
+  const [skill, setSkill] = useState(skillOptions[0]); // dynamically set default
   const [vendors, setVendors] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [reviewInputs, setReviewInputs] = useState({});
   const [selectedVendor, setSelectedVendor] = useState(null);
 
   useEffect(() => {
-    fetchVendors();
+    if (skill) fetchVendors();
   }, [skill]);
 
   const fetchVendors = async () => {
     setLoading(true);
     try {
-      const res = await axios.get('http://localhost:8080/api/vendor-reviews/by-skill', {
-        params: { skill },
+      const res = await axios.get('http://localhost:8080/api/vendor-reviews/by-phaseType', {
+        params: { phaseType: skill }, // backend expects "phaseType"
       });
       setVendors(res.data);
-
-      const inputMap = {};
-      res.data.forEach(v => {
-        const userReview = v.userReview;
-        if (userReview) {
-          inputMap[v.id] = {
-            comment: userReview.comment,
-            rating: userReview.rating,
-            reviewId: userReview.id
-          };
-        }
-      });
-      setReviewInputs(inputMap);
     } catch (err) {
       console.error('Error fetching vendors:', err);
+      toast.error("Failed to fetch vendors");
     }
     setLoading(false);
-  };
-
-  const handleInputChange = (vendorId, field, value) => {
-    setReviewInputs(prev => ({
-      ...prev,
-      [vendorId]: {
-        ...prev[vendorId],
-        [field]: value
-      }
-    }));
-  };
-
-  const submitReview = async (vendorId) => {
-    const { comment, rating, reviewId } = reviewInputs[vendorId] || {};
-    if (!comment || !rating) return toast.error('Please fill comment and rating');
-
-    try {
-      if (reviewId) {
-        await axios.put(`http://localhost:8080/api/vendor-reviews/reviews/${reviewId}`, {
-          vendorId, userId, comment, rating: Number(rating)
-        });
-        toast.success('Review updated');
-      } else {
-        await axios.post(`http://localhost:8080/api/vendor-reviews/reviews`, {
-          vendorId, userId, comment, rating
-        });
-        toast.success('Review added');
-      }
-      fetchVendors();
-    } catch (err) {
-      console.error('Review submit failed:', err);
-      toast.error('Failed to submit review');
-    }
-  };
-
-  const deleteReview = async (vendorId) => {
-    const reviewId = reviewInputs[vendorId]?.reviewId;
-    if (!reviewId) return toast.error('No review to delete');
-
-    try {
-      await axios.delete(`http://localhost:8080/api/vendor-reviews/reviews/${reviewId}`);
-      toast.success('Review deleted');
-      fetchVendors();
-    } catch (err) {
-      console.error('Delete failed:', err);
-      toast.error('Failed to delete review');
-    }
   };
 
   const toggleAssignVendor = async (vendorId, available, name) => {
@@ -95,7 +34,7 @@ export default function VendorReviewDisplay() {
       const action = available ? 'assign' : 'unassign';
       await axios.put(`http://localhost:8080/api/vendor-assignment/${action}/${vendorId}`);
       toast.success(`${available ? 'Assigned' : 'Unassigned'} ${name}`);
-      fetchVendors();
+      fetchVendors(); // refresh list after update
     } catch (err) {
       console.error('Error toggling assign/unassign:', err);
       toast.error(`${available ? 'Assign' : 'Unassign'} failed for ${name}`);
@@ -106,7 +45,9 @@ export default function VendorReviewDisplay() {
     <div className="min-h-screen bg-gradient-to-br from-white to-gray-100 p-8">
       <Toaster position="top-center" toastOptions={{ duration: 3000 }} />
       <div className="max-w-screen-xl mx-auto">
-        <h1 className="text-4xl font-extrabold mb-8 text-center text-[#004A7C] drop-shadow-md">Vendor Reviews</h1>
+        <h1 className="text-4xl font-extrabold mb-8 text-center text-[#004A7C] drop-shadow-md">
+          Vendor Reviews
+        </h1>
 
         <div className="flex justify-center mb-10">
           <select
@@ -114,6 +55,7 @@ export default function VendorReviewDisplay() {
             onChange={(e) => setSkill(e.target.value)}
             className="p-3 border border-gray-300 rounded bg-white text-[#333333] shadow-sm w-64 text-center"
           >
+            <option value="" disabled>Select Skill</option>
             {skillOptions.map((opt) => (
               <option key={opt} value={opt}>{opt}</option>
             ))}
@@ -133,22 +75,26 @@ export default function VendorReviewDisplay() {
               <h2 className="text-2xl font-bold text-[#004A7C] flex items-center gap-2">
                 {selectedVendor.name} <span className="text-blue-500">✔</span>
               </h2>
-              <p className="text-gray-600 mt-1">{selectedVendor.skill}</p>
+              <p className="text-gray-600 mt-1">{skill}</p>
               <p className="text-sm mt-1 font-semibold text-green-600">
                 {selectedVendor.available ? 'Available' : 'Not Available'}
               </p>
+
               <div className="my-2 flex flex-col sm:flex-row gap-2">
                 <span className="bg-gray-100 px-3 py-1 rounded-full text-sm">
-                  Experience: {selectedVendor.experience || '2'} 
+                  Experience: {selectedVendor.experience || '2'} years
                 </span>
                 <span className="bg-gray-100 px-3 py-1 rounded-full text-sm">
                   Company: {selectedVendor.companyName || 'Independent'}
                 </span>
               </div>
+
               <p className="text-gray-700 mt-3">
-                <strong>About:</strong> {`${selectedVendor.name} is a skilled ${selectedVendor.skill?.toLowerCase()} professional.`}
+                <strong>About:</strong> {`${selectedVendor.name} is a skilled ${skill.toLowerCase()} professional.`}
               </p>
-              <p className="text-black mt-4 text-lg"><strong>Price:</strong> ₹{selectedVendor.basePrice || '500'}</p>
+              <p className="text-black mt-4 text-lg">
+                <strong>Price:</strong> ₹{selectedVendor.basePrice || '500'}
+              </p>
 
               <button
                 onClick={() => toggleAssignVendor(selectedVendor.id, selectedVendor.available, selectedVendor.name)}
@@ -175,9 +121,13 @@ export default function VendorReviewDisplay() {
                           </span>
                         </div>
                         <p className="text-gray-600 text-sm mt-1 italic">“{r.comment}”</p>
-                        <p className="text-xs text-gray-400 mt-1">{new Date(r.createdAt).toLocaleDateString('en-IN', {
-                          year: 'numeric', month: 'short', day: 'numeric'
-                        })}</p>
+                        <p className="text-xs text-gray-400 mt-1">
+                          {new Date(r.createdAt).toLocaleDateString('en-IN', {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric',
+                          })}
+                        </p>
                       </div>
                     ))
                   ) : (
@@ -207,12 +157,13 @@ export default function VendorReviewDisplay() {
                   className="w-20 h-20 rounded-full border object-cover mb-3"
                 />
                 <h2 className="text-lg font-bold text-[#004A7C] mb-1 text-center">{vendor.name}</h2>
-                <p className="text-sm text-gray-500 mb-1">{vendor.skill}</p>
+                <p className="text-sm text-gray-500 mb-1">{skill}</p>
                 <p className="text-sm text-gray-500 mb-1">{vendor.companyName || 'Independent'}</p>
-                <p className="text-sm text-gray-600 mb-1">{vendor.experience || 0} </p>
+                <p className="text-sm text-gray-600 mb-1">{vendor.experience || 0} years</p>
                 <p className={`text-sm font-semibold ${vendor.available ? 'text-green-600' : 'text-red-600'} mb-2`}>
                   {vendor.available ? 'Available' : 'Not Available'}
                 </p>
+
                 <div className="flex items-center text-yellow-500 mb-3">
                   {[...Array(Math.round(vendor.rating))].map((_, i) => (
                     <Star key={i} fill="#FFD700" size={16} />
@@ -221,6 +172,7 @@ export default function VendorReviewDisplay() {
                     ({vendor.rating?.toFixed(1) || '0.0'})
                   </span>
                 </div>
+
                 <button
                   onClick={() => setSelectedVendor(vendor)}
                   className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded mb-2"
