@@ -1,154 +1,253 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
-import { CheckCircle2, XCircle, Trash2 } from "lucide-react";
+import { useEffect, useState, useCallback } from "react";
+import { AlertCircle } from "lucide-react";
+import { toast } from "react-toastify";
 import axiosInstance from "../../axios/axiosInstance";
+import VendorCard from "./VendorCard";
 
 export default function Vendor() {
-  const [vendors, setVendors] = useState([]);
+  const [approvedVendors, setApprovedVendors] = useState([]);
+  const [pendingVendors, setPendingVendors] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [activeTab, setActiveTab] = useState("approved");
+  const [approvedPage, setApprovedPage] = useState(0);
+  const [approvedTotalPages, setApprovedTotalPages] = useState(1);
+  const [pendingPage, setPendingPage] = useState(0);
+  const [pendingTotalPages, setPendingTotalPages] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [vendorToDelete, setVendorToDelete] = useState(null);
 
-  useEffect(() => {
-    fetchVendors();
-  }, []);
-
-  const fetchVendors = async () => {
+  const fetchApprovedVendors = useCallback(async (page = 0, size = pageSize) => {
     setLoading(true);
     setError("");
     try {
-      const res = await axiosInstance.get("/admin/vendors");
-      setVendors(res.data);
+      const res = await axiosInstance.get(`/admin/vendors/approved?page=${page}&size=${size}`);
+      setApprovedVendors(res.data.content);
+      setApprovedTotalPages(res.data.totalPages);
     } catch (err) {
       console.error(err);
-      setError("Failed to fetch vendors.");
+      setError("Failed to fetch approved vendors.");
     }
     setLoading(false);
-  };
+  }, [pageSize]);
+
+  const fetchPendingVendors = useCallback(async (page = 0, size = pageSize) => {
+    setLoading(true);
+    setError("");
+    try {
+      const res = await axiosInstance.get(`/admin/vendors/pending?page=${page}&size=${size}`);
+      setPendingVendors(res.data.content);
+      setPendingTotalPages(res.data.totalPages);
+    } catch (err) {
+      console.error(err);
+      setError("Failed to fetch pending vendors.");
+    }
+    setLoading(false);
+  }, [pageSize]);
+
+  useEffect(() => {
+    if (activeTab === "approved") {
+      setApprovedPage(0);
+    } else {
+      setPendingPage(0);
+    }
+  }, [pageSize, activeTab]);
+
+  useEffect(() => {
+    if (activeTab === "approved") {
+      fetchApprovedVendors(approvedPage, pageSize);
+    }
+  }, [activeTab, approvedPage, pageSize, fetchApprovedVendors]);
+
+  useEffect(() => {
+    if (activeTab === "approval") {
+      fetchPendingVendors(pendingPage, pageSize);
+    }
+  }, [activeTab, pendingPage, pageSize, fetchPendingVendors]);
 
   const updateApproval = async (id, approved) => {
     try {
-      await axiosInstance.put(`/admin/vendor/${id}/approve`, null,{
-          params: { approved },
-        }
-      );
-
-      // Remove vendor from list if rejected
-      if (!approved) {
-        setVendors((prev) => prev.filter((v) => v.id !== id));
-      } else {
-        setVendors((prev) =>
-          prev.map((v) => (v.id === id ? { ...v, approved: true } : v))
-        );
+      const response = await axiosInstance.put(`/admin/vendor/${id}/approve`, null, { params: { approved } });
+      if (response?.data?.message === "SUCCESS") {
+        toast.success(`Vendor Approval Request ${approved ? "Accepted" : "Rejected"}`)
+        setPendingVendors((prev) => prev.filter((v) => v.exposedId !== id));
       }
     } catch (err) {
       console.error(err);
-      alert("Failed to update vendor approval.");
+      toast.error("Failed to update vendor approval");
     }
   };
 
   const deleteVendor = async (id) => {
-    const confirm = window.confirm(
-      "Are you sure you want to delete this vendor?"
-    );
-    if (!confirm) return;
+    setVendorToDelete(id);
+    setShowDeleteModal(true);
+  };
 
+  const handleConfirmDelete = async () => {
+    if (!vendorToDelete) return;
     try {
-      const response = await axiosInstance.delete(`/admin/vendor/${id}`);
-      setVendors((prev) => prev.filter((v) => v.id !== id));
+      const response = await axiosInstance.delete(`/admin/vendor/${vendorToDelete}`);
+      if (response?.data?.message === "SUCCESS") {
+        toast.success(`Vendor Deleted Successfully`)
+        setApprovedVendors((prev) => prev.filter((v) => v.exposedId !== vendorToDelete));
+      }
     } catch (err) {
       console.error(err);
-      alert("Failed to delete vendor.");
+      toast.error("Failed to delete vendor");
     }
+    setShowDeleteModal(false);
+    setVendorToDelete(null);
+  };
+
+  const handleCancelDelete = () => {
+    setShowDeleteModal(false);
+    setVendorToDelete(null);
   };
 
   return (
-    <div className="p-6 bg-white min-h-screen">
-      <h2 className="text-2xl font-bold text-blue-900 mb-6">Vendor List</h2>
+    <div className="flex flex-col items-center">
+      <div className="w-full max-w-5xl bg-white rounded-lg shadow-lg border border-blue-100 p-8 mb-2">
+        <h2 className="text-2xl font-bold text-blue-900 mb-6">Vendor List</h2>
 
-      {loading && <p className="text-blue-700">Loading...</p>}
-      {error && <p className="text-red-600">{error}</p>}
+        {/* Page Size Selector */}
+        <div className="flex items-center gap-2 mb-4">
+          <label htmlFor="vendorPageSize" className="text-blue-900 font-semibold">Vendors per page:</label>
+          <select
+            id="vendorPageSize"
+            value={pageSize}
+            onChange={e => setPageSize(Number(e.target.value))}
+            className="border cursor-pointer border-blue-300 rounded-lg px-4 py-2 bg-white text-blue-900 font-semibold focus:outline-none focus:ring-2 focus:ring-blue-400 transition shadow-sm hover:border-blue-400"
+          >
+            {[5, 10, 20, 50].map(size => (
+              <option key={size} value={size}>{size}</option>
+            ))}
+          </select>
+        </div>
 
-      {!loading && vendors.length === 0 && <p>No vendors found.</p>}
+        <div className="flex mb-6 border-b border-blue-200">
+          <button
+            className={`px-6 py-2 font-semibold focus:outline-none transition border-b-2 cursor-pointer -mb-px ${activeTab === 'approved'
+              ? 'border-blue-600 text-blue-700'
+              : 'border-transparent text-blue-400 hover:text-blue-600'
+              }`}
+            onClick={() => setActiveTab('approved')}
+          >
+            Approved Vendors
+            <span className="ml-2 text-xs bg-blue-100 text-blue-700 rounded px-2 py-0.5">{approvedVendors.length}</span>
+          </button>
+          <button
+            className={`px-6 py-2 font-semibold focus:outline-none transition border-b-2 cursor-pointer -mb-px ${activeTab === 'approval'
+              ? 'border-blue-600 text-blue-700'
+              : 'border-transparent text-blue-400 hover:text-blue-600'
+              }`}
+            onClick={() => setActiveTab('approval')}
+          >
+            Approval Requests
+            <span className="ml-2 text-xs bg-blue-100 text-blue-700 rounded px-2 py-0.5">{pendingVendors.length}</span>
+          </button>
+        </div>
 
-      {!loading && vendors.length > 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {vendors.map((vendor) => (
-            <div
-              key={vendor.id}
-              className="bg-blue-50 border border-blue-200 rounded-lg p-4 shadow-md"
-            >
-              <div className="flex items-center gap-4 mb-3">
-                <img
-                  src={vendor?.pic || "https://via.placeholder.com/50"}
-                  alt="Profile"
-                  className="w-14 h-14 rounded-full"
-                />
-                <div>
-                  <h3 className="text-lg font-semibold text-blue-900">
-                    {vendor.companyName}
-                  </h3>
-                  <p className="text-sm text-blue-700">{vendor.name}</p>
-                  <p className="text-sm text-blue-700">{vendor.email}</p>
-                  <p className="text-sm text-blue-700">📞 {vendor.contact}</p>
-                </div>
-              </div>
+        {loading && <p className="text-blue-700">Loading...</p>}
+        {error && <p className="text-red-600">{error}</p>}
 
-              <p className="text-blue-800 text-sm mb-1">
-                Experience: {vendor.experience}
-              </p>
-              <p className="text-blue-800 text-sm mb-2">
-                Status:{" "}
-                <span
-                  className={
-                    vendor.available ? "text-green-600" : "text-red-600"
-                  }
-                >
-                  {vendor.available ? "Available" : "Unavailable"}
-                </span>
-              </p>
-
-              <div className="mb-2">
-                <p className="font-semibold text-blue-900 mb-1">Skills:</p>
-                <ul className="list-disc list-inside text-sm text-blue-800">
-                  {vendor.skills.map((skill, index) => (
-                    <li key={index}>{skill}</li>
-                  ))}
-                </ul>
-              </div>
-
-              <div className="flex gap-2 mt-4">
-                {vendor.approved === null && (
-                  <>
-                    <button
-                      onClick={() => updateApproval(vendor.id, true)}
-                      className={`flex-1 px-3 py-1 rounded bg-green-600 text-white hover:bg-green-700 flex items-center gap-2 justify-center`}
-                    >
-                      <CheckCircle2 size={16} />
-                      Approve
-                    </button>
-
-                    <button
-                      onClick={() => updateApproval(vendor.id, false)}
-                      className="flex-1 px-3 py-1 rounded bg-yellow-500 text-white hover:bg-yellow-600 flex items-center gap-2 justify-center"
-                    >
-                      <XCircle size={16} />
-                      Reject
-                    </button>
-                  </>
-                )}
-
-                {vendor.approved !== null && (
-                  <button
-                    onClick={() => deleteVendor(vendor.id)}
-                    className="flex-1 px-3 py-1 rounded bg-red-600 text-white hover:bg-red-700 flex items-center gap-2 justify-center"
-                  >
-                    <Trash2 size={16} />
-                    Remove
-                  </button>
-                )}
-              </div>
+        {!loading && activeTab === 'approval' && (
+          pendingVendors.length === 0 ? (
+            <div className="flex items-center justify-center text-gray-400 italic text-md gap-1 mt-1">
+              <AlertCircle size={14} />
+              No Approval Requests Found
             </div>
-          ))}
+          ) : (
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {pendingVendors.map((vendor) => (
+                  <VendorCard
+                    key={vendor.exposedId}
+                    vendor={vendor}
+                    onApprove={id => updateApproval(id, true)}
+                    onReject={id => updateApproval(id, false)}
+                  />
+                ))}
+              </div>
+              <div className="flex justify-center items-center gap-4 mt-6">
+                <button
+                  className="px-3 py-1 rounded bg-blue-100 text-blue-700 font-semibold disabled:opacity-50 cursor-pointer"
+                  onClick={() => setPendingPage(p => Math.max(0, p - 1))}
+                  disabled={pendingPage === 0}
+                >
+                  &lt;&lt; Prev
+                </button>
+                <span className="text-sm text-blue-900">Page {pendingPage + 1} of {pendingTotalPages}</span>
+                <button
+                  className="px-3 py-1 rounded bg-blue-100 text-blue-700 font-semibold disabled:opacity-50 cursor-pointer"
+                  onClick={() => setPendingPage(p => Math.min(pendingTotalPages - 1, p + 1))}
+                  disabled={pendingPage >= pendingTotalPages - 1}
+                >
+                  Next &gt;&gt;
+                </button>
+              </div>
+            </>
+          )
+        )}
+        {!loading && activeTab === 'approved' && (
+          approvedVendors.length === 0 ? (
+            <div className="flex items-center justify-center text-gray-400 italic text-md gap-1 mt-1">
+              <AlertCircle size={14} />
+              No Approved Vendors Found
+            </div>
+          ) : (
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {approvedVendors.map((vendor) => (
+                  <VendorCard
+                    key={vendor.exposedId}
+                    vendor={vendor}
+                    onRemove={deleteVendor}
+                  />
+                ))}
+              </div>
+              <div className="flex justify-center items-center gap-4 mt-6">
+                <button
+                  className="px-3 py-1 rounded bg-blue-100 text-blue-700 font-semibold disabled:opacity-50 cursor-pointer"
+                  onClick={() => setApprovedPage(p => Math.max(0, p - 1))}
+                  disabled={approvedPage === 0}
+                >
+                  &lt;&lt; Prev
+                </button>
+                <span className="text-sm text-blue-900">Page {approvedPage + 1} of {approvedTotalPages}</span>
+                <button
+                  className="px-3 py-1 rounded bg-blue-100 text-blue-700 font-semibold disabled:opacity-50 cursor-pointer"
+                  onClick={() => setApprovedPage(p => Math.min(approvedTotalPages - 1, p + 1))}
+                  disabled={approvedPage >= approvedTotalPages - 1}
+                >
+                  Next &gt;&gt;
+                </button>
+              </div>
+            </>
+          )
+        )}
+      </div>
+      {/* Modal for delete confirmation */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70">
+        <div className="bg-white rounded-lg shadow-lg p-8 max-w-sm w-full">
+            <h3 className="text-lg font-semibold text-red-700 mb-4">Delete Vendor</h3>
+            <p className="mb-6 text-gray-700">Are you sure you want to delete this vendor? This action cannot be undone.</p>
+            <div className="flex justify-end gap-3">
+              <button
+                className="px-4 py-2 rounded bg-gray-200 text-gray-700 hover:bg-gray-300 font-semibold cursor-pointer"
+                onClick={handleCancelDelete}
+              >
+                Cancel
+              </button>
+              <button
+                className="px-4 py-2 rounded bg-red-600 text-white hover:bg-red-700 font-semibold cursor-pointer"
+                onClick={handleConfirmDelete}
+              >
+                Delete
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
