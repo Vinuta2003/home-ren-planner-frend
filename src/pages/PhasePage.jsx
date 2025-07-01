@@ -19,6 +19,7 @@ export function PhasePage(props){
     
 
     useEffect(()=>{
+        updateNewMaterialsList([]);
         dispatch(clearChosenMaterialsList());
         dispatch(getPhaseById(phaseId));
     },[phaseId])
@@ -58,7 +59,7 @@ export function PhasePage(props){
     }
 
     return(
-        <>
+        <div id="phase-materials-div">
             <h1>Phase Materials: </h1>
             <div id="phase-materials-display">
                 {loaded
@@ -85,7 +86,7 @@ export function PhasePage(props){
                 </>
 
             }
-        </>
+        </div>
         
         
     )
