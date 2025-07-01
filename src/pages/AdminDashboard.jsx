@@ -10,9 +10,9 @@ export default function AdminDashboard()
     
     return(
         <>
-            <div className="admin-dashboard flex flex-row">
+            <div className="admin-dashboard min-h-screen bg-blue-50 ">
                 <SideBar setActiveTab={setActiveTab} activeTab={activeTab}/>
-                <div className="content">
+                <div className="ml-64 flex-1 flex flex-col p-8 bg-blue-50 overflow-auto h-screen">
                     {activeTab === "customer" && <Customer/>}
                     {activeTab === "vendor" && <Vendor/>}
                     {activeTab === "material" && <Material/>}

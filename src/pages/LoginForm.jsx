@@ -66,12 +66,15 @@ export default function LoginForm() {
       }
 
       if(responseData?.message === "SUCCESS"){
+        e.target.reset();
+        setFormData({ email: "", password: "" });
+        setErrors({});
         toast.success("Login successful! Welcome back!", {
-          onClose: () => {
-            if(responseData?.role === "ADMIN") navigate("/admin-dashboard")
-            else if(responseData?.role === "VENDOR") navigate("/vendor-dashboard")
-            else navigate("/user-dashboard")
-          },
+          // onClose: () => {
+          //   if(responseData?.role === "ADMIN") navigate("/admin-dashboard")
+          //   else if(responseData?.role === "VENDOR") navigate("/vendor-dashboard")
+          //   else navigate("/user-dashboard")
+          // },
           autoClose: 3000
         })
       }
@@ -128,6 +131,10 @@ export default function LoginForm() {
         >
           Login
         </button>
+        <div className="mt-6 text-center text-blue-900 text-sm">
+          Don't have an account?{' '}
+          <a href="/register" className="text-blue-600 font-semibold hover:underline">Register here</a>
+        </div>
       </form>
     </div>
   );

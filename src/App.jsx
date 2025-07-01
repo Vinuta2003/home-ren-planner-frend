@@ -5,9 +5,10 @@ import './App.css'
 import RegisterForm from './pages/RegisterForm'
 import LoginForm from './pages/LoginForm'
 import AdminDashboard from './pages/AdminDashboard'
+import ProtectedRoute from './routes/ProtectedRoute'
+import PageNotFound from './pages/PageNotFound'
 
 function App() {
-
   return (
     <Router>
       
@@ -25,11 +26,19 @@ function App() {
       />
       
       <Routes>
-        <Route path="/" element = {<AdminDashboard/>}/>
-        <Route path="/register" element = {<RegisterForm/>}/>
+        <Route path="/" element = {<RegisterForm/>}/>
+        {/* <Route path="/register" element = {<RegisterForm/>}/> */}
         <Route path="/login" element = {<LoginForm/>}/>
+        
         <Route path="/vendor-dashboard"/>
-        {/* <Route path="/admin-dashboard" element = {<AdminDashboard/>}/> */}
+
+        <Route path="/admin-dashboard" element = {
+          <ProtectedRoute allowedRoles={["ADMIN"]}>
+            <AdminDashboard/>
+          </ProtectedRoute>
+        }/>
+
+        <Route path="*" element={<PageNotFound/>}/>
 
       </Routes>
     </Router>
