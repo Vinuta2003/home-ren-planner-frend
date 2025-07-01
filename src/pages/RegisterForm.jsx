@@ -187,7 +187,7 @@ export default function RegisterForm() {
                 >
                   <option value="">-- Select Skill --</option>
                   <option value="PLUMBING">Plumbing</option>
-                  <option value="ELECTRICAL">Electrical</option>
+                  <option value="ELECTRICITY">Electrical</option>
                   <option value="PAINTING">Painting</option>
                   <option value="CARPENTRY">Carpentry</option>
                   <option value="FLOORING">Flooring</option>

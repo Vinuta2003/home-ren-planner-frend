@@ -1,18 +1,19 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import { ToastContainer } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css'
-import './App.css'
-import RegisterForm from './pages/RegisterForm'
-import LoginForm from './pages/LoginForm'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import './App.css';
+
+import RegisterForm from './pages/RegisterForm';
+import LoginForm from './pages/LoginForm';
+import VendorReviewDisplay from './pages/VendorReviewDisplay'; // ✅ Import added
 
 function App() {
-
   return (
     <Router>
       <Routes>
-        <Route path="/" element = {<RegisterForm/>}/>
-        {/* <Route path="/register" element = {RegisterForm}/> */}
-        <Route path="/login" element = {<LoginForm/>}/>
+        <Route path="/" element={<RegisterForm />} />
+        <Route path="/login" element={<LoginForm />} />
+        <Route path="/reviews" element={<VendorReviewDisplay />} /> {/* ✅ Route added */}
       </Routes>
       <ToastContainer
         position="top-right"
@@ -27,7 +28,7 @@ function App() {
         theme="light"
       />
     </Router>
-  )
+  );
 }
 
-export default App
+export default App;
