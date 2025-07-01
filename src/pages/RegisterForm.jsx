@@ -1,20 +1,32 @@
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import axiosInstance from "../axios/axiosInstance";
-import { useDispatch, useSelector } from 'react-redux';
-import { login } from '../redux/auth/authSlice';
+import { useDispatch, useSelector } from "react-redux";
+import { login } from "../redux/auth/authSlice";
+import { useNavigate } from "react-router-dom";
 
 export default function RegisterForm() {
   const dispatch = useDispatch();
   const authState = useSelector((state) => state.auth);
+  const navigate = useNavigate();
 
   const [isVendor, setIsVendor] = useState(false);
   const [skills, setSkills] = useState([]);
   const [available, setAvailable] = useState(false);
 
+  const allSkillOptions = [
+    { value: "PLUMBING", label: "Plumbing" },
+    { value: "ELECTRICAL", label: "Electrical" },
+    { value: "PAINTING", label: "Painting" },
+    { value: "CARPENTRY", label: "Carpentry" },
+    { value: "TILING", label: "Flooring" },
+    { value: "CIVIL", label: "Tiling" },
+  ];
+  const [skillError, setSkillError] = useState("");
+
   useEffect(() => {
-    console.log("Auth State in Register Form", authState)
-  },[authState])
+    console.log("Auth State in Register Form", authState);
+  }, [authState]);
 
   const handleSkillChange = (index, field, value) => {
     const updatedSkills = [...skills];
@@ -29,6 +41,7 @@ export default function RegisterForm() {
   const handleSubmit = async (e) => {
     try {
       e.preventDefault();
+      setSkillError("");
       const data = new FormData(e.target);
       const formData = Object.fromEntries(data.entries());
 
@@ -38,7 +51,14 @@ export default function RegisterForm() {
       };
 
       if (isVendor) {
-        payload.skills = skills;
+        if (skills.length === 0) {
+          setSkillError("Please add at least one skill.");
+          return;
+        }
+        payload.skills = skills.map((skill) => ({
+          skillName: skill.skillName,
+          basePrice: Number(skill.basePrice),
+        }));
         payload.available = available;
       }
 
@@ -49,25 +69,35 @@ export default function RegisterForm() {
 
       console.log("Response from Server : ", responseData);
 
-      if(responseData){
+      if (responseData) {
         dispatch(
           login({
             email: responseData?.email,
             role: responseData?.role,
             accessToken: responseData?.accessToken,
           })
-        )
+        );
       }
 
-      responseData?.message === "SUCCESS"
-        ? toast.success(`Registration successful! Welcome ${formData.name}!`)
-        : toast.error(`Registration Unsuccessful! Please Try Again!`);
+      if (responseData?.message === "SUCCESS") {
+        e.target.reset();
+        setSkills([]);
+        setAvailable(false);
+        setIsVendor(false);
+        toast.success("Registration Successful", {
+          // onClose: () => {
+          //   if (responseData?.role === "VENDOR") navigate("/vendor-dashboard");
+          //   else navigate("/user-dashboard");
+          // },
+          // autoClose: 3000,
+        });
+      } else toast.message("Registration Unsuccessful!");
     } catch (e) {
       if (e.response && e.response.data) {
         console.log("Error Response", e.response.data);
-        toast.error(e.response.data.message || "Login Unsuccessful!");
+        toast.error(e.response.data.message || "Registration Unsuccessful!");
       } else {
-        toast.error("Login Unsuccessful!");
+        toast.error("Registration Unsuccessful!");
       }
     }
   };
@@ -157,7 +187,7 @@ export default function RegisterForm() {
             <input
               type="text"
               name="experience"
-              placeholder="Experience"
+              placeholder="Experience in Years"
               required
               className="w-full px-4 py-2 border border-gray-300 rounded mb-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
@@ -175,51 +205,36 @@ export default function RegisterForm() {
             <label className="block mt-4 font-semibold text-blue-600">
               Skills & Base Prices:
             </label>
-            {skills.map((skill, index) => (
-              <div key={index} className="flex gap-2 mt-2">
-                <select
-                  value={skill.skillName}
-                  required
-                  onChange={(e) =>
-                    handleSkillChange(index, "skillName", e.target.value)
-                  }
-                  className="w-1/2 px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="">-- Select Skill --</option>
-                  <option value="PLUMBING">Plumbing</option>
-                  <option value="ELECTRICAL">Electrical</option>
-                  <option value="PAINTING">Painting</option>
-                  <option value="CARPENTRY">Carpentry</option>
-                  <option value="FLOORING">Flooring</option>
-                  <option value="TILING">Tiling</option>
-                  <option value="ROOFING">Roofing</option>
-                  <option value="HVAC">HVAC</option>
-                  <option value="INTERIOR_DESIGN">Interior Design</option>
-                  <option value="MASONRY">Masonry</option>
-                  <option value="WATERPROOFING">Waterproofing</option>
-                  <option value="LANDSCAPING">Landscaping</option>
-                  <option value="GLASS_WORK">Glass Work</option>
-                  <option value="FALSE_CEILING">False Ceiling</option>
-                  <option value="MODULAR_KITCHEN">Modular Kitchen</option>
-                  <option value="SECURITY_SYSTEMS">Security Systems</option>
-                  <option value="SMART_HOME_SETUP">Smart Home Setup</option>
-                  <option value="CLEANING_SERVICES">Cleaning Services</option>
-                  <option value="DEMOLITION">Demolition</option>
-                  <option value="PEST_CONTROL">Pest Control</option>
-                </select>
-                <input
-                  type="number"
-                  placeholder="Base Price"
-                  value={skill.basePrice}
-                  disabled={!skill.skillName}
-                  required
-                  onChange={(e) =>
-                    handleSkillChange(index, "basePrice", e.target.value)
-                  }
-                  className="w-1/2 px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-            ))}
+            {skills.map((skill, index) => {
+              // Exclude already selected skills except for the current one
+              const selectedSkills = skills.map(s => s.skillName).filter((_, i) => i !== index);
+              const availableOptions = allSkillOptions.filter(opt => !selectedSkills.includes(opt.value));
+              return (
+                <div key={index} className="flex gap-2 mt-2">
+                  <select
+                    value={skill.skillName}
+                    required
+                    onChange={e => handleSkillChange(index, "skillName", e.target.value)}
+                    className="w-1/2 px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="">-- Select Skill --</option>
+                    {availableOptions.map(opt => (
+                      <option key={opt.value} value={opt.value}>{opt.label}</option>
+                    ))}
+                  </select>
+                  <input
+                    type="number"
+                    placeholder="Base Price"
+                    value={skill.basePrice}
+                    disabled={!skill.skillName}
+                    required
+                    onChange={e => handleSkillChange(index, "basePrice", e.target.value)}
+                    className="w-1/2 px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+              );
+            })}
+            {skillError && <div className="text-red-600 text-sm mt-2">{skillError}</div>}
             <button
               type="button"
               onClick={addSkill}
@@ -236,6 +251,10 @@ export default function RegisterForm() {
         >
           Submit
         </button>
+        <div className="mt-6 text-center text-blue-900 text-sm">
+          Already have an account?{' '}
+          <a href="/login" className="text-blue-600 font-semibold hover:underline">Login here</a>
+        </div>
       </form>
     </div>
   );

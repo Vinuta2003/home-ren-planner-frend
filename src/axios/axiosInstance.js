@@ -58,6 +58,7 @@ export const setupInterceptors = (store) => {
           }
         } catch (refreshError) {
           store.dispatch({ type: "auth/logout" });
+          console.log("Inside catch of response interceptor")
           window.location.href = "/login";
           return Promise.reject(refreshError);
         }

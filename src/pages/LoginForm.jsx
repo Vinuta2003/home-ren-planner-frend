@@ -3,10 +3,13 @@ import { toast } from "react-toastify";
 import axiosInstance from "../axios/axiosInstance";
 import { useDispatch, useSelector } from 'react-redux';
 import { login, logout } from '../redux/auth/authSlice';
+import { useNavigate } from "react-router-dom"
 
 export default function LoginForm() {
+
   const dispatch = useDispatch();
   const authState = useSelector((state) => state.auth);
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState({});
@@ -61,9 +64,22 @@ export default function LoginForm() {
           })
         );
       }
-      responseData?.message === "SUCCESS"
-        ? toast.success("Login successful! Welcome back!")
-        : toast.error("Login Unsuccessful!");
+
+      if(responseData?.message === "SUCCESS"){
+        e.target.reset();
+        setFormData({ email: "", password: "" });
+        setErrors({});
+        toast.success("Login successful! Welcome back!", {
+          // onClose: () => {
+          //   if(responseData?.role === "ADMIN") navigate("/admin-dashboard")
+          //   else if(responseData?.role === "VENDOR") navigate("/vendor-dashboard")
+          //   else navigate("/user-dashboard")
+          // },
+          autoClose: 3000
+        })
+      }
+      else toast.message("Login Unsuccessful!")
+
     } catch (e) {
       if (e.response && e.response.data) {
         console.log("Error Response", e.response.data);
@@ -115,6 +131,10 @@ export default function LoginForm() {
         >
           Login
         </button>
+        <div className="mt-6 text-center text-blue-900 text-sm">
+          Don't have an account?{' '}
+          <a href="/register" className="text-blue-600 font-semibold hover:underline">Register here</a>
+        </div>
       </form>
     </div>
   );

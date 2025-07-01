@@ -4,16 +4,14 @@ import 'react-toastify/dist/ReactToastify.css'
 import './App.css'
 import RegisterForm from './pages/RegisterForm'
 import LoginForm from './pages/LoginForm'
+import AdminDashboard from './pages/AdminDashboard'
+import ProtectedRoute from './routes/ProtectedRoute'
+import PageNotFound from './pages/PageNotFound'
 
 function App() {
-
   return (
     <Router>
-      <Routes>
-        <Route path="/" element = {<RegisterForm/>}/>
-        {/* <Route path="/register" element = {RegisterForm}/> */}
-        <Route path="/login" element = {<LoginForm/>}/>
-      </Routes>
+      
       <ToastContainer
         position="top-right"
         autoClose={3000}
@@ -26,6 +24,23 @@ function App() {
         pauseOnHover
         theme="light"
       />
+      
+      <Routes>
+        <Route path="/" element = {<RegisterForm/>}/>
+        {/* <Route path="/register" element = {<RegisterForm/>}/> */}
+        <Route path="/login" element = {<LoginForm/>}/>
+        
+        <Route path="/vendor-dashboard"/>
+
+        <Route path="/admin-dashboard" element = {
+          <ProtectedRoute allowedRoles={["ADMIN"]}>
+            <AdminDashboard/>
+          </ProtectedRoute>
+        }/>
+
+        <Route path="*" element={<PageNotFound/>}/>
+
+      </Routes>
     </Router>
   )
 }
