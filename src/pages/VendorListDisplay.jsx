@@ -3,7 +3,7 @@ import axiosInstance from "../axios/axiosInstance";
 import { Star, BadgeCheck } from 'lucide-react';
 import toast, { Toaster } from 'react-hot-toast';
 
-const skillOptions = ['ELECTRICITY', 'PLUMBING', 'PAINTING', 'STRUCTURAL_WORK', 'TILING', 'CARPENTRY'];
+const skillOptions = ['ELECTRICAL', 'PLUMBING', 'PAINTING', 'STRUCTURAL_WORK', 'TILING', 'CARPENTRY'];
 
 export default function VendorListDisplay() {
   const [skill, setSkill] = useState(skillOptions[0]);
