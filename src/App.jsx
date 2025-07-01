@@ -5,7 +5,7 @@ import './App.css';
 
 import RegisterForm from './pages/RegisterForm';
 import LoginForm from './pages/LoginForm';
-import VendorReviewDisplay from './pages/VendorReviewDisplay'; // ✅ Import added
+import VendorListDisplay from './pages/VendorListDisplay'; // ✅ Import added
 
 function App() {
   return (
@@ -13,7 +13,7 @@ function App() {
       <Routes>
         <Route path="/" element={<RegisterForm />} />
         <Route path="/login" element={<LoginForm />} />
-        <Route path="/reviews" element={<VendorReviewDisplay />} /> {/* ✅ Route added */}
+        <Route path="/vendorlist" element={<VendorListDisplay />} /> {/* ✅ Route added */}
       </Routes>
       <ToastContainer
         position="top-right"
