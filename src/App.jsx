@@ -7,6 +7,7 @@ import LoginForm from './pages/LoginForm'
 import AdminDashboard from './pages/AdminDashboard'
 import ProtectedRoute from './routes/ProtectedRoute'
 import PageNotFound from './pages/PageNotFound'
+import UpdateProfile from './pages/UpdateProfile'
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
       <Routes>
         <Route path="/register" element = {<RegisterForm/>}/>
         <Route path="/login" element = {<LoginForm/>}/>
+        <Route path="/update-profile" element = {<UpdateProfile />}/>
         
         <Route path="/user-dashboard"/>
         <Route path="/vendor-dashboard"/>

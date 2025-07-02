@@ -100,7 +100,7 @@ export default function Customer() {
                         <img
                           src={user?.pic || "https://img.icons8.com/?size=100&id=12438&format=png&color=000000"}
                           alt="Profile"
-                          className="w-10 h-10 rounded-lg mx-auto"
+                          className="w-10 h-10 rounded-full mx-auto"
                         />
                       </td>
                       <td className="p-3 text-center align-middle whitespace-normal break-words">{user.name}</td>

@@ -3,7 +3,6 @@ import { Navigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { jwtDecode } from "jwt-decode";
 import axiosInstance from "../axios/axiosInstance";
-import { Navigate } from "react-router-dom";
 import { logout, updateAccessToken } from "../redux/auth/authSlice";
 import Unauthorized from "../pages/Unauthorized";
 
