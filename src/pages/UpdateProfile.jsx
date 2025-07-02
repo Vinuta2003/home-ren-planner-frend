@@ -26,6 +26,7 @@ export default function UpdateProfile() {
       try {
         const res = await axiosInstance.get("/auth/getProfile");
         const data = res.data;
+        console.log(data)
         setName(data.name || "");
         setContact(data.contact || "");
         setCompanyName(data.companyName || "");
@@ -76,19 +77,24 @@ export default function UpdateProfile() {
 
     const submitData = new FormData();
     submitData.append("email", email);
-    if (name) submitData.append("name", name);
-    if (contact) submitData.append("contact", contact);
-    if (newPassword) submitData.append("newPassword", newPassword);
+
+    if (name !== undefined && name !== null && name !== "") submitData.append("name", name);
+    if (contact !== undefined && contact !== null && contact !== "") submitData.append("contact", contact);
+    if (newPassword !== undefined && newPassword !== null && newPassword !== "") submitData.append("newPassword", newPassword);
+
     if (role === "VENDOR") {
-      if (companyName) submitData.append("companyName", companyName);
-      if (experience) submitData.append("experience", experience);
+      if (companyName !== undefined && companyName !== null && companyName !== "") submitData.append("companyName", companyName);
+      if (experience !== undefined && experience !== null && experience !== "") submitData.append("experience", experience);
       submitData.append("available", String(available));
       skills.forEach((skill, index) => {
-        if (skill.skillName) submitData.append(`skills[${index}].skillName`, skill.skillName);
-        if (skill.basePrice !== undefined && skill.basePrice !== null) submitData.append(`skills[${index}].basePrice`, skill.basePrice);
+        if (skill.skillName !== undefined && skill.skillName !== null && skill.skillName !== "")
+          submitData.append(`skills[${index}].skillName`, skill.skillName);
+        if (skill.basePrice !== undefined && skill.basePrice !== null && skill.basePrice !== "")
+          submitData.append(`skills[${index}].basePrice`, skill.basePrice);
       });
     }
     if (profileImage instanceof File) {
+      console.log("Setting profile image")
       submitData.append("profileImage", profileImage);
     }
     try {
@@ -118,23 +124,23 @@ export default function UpdateProfile() {
     <form
       encType="multipart/form-data"
       onSubmit={handleSubmit}
-      className="p-8 bg-white max-w-2xl mx-auto my-10 rounded-2xl shadow-2xl border border-blue-100"
+      className="p-8 bg-white max-w-2xl mx-auto my-10 rounded-2xl shadow-xl border border-blue-200"
     >
       <h2 className="text-4xl font-extrabold text-blue-900 mb-10 text-center tracking-tight drop-shadow-sm">
         Update Profile
       </h2>
       {/* Profile Image */}
-      <div className="mb-10 border-b pb-8 flex flex-col items-center">
-        <label className="block font-semibold text-blue-900 mb-3 text-lg">Profile Image</label>
+      <div className="mb-10  py-4 flex flex-col items-center bg-blue-50 rounded-xl shadow-sm">
+        <label className="block font-semibold text-blue-700 mb-3 text-lg">Profile Image</label>
         <div className="relative group cursor-pointer" onClick={handleImageClick}>
-          <div className="w-28 h-28 rounded-full overflow-hidden border-4 border-blue-300 bg-gray-50 flex items-center justify-center shadow-lg transition group-hover:scale-105 group-hover:border-blue-500">
+          <div className="w-28 h-28 rounded-full overflow-hidden border-4 border-blue-200 bg-blue-100 flex items-center justify-center shadow-lg transition group-hover:scale-105 group-hover:border-blue-400">
             <img
               src={imagePreview || "https://ui-avatars.com/api/?name=User&background=E0E7FF&color=1E3A8A&size=100"}
               alt="Profile"
               className="object-cover w-full h-full"
             />
-            <div className="absolute inset-0 bg-blue-900 bg-opacity-30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-              <span className="text-white font-semibold text-sm">Change</span>
+            <div className="absolute inset-0 bg-blue-900 bg-opacity-30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded-full">
+              <span className="text-blue-100 font-semibold text-sm tracking-wide">Change</span>
             </div>
           </div>
           <input
@@ -147,54 +153,54 @@ export default function UpdateProfile() {
         </div>
       </div>
       {/* Email (readonly) */}
-      <div className="mb-8">
-        <label className="block font-semibold text-blue-900 mb-1">Email</label>
+      <div className="mb-8 bg-blue-50 rounded-lg p-4 border border-blue-100">
+        <label className="block font-semibold text-blue-700 mb-1">Email</label>
         <input
           type="email"
           value={email || ""}
           readOnly
-          className="w-full px-4 py-2 border bg-gray-100 rounded-lg text-gray-700 focus:outline-none"
+          className="w-full px-4 py-2 border border-blue-200 bg-blue-100 rounded-lg text-blue-900 focus:outline-none"
         />
       </div>
       {/* Common Fields */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10 border-b pb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10 border-b pb-8 bg-blue-50 rounded-xl p-6 border border-blue-100">
         <div>
-          <label className="block font-semibold text-blue-900 mb-1">Name</label>
+          <label className="block font-semibold text-blue-700 mb-1">Name</label>
           <input
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-4 py-2 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white text-blue-900"
             placeholder="Enter name"
           />
         </div>
         <div>
-          <label className="block font-semibold text-blue-900 mb-1">Contact</label>
+          <label className="block font-semibold text-blue-700 mb-1">Contact</label>
           <input
             type="text"
             value={contact}
             onChange={(e) => setContact(e.target.value)}
-            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-4 py-2 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white text-blue-900"
             placeholder="Enter contact"
           />
         </div>
         <div>
-          <label className="block font-semibold text-blue-900 mb-1">New Password</label>
+          <label className="block font-semibold text-blue-700 mb-1">New Password</label>
           <input
             type="password"
             value={newPassword}
             onChange={(e) => setNewPassword(e.target.value)}
-            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-4 py-2 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white text-blue-900"
             placeholder="Enter new password"
           />
         </div>
         <div>
-          <label className="block font-semibold text-blue-900 mb-1">Confirm New Password</label>
+          <label className="block font-semibold text-blue-700 mb-1">Confirm New Password</label>
           <input
             type="password"
             value={confirmNewPassword}
             onChange={(e) => setConfirmNewPassword(e.target.value)}
-            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-4 py-2 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white text-blue-900"
             placeholder="Confirm new password"
             disabled={!newPassword}
           />
@@ -205,34 +211,34 @@ export default function UpdateProfile() {
       {role === "VENDOR" && (
         <>
           {/* Company Name & Experience & Availability */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10 border-b pb-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10 border-b pb-8 bg-blue-50 rounded-xl p-6 border border-blue-100">
             <div>
-              <label className="block font-semibold text-blue-900 mb-1">Company Name</label>
+              <label className="block font-semibold text-blue-700 mb-1">Company Name</label>
               <input
                 type="text"
                 value={companyName}
                 onChange={(e) => setCompanyName(e.target.value)}
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white text-blue-900"
                 placeholder="Enter company name"
               />
             </div>
             <div>
-              <label className="block font-semibold text-blue-900 mb-1">Experience (years)</label>
+              <label className="block font-semibold text-blue-700 mb-1">Experience (years)</label>
               <input
                 type="number"
                 min={0}
                 value={experience}
                 onChange={(e) => setExperience(e.target.value)}
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white text-blue-900"
                 placeholder="Enter experience in years"
               />
             </div>
             <div className="w-full">
-              <label className="block font-semibold text-blue-900 mb-1">Availability</label>
+              <label className="block font-semibold text-blue-700 mb-1">Availability</label>
               <select
                 value={available === true ? "true" : "false"}
                 onChange={(e) => setAvailable(e.target.value === "true")}
-                className="px-4 w-full py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="px-4 w-full py-2 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white text-blue-900"
               >
                 <option value="true">Yes</option>
                 <option value="false">No</option>
@@ -243,8 +249,8 @@ export default function UpdateProfile() {
 
           {/* Skills (readonly skillName, editable basePrice) */}
           {skills && skills.length > 0 && (
-            <div className="mb-8">
-              <label className="block font-semibold text-blue-900 mb-2">Skills & Pricing</label>
+            <div className="mb-8 bg-blue-50 rounded-xl p-6 border border-blue-100">
+              <label className="block font-semibold text-blue-700 mb-2">Skills & Pricing</label>
               <div className="space-y-4 mt-6">
                 {skills.map((skill, index) => (
                   <div key={index} className="flex items-center flex justify-center gap-4">
@@ -252,16 +258,16 @@ export default function UpdateProfile() {
                       type="text"
                       value={skill.skillName}
                       readOnly
-                      className="w-1/2 px-4 py-2 border bg-gray-100 rounded-lg text-gray-700"
+                      className="w-1/2 px-4 py-2 border border-blue-200 bg-blue-100 rounded-lg text-blue-900"
                     />
                     <div className="relative w-1/3">
-                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-blue-700 text-lg pointer-events-none">₹</span>
+                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-blue-400 text-lg pointer-events-none">₹</span>
                       <input
                         type="number"
                         min={0}
                         value={skill.basePrice === 0 ? "" : skill.basePrice}
                         onChange={(e) => handleSkillPriceChange(index, e.target.value)}
-                        className="pl-8 pr-2 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
+                        className="pl-8 pr-2 py-2 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 w-full bg-white text-blue-900"
                         placeholder="Base Price"
                       />
                     </div>
@@ -275,7 +281,7 @@ export default function UpdateProfile() {
       <div className="mt-10 flex justify-center">
         <button
           type="submit"
-          className="bg-gradient-to-r from-blue-700 to-blue-500 cursor-pointer text-white px-10 py-4 rounded-xl shadow-lg font-bold text-xl hover:from-blue-800 hover:to-blue-600 transition flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+          className="bg-gradient-to-r from-blue-700 to-blue-400 cursor-pointer text-white px-10 py-4 rounded-xl shadow-lg font-bold text-xl hover:from-blue-800 hover:to-blue-500 transition flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed border border-blue-700"
           disabled={submitting}
         >
           {submitting && (
