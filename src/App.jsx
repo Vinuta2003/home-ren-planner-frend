@@ -12,7 +12,7 @@ import UpdateProfile from './pages/UpdateProfile'
 function App() {
   return (
     <Router>
-      
+
       <ToastContainer
         position="top-right"
         autoClose={1500}
@@ -25,22 +25,26 @@ function App() {
         pauseOnHover
         theme="light"
       />
-      
+
       <Routes>
-        <Route path="/register" element = {<RegisterForm/>}/>
-        <Route path="/login" element = {<LoginForm/>}/>
-        <Route path="/update-profile" element = {<UpdateProfile />}/>
-        
-        <Route path="/user-dashboard"/>
-        <Route path="/vendor-dashboard"/>
+        <Route path="/register" element={<RegisterForm />} />
+        <Route path="/login" element={<LoginForm />} />
+        <Route path="/update-profile" element={
+          <ProtectedRoute allowedRoles={["CUSTOMER", "VENDOR"]}>
+            <UpdateProfile />
+          </ProtectedRoute>}
+        />
 
-        <Route path="/admin-dashboard" element = {
+        <Route path="/user-dashboard" />
+        <Route path="/vendor-dashboard" />
+
+        <Route path="/admin-dashboard" element={
           <ProtectedRoute allowedRoles={["ADMIN"]}>
-            <AdminDashboard/>
+            <AdminDashboard />
           </ProtectedRoute>
-        }/>
+        } />
 
-        <Route path="*" element={<PageNotFound/>}/>
+        <Route path="*" element={<PageNotFound />} />
 
       </Routes>
     </Router>
