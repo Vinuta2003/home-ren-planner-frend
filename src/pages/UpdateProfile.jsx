@@ -126,7 +126,7 @@ export default function UpdateProfile() {
       onSubmit={handleSubmit}
       className="p-8 bg-white max-w-2xl mx-auto my-10 rounded-2xl shadow-xl border border-blue-200"
     >
-      <h2 className="text-4xl font-extrabold text-blue-900 mb-10 text-center tracking-tight drop-shadow-sm">
+      <h2 className="text-4xl font-sans font-medium text-blue-900 mb-10 text-center tracking-tight drop-shadow-sm">
         Update Profile
       </h2>
       {/* Profile Image */}
@@ -281,7 +281,7 @@ export default function UpdateProfile() {
       <div className="mt-10 flex justify-center">
         <button
           type="submit"
-          className="bg-gradient-to-r from-blue-700 to-blue-400 cursor-pointer text-white px-10 py-4 rounded-xl shadow-lg font-bold text-xl hover:from-blue-800 hover:to-blue-500 transition flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed border border-blue-700"
+          className="bg-gradient-to-r from-blue-400 to-blue-500 hover:from-blue-500 hover:to-blue-700 focus:ring-4 focus:ring-blue-200 focus:outline-none cursor-pointer text-white px-10 py-4 rounded-xl shadow-xl font-bold text-xl transition-all duration-200 transform hover:scale-105 flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed border border-blue-400"
           disabled={submitting}
         >
           {submitting && (
