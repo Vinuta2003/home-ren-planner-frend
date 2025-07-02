@@ -1,17 +1,48 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import { ToastContainer } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css'
-import './App.css'
-import RegisterForm from './pages/RegisterForm'
-import LoginForm from './pages/LoginForm'
-import AdminDashboard from './pages/AdminDashboard'
-import ProtectedRoute from './routes/ProtectedRoute'
-import PageNotFound from './pages/PageNotFound'
-import UpdateProfile from './pages/UpdateProfile'
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import "./App.css";
+import Home from "./pages/Home";
+import RegisterForm from "./pages/RegisterForm";
+import LoginForm from "./pages/LoginForm";
+import AdminDashboard from "./pages/AdminDashboard";
+import ProtectedRoute from "./routes/ProtectedRoute";
+import PageNotFound from "./pages/PageNotFound";
+
+import VendorListDisplay from "./pages/VendorListDisplay"; 
+import UpdateProfile from "./pages/UpdateProfile";
 
 function App() {
   return (
     <Router>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/register" element={<RegisterForm />} />
+        <Route path="/login" element={<LoginForm />} />
+        <Route
+          path="/update-profile"
+          element={
+            <ProtectedRoute allowedRoles={["CUSTOMER", "VENDOR"]}>
+              <UpdateProfile />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/vendorlist" element={<VendorListDisplay />} />
+
+        <Route
+          path="/admin-dashboard"
+          element={
+            <ProtectedRoute allowedRoles={["ADMIN"]}>
+              <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/user-dashboard" />
+        <Route path="/vendor-dashboard" />
+
+        {/* 404 fallback should be last */}
+        <Route path="*" element={<PageNotFound />} />
+      </Routes>
 
       <ToastContainer
         position="top-right"
@@ -25,30 +56,8 @@ function App() {
         pauseOnHover
         theme="light"
       />
-
-      <Routes>
-        <Route path="/register" element={<RegisterForm />} />
-        <Route path="/login" element={<LoginForm />} />
-        <Route path="/update-profile" element={
-          <ProtectedRoute allowedRoles={["CUSTOMER", "VENDOR"]}>
-            <UpdateProfile />
-          </ProtectedRoute>}
-        />
-
-        <Route path="/user-dashboard" />
-        <Route path="/vendor-dashboard" />
-
-        <Route path="/admin-dashboard" element={
-          <ProtectedRoute allowedRoles={["ADMIN"]}>
-            <AdminDashboard />
-          </ProtectedRoute>
-        } />
-
-        <Route path="*" element={<PageNotFound />} />
-
-      </Routes>
     </Router>
-  )
+  );
 }
 
-export default App
+export default App;
