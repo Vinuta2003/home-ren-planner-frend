@@ -16,9 +16,12 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
   useEffect(() => {
     const checkToken = async () => {
       if (!user?.accessToken) {
-        setIsAuthenticated(false);
         setIsLoading(false);
-        return;
+        setIsAuthenticated(false);
+        setIsAuthorized(false);
+        return(
+          <Navigate to="/login" replace/>
+        )
       }
 
       try {
@@ -31,6 +34,7 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
             const newAccessToken = response.data.accessToken;
             dispatch(updateAccessToken({newAccessToken}));
             setIsAuthenticated(true);
+            checkRole()
           } catch (refreshError) {
             console.log("Refresh token failed:", refreshError);
             dispatch(logout());

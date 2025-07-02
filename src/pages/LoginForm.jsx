@@ -61,6 +61,7 @@ export default function LoginForm() {
             email: responseData?.email,
             role: responseData?.role,
             accessToken: responseData?.accessToken,
+            url: responseData?.url
           })
         );
       }
@@ -70,11 +71,11 @@ export default function LoginForm() {
         setFormData({ email: "", password: "" });
         setErrors({});
         toast.success("Login successful! Welcome back!", {
-          // onClose: () => {
-          //   if(responseData?.role === "ADMIN") navigate("/admin-dashboard")
-          //   else if(responseData?.role === "VENDOR") navigate("/vendor-dashboard")
-          //   else navigate("/user-dashboard")
-          // },
+          onClose: () => {
+            if(responseData?.role === "ADMIN") navigate("/admin-dashboard")
+            else if(responseData?.role === "VENDOR") navigate("/vendor-dashboard")
+            else navigate("/")
+          },
           autoClose: 3000
         })
       }
@@ -98,7 +99,7 @@ export default function LoginForm() {
         className="bg-white p-8 rounded-xl shadow-md w-full max-w-md"
       >
         <h2 className="text-2xl font-bold text-blue-600 mb-6 text-center">
-          Login
+          SIGN IN
         </h2>
 
         <input
@@ -129,7 +130,7 @@ export default function LoginForm() {
           type="submit"
           className="w-full bg-blue-600 text-white py-2 rounded font-semibold hover:bg-blue-700 transition hover:cursor-pointer"
         >
-          Login
+          Sign In
         </button>
         <div className="mt-6 text-center text-blue-900 text-sm">
           Don't have an account?{' '}
