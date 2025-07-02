@@ -138,14 +138,17 @@ export default function App() {
           <source src={homepageVideo} type="video/mp4" />
           Your browser does not support the video tag.
         </video>
-        <div className="absolute inset-0 flex flex-col justify-center items-center text-white text-center bg-black/25 pointer-events-none">
+        <div className="absolute inset-0 flex flex-col justify-center items-center text-white text-center bg-black/25">
           <h1 className="text-5xl font-bold shadow-md">
             Start designing your home, from your home
           </h1>
           <h5 className="mt-2">
             Begin your home interior journey from the comfort of your home today
           </h5>
-          <button className="bg-[#005eb8] mt-4 px-8 py-3 rounded-full text-white font-medium">
+          <button
+            className="mt-6 px-8 py-3 rounded-full bg-[#005eb8]/70 text-white font-semibold text-lg shadow-lg border-2 border-white/30 hover:bg-[#005eb8]/90 hover:scale-105 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-200 cursor-pointer backdrop-blur"
+            onClick={() => navigate("/create-project")}
+          >
             Create Project
           </button>
         </div>
@@ -280,12 +283,6 @@ export default function App() {
             </div>
           </div>
 
-          {/* Button */}
-          <div className="flex justify-center">
-            <button className="bg-[#005eb8] text-white font-semibold px-6 py-3 rounded-full">
-              Create Project
-            </button>
-          </div>
         </div>
       </section>
 
@@ -492,7 +489,7 @@ export default function App() {
                   <td className="p-4 bg-[#e6f2ff] font-medium shadow-inner">
                     <ul className="list-disc ml-4">
                       <li>Up to 10-year warranty⁴</li>
-                      <li>India’s first & only on-site service warranty</li>
+                      <li>India's first & only on-site service warranty</li>
                     </ul>
                   </td>
                   <td className="p-4">
@@ -518,9 +515,6 @@ export default function App() {
             </table>
           </div>
 
-          <button className="mt-8 px-8 py-3 bg-[#005eb8] text-white font-medium rounded-full hover:bg-[#004a9f] transition">
-            Create Project
-          </button>
         </div>
       </section>
 
@@ -582,7 +576,7 @@ export default function App() {
               <button
                 key={index}
                 onClick={() => setActiveTab(index)}
-                className={`px-4 py-2 rounded-full text-sm font-medium border transition ${
+                className={`px-4 py-2 rounded-full text-sm font-medium border transition cursor-pointer ${
                   activeTab === index
                     ? "bg-[#005eb8] text-white"
                     : "bg-white text-[#002169] border-[#005eb8] hover:bg-[#e6f2ff]"

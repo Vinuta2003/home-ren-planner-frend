@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {  Routes, Route, useLocation } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
@@ -15,39 +15,9 @@ import NavBar from "./components/NavBar";
 import Footer from "./components/Footer";
 
 function App() {
+  let location = useLocation();
   return (
-    <Router>
-      <NavBar/>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/register" element={<RegisterForm />} />
-        <Route path="/login" element={<LoginForm />} />
-        <Route
-          path="/update-profile"
-          element={
-            <ProtectedRoute allowedRoles={["CUSTOMER", "VENDOR"]}>
-              <UpdateProfile />
-            </ProtectedRoute>
-          }
-        />
-        <Route path="/vendorlist" element={<VendorListDisplay />} />
-
-        <Route
-          path="/admin-dashboard"
-          element={
-            <ProtectedRoute allowedRoles={["ADMIN"]}>
-              <AdminDashboard />
-            </ProtectedRoute>
-          }
-        />
-        <Route path="/vendor-dashboard" />
-
-        {/* 404 fallback should be last */}
-        <Route path="*" element={<PageNotFound />} />
-      </Routes>
-
-      <Footer/>
-
+    <>
       <ToastContainer
         position="top-right"
         autoClose={1500}
@@ -60,9 +30,38 @@ function App() {
         pauseOnHover
         theme="light"
       />
-      
-    </Router>
-
+      {location.pathname !== "/admin-dashboard" && <NavBar/>}
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/register" element={<RegisterForm />} />
+        <Route path="/login" element={<LoginForm />} />
+        <Route
+          path="/update-profile"
+          element={
+            <ProtectedRoute allowedRoles={["CUSTOMER", "VENDOR"]}>
+              <UpdateProfile />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/create-project" element={
+          <ProtectedRoute allowedRoles={["CUSTOMER"]}>
+            {/* Add Create Project Component Here */}
+          </ProtectedRoute>
+        }/>
+        <Route path="/vendorlist" element={<VendorListDisplay />} />
+        <Route
+          path="/admin-dashboard"
+          element={
+            <ProtectedRoute allowedRoles={["ADMIN"]}>
+              <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/vendor-dashboard" />
+        <Route path="*" element={<PageNotFound />} />
+      </Routes>
+      {location.pathname !== "/admin-dashboard" && <Footer/>}
+    </>
   );
 }
 

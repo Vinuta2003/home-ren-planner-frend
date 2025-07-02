@@ -1,2 +1,19 @@
 @import "tailwindcss";
 
+:root{
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+
+::-webkit-scrollbar{
+    width: 10px;
+    background: #e6f2ff;
+}
+
+::-webkit-scrollbar-thumb{
+    background: #005eb8;
+    border-radius: 2rem;
+    border: 2px solid #e6f2ff;
+}

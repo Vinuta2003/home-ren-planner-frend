@@ -75,6 +75,7 @@ export default function RegisterForm() {
             email: responseData?.email,
             role: responseData?.role,
             accessToken: responseData?.accessToken,
+            url: responseData?.url
           })
         );
       }

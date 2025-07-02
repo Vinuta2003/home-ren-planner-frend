@@ -61,6 +61,7 @@ export default function LoginForm() {
             email: responseData?.email,
             role: responseData?.role,
             accessToken: responseData?.accessToken,
+            url: responseData?.url
           })
         );
       }

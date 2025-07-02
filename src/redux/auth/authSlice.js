@@ -4,6 +4,7 @@ const initialState = {
   email: null,
   role: null,
   accessToken: null,
+  url: null
 };
 
 const authSlice = createSlice({
@@ -14,11 +15,13 @@ const authSlice = createSlice({
       state.email = action.payload.email;
       state.role = action.payload.role;
       state.accessToken = action.payload.accessToken;
+      state.url = action.payload.url;
     },
     logout: (state) => {
       state.email = null;
       state.role = null;
       state.accessToken = null;
+      state.url = null;
     },
     updateAccessToken: (state, action) => {
       state.accessToken = action.payload.newAccessToken
