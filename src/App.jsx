@@ -11,10 +11,13 @@ import PageNotFound from "./pages/PageNotFound";
 
 import VendorListDisplay from "./pages/VendorListDisplay"; 
 import UpdateProfile from "./pages/UpdateProfile";
+import NavBar from "./components/NavBar";
+import Footer from "./components/Footer";
 
 function App() {
   return (
     <Router>
+      <NavBar/>
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/register" element={<RegisterForm />} />
@@ -37,12 +40,13 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route path="/user-dashboard" />
         <Route path="/vendor-dashboard" />
 
         {/* 404 fallback should be last */}
         <Route path="*" element={<PageNotFound />} />
       </Routes>
+
+      <Footer/>
 
       <ToastContainer
         position="top-right"
@@ -56,7 +60,9 @@ function App() {
         pauseOnHover
         theme="light"
       />
+      
     </Router>
+
   );
 }
 

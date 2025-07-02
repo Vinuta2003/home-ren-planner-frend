@@ -114,7 +114,7 @@ export default function UpdateProfile() {
 
   if (loading)
     return (
-      <div className="flex justify-center items-center h-64">
+      <div className="flex justify-center items-center h-64 ">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
         <span className="ml-4 text-blue-700 font-semibold">Loading profile...</span>
       </div>
@@ -124,7 +124,7 @@ export default function UpdateProfile() {
     <form
       encType="multipart/form-data"
       onSubmit={handleSubmit}
-      className="p-8 bg-white max-w-2xl mx-auto my-10 rounded-2xl shadow-xl border border-blue-200"
+      className="p-8 bg-white max-w-2xl mx-auto my-10 rounded-2xl shadow-xl border border-blue-200 mt-30"
     >
       <h2 className="text-4xl font-sans font-medium text-blue-900 mb-10 text-center tracking-tight drop-shadow-sm">
         Update Profile

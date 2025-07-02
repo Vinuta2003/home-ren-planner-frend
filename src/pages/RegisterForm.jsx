@@ -85,11 +85,11 @@ export default function RegisterForm() {
         setAvailable(false);
         setIsVendor(false);
         toast.success("Registration Successful", {
-          // onClose: () => {
-          //   if (responseData?.role === "VENDOR") navigate("/vendor-dashboard");
-          //   else navigate("/user-dashboard");
-          // },
-          // autoClose: 3000,
+          onClose: () => {
+            if (responseData?.role === "VENDOR") navigate("/vendor-dashboard");
+            else navigate("/");
+          },
+          autoClose: 3000,
         });
       } else toast.message("Registration Unsuccessful!");
     } catch (e) {
@@ -103,7 +103,7 @@ export default function RegisterForm() {
   };
 
   return (
-    <div className="min-h-screen bg-blue-50 flex justify-center items-center py-5">
+    <div className="min-h-screen bg-blue-50 flex justify-center items-center pb-10 pt-30">
       <form
         onSubmit={handleSubmit}
         className="bg-white p-8 rounded-xl shadow-md w-full max-w-xl"
