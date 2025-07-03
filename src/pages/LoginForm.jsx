@@ -66,6 +66,8 @@ export default function LoginForm() {
         );
       }
 
+      localStorage.setItem("accessToken", responseData?.accessToken);
+
       if(responseData?.message === "SUCCESS"){
         e.target.reset();
         setFormData({ email: "", password: "" });

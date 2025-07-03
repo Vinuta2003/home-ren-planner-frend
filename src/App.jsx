@@ -13,6 +13,8 @@ import VendorListDisplay from "./pages/VendorListDisplay";
 import UpdateProfile from "./pages/UpdateProfile";
 import NavBar from "./components/NavBar";
 import Footer from "./components/Footer";
+import MyReviews from "./pages/MyReviews";
+import AddVendorForm from "./pages/AddVendorForm";
 
 function App() {
   let location = useLocation();
@@ -31,15 +33,25 @@ function App() {
         theme="light"
       />
       {location.pathname !== "/admin-dashboard" && <NavBar/>}
+      <div className="pt-20 px-4">
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/register" element={<RegisterForm />} />
         <Route path="/login" element={<LoginForm />} />
+        <Route path ="/addreview" element={<AddVendorForm/>} />
         <Route
           path="/update-profile"
           element={
             <ProtectedRoute allowedRoles={["CUSTOMER", "VENDOR"]}>
               <UpdateProfile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/my-reviews"
+          element={
+            <ProtectedRoute allowedRoles={["CUSTOMER", "ADMIN"]}>
+              <MyReviews />
             </ProtectedRoute>
           }
         />
@@ -60,6 +72,7 @@ function App() {
         <Route path="/vendor-dashboard" />
         <Route path="*" element={<PageNotFound />} />
       </Routes>
+      </div>
       {location.pathname !== "/admin-dashboard" && <Footer/>}
     </>
   );
