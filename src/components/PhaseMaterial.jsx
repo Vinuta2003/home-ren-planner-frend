@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { getPhaseById, getPhaseMaterialsByPhaseId} from "../app/features/phaseSlice";
+import { getPhaseById } from "../app/features/phaseSlice";
 import { deletePhaseMaterial, updatePhaseMaterialQuantity } from "../app/apis/phaseApis";
 
 export function PhaseMaterial(props){
@@ -19,7 +19,9 @@ export function PhaseMaterial(props){
     const deleteButtonOnClickHandler = async()=>{
         await deletePhaseMaterial(phaseMaterial.exposedId);
 
-        await dispatch(getPhaseMaterialsByPhaseId(phaseMaterial.phaseResponse.id));
+        await dispatch(getPhaseById(phaseMaterial.phaseResponse.id));
+
+
     }
 
     const incrementButtonOnClickListener = ()=>{
@@ -41,7 +43,7 @@ export function PhaseMaterial(props){
 
         updateEditMode(false);
 
-        await dispatch(getPhaseMaterialsByPhaseId(phaseMaterial.phaseResponse.id));
+        await dispatch(getPhaseById(phaseMaterial.phaseResponse.id));
        
     }
 
