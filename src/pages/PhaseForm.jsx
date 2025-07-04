@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { createPhase } from "../app/features/phaseListSlice";
+import { createPhaseApi } from "../app/apis/phaseListAPIs";
 import axios from "axios";
 
 function PhaseForm() {
@@ -17,8 +17,8 @@ function PhaseForm() {
     description: "",
     phaseType: "",
     phaseStatus: "",
-    start_date: "",
-    end_date: "",
+    startDate: "",
+    endDate: "",
     vendor: "",
     project: ""
   });
@@ -52,13 +52,14 @@ function PhaseForm() {
       project: { id: formData.project },
       phaseName: formData.phaseName,
       description: formData.description,
-      startDate: formData.start_date,
-      endDate: formData.end_date,
+      startDate: formData.startDate,
+      endDate: formData.endDate,
       phaseType: formData.phaseType,
       phaseStatus: formData.phaseStatus,
     };
+console.log("Payload:", payload);
 
-    dispatch(createPhase(payload))
+    createPhaseApi(payload)
       .then(() => navigate(`/phase/project/${formData.project}`))
       .catch((err) => console.error("Error creating phase:", err));
   };
@@ -87,17 +88,19 @@ function PhaseForm() {
 
         <input
           type="date"
-          name="start_date"
-          value={formData.start_date}
+          name="startDate"
+          value={formData.startDate}
           onChange={handleChange}
+          min={new Date().toISOString().split("T")[0]}
           className="w-full px-4 py-2 border border-gray-300 rounded mb-3 text-gray-500"
         />
 
         <input
           type="date"
-          name="end_date"
-          value={formData.end_date}
+          name="endDate"
+          value={formData.endDate}
           onChange={handleChange}
+          min={new Date().toISOString().split("T")[0]}
           className="w-full px-4 py-2 border border-gray-300 rounded mb-3 text-gray-500"
         />
 

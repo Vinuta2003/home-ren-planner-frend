@@ -3,6 +3,8 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getPhasesByProject } from "../app/features/phaseListSlice"; // adjust if needed
 import { Plus } from "lucide-react";
+import { Link } from "react-router-dom";
+
 
 function PhaseList() {
   const { projectId } = useParams();
@@ -55,30 +57,31 @@ function PhaseList() {
           ) : (
             <div className="flex flex-col space-y-4">
               {phases.map((phase) => (
-                <div
-  key={phase.id}
-  className="bg-blue-100 border border-blue-300 p-4 rounded-xl shadow-md flex justify-between items-start"
->
-  <div>
-    <h3 className="font-bold text-blue-800 text-lg mb-1">{phase.phaseName}</h3>
-    <p className="text-sm text-blue-800">{phase.description}</p>
-  </div>
+                <Link to={`/phase/${phase.id}`}  key={phase.id}>
+                  <div
+                    className="bg-blue-100 border border-blue-300 p-4 rounded-xl shadow-md flex justify-between items-start hover:shadow-lg transition"
+                  >
+                    <div>
 
-  <span
-    className={`text-xs font-semibold px-3 py-1 rounded-full mt-1
-      ${
-        phase.phaseStatus === "NOTSTARTED"
-          ? "bg-red-100 text-red-700"
-          : phase.phaseStatus === "INSPECTION"
-          ? "bg-yellow-100 text-yellow-700"
-          : phase.phaseStatus === "INPROGRESS"
-          ? "bg-green-100 text-green-700"
-          : "bg-blue-200 text-blue-800"
-      }`}
-  >
-    {phase.phaseStatus}
-  </span>
-</div>
+                      <h3 className="font-bold text-blue-800 text-lg mb-1">{phase.phaseName}</h3>
+                      <p className="text-sm text-blue-800">{phase.description}</p>
+                    </div>
+                    <span
+                      className={`text-xs font-semibold px-3 py-1 rounded-full mt-1
+        ${phase.phaseStatus === "NOTSTARTED"
+                          ? "bg-red-100 text-red-700"
+                          : phase.phaseStatus === "INSPECTION"
+                            ? "bg-yellow-100 text-yellow-700"
+                            : phase.phaseStatus === "INPROGRESS"
+                              ? "bg-green-100 text-green-700"
+                              : "bg-blue-200 text-blue-800"
+                        }`}
+                    >
+                      {phase.phaseStatus}
+                    </span>
+                  </div>
+                </Link>
+
 
               ))}
             </div>

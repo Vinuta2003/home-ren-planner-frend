@@ -5,8 +5,7 @@ function ProjectPage() {
 
   // Dummy list of projects
   const projects = [
-    { id: "123e4567-e89b-12d3-a456-426614174000", name: "Project A" },
-    { id: "123e4567-e89b-12d3-a456-426614174000", name: "Project B" },
+    { id: "f04e8c60-eb5e-47bb-9766-966e3905219d", name: "Project A" },
   ];
 
   return (

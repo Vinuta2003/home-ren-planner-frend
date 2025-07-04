@@ -19,8 +19,8 @@ function App() {
         <Route path="/login" element = {<LoginForm/>}/>
         <Route path="/phase-form" element={<PhaseForm />} /> 
         <Route path="/" element={<ProjectPage />} />
-        <Route path="/phaselist" element={<PhaseList />} />
         <Route path="/phase/project/:projectId" element={<PhaseList />} />
+        <Route path="/phase/:phaseId" element={<PhasePage/>}/>
       </Routes>
       <ToastContainer
         position="top-right"
