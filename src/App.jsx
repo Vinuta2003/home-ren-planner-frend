@@ -8,6 +8,7 @@ import PhaseForm from './pages/PhaseForm'
 import ProjectPage from './pages/ProjectDashboard'
 import PhasePage from './pages/PhasePage'
 import PhaseList from './pages/PhaseList'
+import VendorListDisplay from './pages/VendorListDisplay'
 
 function App() {
 
@@ -18,6 +19,7 @@ function App() {
         {/* <Route path="/register" element = {RegisterForm}/> */}
         <Route path="/login" element = {<LoginForm/>}/>
         <Route path="/phase-form" element={<PhaseForm />} /> 
+        <Route path="/vendor-list" element={<VendorListDisplay />} />
         <Route path="/" element={<ProjectPage />} />
         <Route path="/phase/project/:projectId" element={<PhaseList />} />
         <Route path="/phase/:phaseId" element={<PhasePage/>}/>
