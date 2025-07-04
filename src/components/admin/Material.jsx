@@ -22,9 +22,31 @@ export default function Material() {
   const [showRemoveModal, setShowRemoveModal] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [activeTab, setActiveTab] = useState("ALL");
+
+  // Function to group materials by phase type
+  const groupMaterialsByPhaseType = (materials) => {
+    if (!materials) return {};
+    
+    return materials.reduce((groups, material) => {
+      const phaseType = material.phaseType;
+      if (!groups[phaseType]) {
+        groups[phaseType] = [];
+      }
+      groups[phaseType].push(material);
+      return groups;
+    }, {});
+  };
+
+  // Function to get materials for active tab
+  const getMaterialsForActiveTab = (materials) => {
+    if (!materials) return [];
+    if (activeTab === "ALL") return materials;
+    return materials.filter(material => material.phaseType === activeTab);
+  };
 
   const units = ["KG", "UNITS", "L"];
-  const phaseTypes = ["ELECTRICAL", "PLUMBING", "CARPENTRY", "CIVIL", "TILING", "PAINTING"];
+  const phaseTypes = ["ALL", "ELECTRICAL", "PLUMBING", "CARPENTRY", "CIVIL", "TILING", "PAINTING"];
 
   useEffect(() => {
     setPage(0);
@@ -256,73 +278,98 @@ export default function Material() {
           </select>
         </div>
 
-        <div className="overflow-x-auto rounded-lg shadow border border-blue-100 bg-blue-50">
-          <table className="w-full table-fixed">
-            <thead className="bg-blue-100 text-blue-900">
-              <tr>
-                <th className="p-3 w-1/6">Name</th>
-                <th className="p-3 w-1/8">Unit</th>
-                <th className="p-3 w-1/6">Phase</th>
-                <th className="p-3 w-1/6">Price / Qty</th>
-                <th className="p-3 w-1/8">Status</th>
-                <th className="p-3">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {materials?.map((material) => (
-                <tr key={material.exposedId} className="border-t border-blue-100 hover:bg-white">
-                  <td className="p-3 text-center align-middle whitespace-normal break-words">{material.name}</td>
-                  <td className="p-3 text-center align-middle whitespace-normal break-words">{material.unit}</td>
-                  <td className="p-3 text-center align-middle whitespace-normal break-words">{material.phaseType}</td>
-                  <td className="p-3 text-center align-middle whitespace-normal break-words">₹{material.pricePerQuantity}</td>
-                  <td className="p-3 text-center align-middle whitespace-normal break-words">
-                    {material.deleted ? (
-                      <span className="text-red-600 font-semibold">Deleted</span>
-                    ) : (
-                      <span className="text-green-700 font-semibold">Active</span>
-                    )}
-                  </td>
-                  <td className="p-3 text-center align-middle">
-                    <div className="flex gap-2 justify-center">
-                      {material.deleted ? (
-                        <>
-                          <button
-                            className="px-3 py-1 rounded flex items-center gap-2 cursor-pointer bg-green-600 hover:bg-green-700 text-white"
-                            onClick={() => handleDeleteOrRestore(material.exposedId, true)}
-                          >
-                            <PlusCircle size={16} /> Restore
-                          </button>
-                          <button
-                            className="px-3 py-1 rounded flex items-center gap-2 cursor-pointer bg-red-600 hover:bg-red-700 text-white"
-                            onClick={() => handlePermanentRemove(material.exposedId)}
-                          >
-                            <Trash2 size={16} /> Remove
-                          </button>
-                        </>
-                      ) : (
-                        <>
-                          <button
-                            className="flex items-center gap-1 bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600 cursor-pointer"
-                            onClick={() => handleEdit(material)}
-                            disabled={material.deleted}
-                          >
-                            <Pencil size={16} /> Edit
-                          </button>
-                          <button
-                            className="px-3 py-1 rounded flex items-center gap-2 cursor-pointer bg-red-600 hover:bg-red-700 text-white"
-                            onClick={() => handleDeleteOrRestore(material.exposedId, false)}
-                          >
-                            <Trash2 size={16} /> Delete
-                          </button>
-                        </>
-                      )}
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        {/* Phase Type Tabs */}
+        <div className="mb-6">
+          <div className="flex flex-wrap gap-2 border-b border-blue-200">
+            {phaseTypes.map((phaseType) => (
+              <button
+                key={phaseType}
+                onClick={() => setActiveTab(phaseType)}
+                className={`px-4 py-2 rounded-t-lg font-semibold transition-colors ${
+                  activeTab === phaseType
+                    ? "bg-blue-400 text-white"
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                }`}
+              >
+                {phaseType === "ALL" ? "ALL MATERIALS" : phaseType}
+              </button>
+            ))}
+          </div>
         </div>
+
+        {/* Materials for Active Tab */}
+        {materials && materials.length > 0 && (
+          <div className="bg-blue-50 rounded-lg shadow border border-blue-100 overflow-hidden">
+            <div className="bg-blue-400 text-white px-6 py-3">
+              <h3 className="text-xl font-bold">{activeTab === "ALL" ? "ALL MATERIALS" : activeTab}</h3>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-blue-100 text-blue-900">
+                  <tr>
+                    <th className="p-3 text-left">Name</th>
+                    <th className="p-3 text-center">Unit</th>
+                    <th className="p-3 text-center">Price / Qty</th>
+                    <th className="p-3 text-center">Status</th>
+                    <th className="p-3 text-center">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {getMaterialsForActiveTab(materials).map((material) => (
+                    <tr key={material.exposedId} className="border-t border-blue-100 hover:bg-white">
+                      <td className="p-3 text-left align-middle whitespace-normal break-words">{material.name}</td>
+                      <td className="p-3 text-center align-middle whitespace-normal break-words">{material.unit}</td>
+                      <td className="p-3 text-center align-middle whitespace-normal break-words">₹{material.pricePerQuantity}</td>
+                      <td className="p-3 text-center align-middle whitespace-normal break-words">
+                        {material.deleted ? (
+                          <span className="text-red-600 font-semibold">Deleted</span>
+                        ) : (
+                          <span className="text-green-700 font-semibold">Active</span>
+                        )}
+                      </td>
+                      <td className="p-3 text-center align-middle">
+                        <div className="flex gap-2 justify-center">
+                          {material.deleted ? (
+                            <>
+                              <button
+                                className="px-3 py-1 rounded flex items-center gap-2 cursor-pointer bg-green-600 hover:bg-green-700 text-white"
+                                onClick={() => handleDeleteOrRestore(material.exposedId, true)}
+                              >
+                                <PlusCircle size={16} /> Restore
+                              </button>
+                              <button
+                                className="px-3 py-1 rounded flex items-center gap-2 cursor-pointer bg-red-600 hover:bg-red-700 text-white"
+                                onClick={() => handlePermanentRemove(material.exposedId)}
+                              >
+                                <Trash2 size={16} /> Remove
+                              </button>
+                            </>
+                          ) : (
+                            <>
+                              <button
+                                className="flex items-center gap-1 bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600 cursor-pointer"
+                                onClick={() => handleEdit(material)}
+                                disabled={material.deleted}
+                              >
+                                <Pencil size={16} /> Edit
+                              </button>
+                              <button
+                                className="px-3 py-1 rounded flex items-center gap-2 cursor-pointer bg-red-600 hover:bg-red-700 text-white"
+                                onClick={() => handleDeleteOrRestore(material.exposedId, false)}
+                              >
+                                <Trash2 size={16} /> Delete
+                              </button>
+                            </>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
 
         {/* Pagination Controls */}
         {materials && materials.length > 0 && (
