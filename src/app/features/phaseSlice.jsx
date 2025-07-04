@@ -14,7 +14,6 @@ export const addPhaseMaterialsToPhase = createAsyncThunk('addPhaseMaterialsToPha
     const res = await axios.post(`http://localhost:8080/api/user/phase/${phaseId}/phase-materials`,chosenMaterialsList);
     const data = res.data;
     return data;
-
 })
 
 const phaseSlice = createSlice({

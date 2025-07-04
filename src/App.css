@@ -1,4 +1,4 @@
-#phase-materials-display{
+/* #phase-materials-display{
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -11,5 +11,5 @@
 
 h1{
     font-size: revert;
-}
+} */
 
