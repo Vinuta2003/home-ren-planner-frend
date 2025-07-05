@@ -5,7 +5,7 @@ import './App.css'
 import RegisterForm from './pages/RegisterForm'
 import LoginForm from './pages/LoginForm'
 import PhaseForm from './pages/PhaseForm'
-import ProjectPage from './pages/ProjectDashboard'
+import RoomPage from './pages/RoomPage'
 import PhasePage from './pages/PhasePage'
 import PhaseList from './pages/PhaseList'
 import ProtectedRoute from './routes/ProtectedRoute'
@@ -26,11 +26,11 @@ function App() {
     <>
       {location.pathname !== "/admin-dashboard" && <NavBar />}
       <Routes>
-        <Route path="/" element={<ProjectPage />} />
+        <Route path="/" element={<RoomPage />} />
         <Route path="/register" element={<RegisterForm />} />
         <Route path="/login" element={<LoginForm />} />
         <Route path="/phase-form" element={<PhaseForm />} />
-        <Route path="/phase/project/:projectId" element={<PhaseList />} />
+        <Route path="/phase/room/:roomId" element={<PhaseList />} />
         <Route path="/phase/:phaseId" element={<PhasePage />} />
         <Route path="/editphase/:id" element={<EditPhaseForm/>}/>
         <Route

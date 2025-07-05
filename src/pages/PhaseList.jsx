@@ -1,25 +1,25 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getPhasesByProject } from "../app/features/phaseListSlice"; // adjust if needed
+import { getPhasesByRoom } from "../app/features/phaseListSlice"; // adjust if needed
 import { Plus } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useMemo } from "react";
 
 
 function PhaseList() {
-  const { projectId } = useParams();
+  const { roomId } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-const projectPhases = useSelector((state) => state.phaselist?.projectPhases);
-const phases = useMemo(() => projectPhases || [], [projectPhases]);
+const roomPhases = useSelector((state) => state.phaselist?.roomPhases);
+const phases = useMemo(() => roomPhases || [], [roomPhases]);
 const loading = useSelector((state) => state.phaselist?.loading || false);
 
 
   useEffect(() => {
-    if (projectId) dispatch(getPhasesByProject(projectId));
-  }, [dispatch, projectId]);
+    if (roomId) dispatch(getPhasesByRoom(roomId));
+  }, [dispatch, roomId]);
 
   return (
 

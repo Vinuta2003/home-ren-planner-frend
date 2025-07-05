@@ -6,8 +6,8 @@ export const getPhaseById = createAsyncThunk("getPhaseById", async (id) => {
   return res.data;
 });
 
-export const getPhasesByProject = createAsyncThunk("getPhasesByProject", async (projectId) => {
-  const res = await axios.get(`http://localhost:8080/phase/project/${projectId}`);
+export const getPhasesByRoom = createAsyncThunk("getPhasesByRoom", async (roomId) => {
+  const res = await axios.get(`http://localhost:8080/phase/room/${roomId}`);
   return res.data;
 });
 
@@ -58,7 +58,7 @@ const phaseListSlice = createSlice({
     phases: [],
     phaseDetails: null,
     phaseMaterials: [],
-    projectPhases: [],
+    roomPhases: [],
     totalCost: 0,
     phaseTypes: [],
     status: "idle",
@@ -76,19 +76,19 @@ const phaseListSlice = createSlice({
       .addCase(getPhaseById.fulfilled, (state, action) => {
         state.phaseDetails = action.payload;
       })
-      .addCase(getPhasesByProject.pending, (state) => {
+      .addCase(getPhasesByRoom.pending, (state) => {
         state.loading = true;
       })
-      .addCase(getPhasesByProject.fulfilled, (state, action) => {
-        state.projectPhases = action.payload;
+      .addCase(getPhasesByRoom.fulfilled, (state, action) => {
+        state.roomPhases = action.payload;
         state.loading = false;
       })
-      .addCase(getPhasesByProject.rejected, (state) => {
+      .addCase(getPhasesByRoom.rejected, (state) => {
         state.loading = false;
       })
 
       .addCase(createPhase.fulfilled, (state, action) => {
-        state.projectPhases.push(action.payload);
+        state.roomPhases.push(action.payload);
       })
 
       .addCase(getPhaseMaterialsByPhaseId.fulfilled, (state, action) => {

@@ -20,7 +20,7 @@ function PhaseForm() {
     startDate: "",
     endDate: "",
     vendor: "",
-    project: ""
+    room: ""
   });
 
   useEffect(() => {
@@ -44,33 +44,42 @@ function PhaseForm() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    const payload = {
-      vendor: { id: formData.vendor },
-      project: { id: formData.project },
-      phaseName: formData.phaseName,
-      description: formData.description,
-      startDate: formData.startDate,
-      endDate: formData.endDate,
-      phaseType: formData.phaseType,
-      phaseStatus: formData.phaseStatus,
-    };
-console.log("Payload:", payload);
+  const payload = {
+    vendor: { id: formData.vendor },
+    room: { id: formData.room },
+    phaseName: formData.phaseName,
+    description: formData.description,
+    startDate: formData.startDate,
+    endDate: formData.endDate,
+    phaseType: formData.phaseType,
+    phaseStatus: formData.phaseStatus,
+  };
 
-  createPhaseApi(payload)
-  .then(() => navigate(`/phase/project/${formData.project}`))
-  .catch((err) => {
-    if (err.response?.status === 409) {
+  console.log("Payload:", payload);
+
+  axios.get(`http://localhost:8080/phase/phase/exists?roomId=${formData.room}&phaseType=${formData.phaseType}`)
+  .then(res => {
+    if (res.data) {
       alert("Phase of this type already exists for the room.");
     } else {
-      console.error("Error creating phase:", err);
-      alert("An error occurred while creating the phase.");
+      // Proceed to create
+      createPhaseApi(payload)
+        .then(() => navigate(`/phase/room/${formData.room}`))
+        .catch(err => {
+          console.error("Error creating phase:", err);
+          alert("An error occurred while creating the phase.");
+        });
     }
+  })
+  .catch(err => {
+    console.error("Error checking existing phase:", err);
+    alert("Could not verify existing phase.");
   });
+  }
 
-  };
   return (
     <div className="min-h-screen bg-blue-50 flex justify-center items-center pt-23">
       <form onSubmit={handleSubmit} className="bg-white p-8 rounded-xl shadow-md w-full max-w-xl">
@@ -113,9 +122,9 @@ console.log("Payload:", payload);
 
 <input
           type="text"
-          name="project"
-          placeholder="Project ID"
-          value={formData.project}
+          name="room"
+          placeholder="Room ID"
+          value={formData.room}
           onChange={handleChange}
           className="w-full px-4 py-2 border border-gray-300 rounded mb-3"
         />
