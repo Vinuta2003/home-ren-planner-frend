@@ -1,4 +1,3 @@
-// PhasePage.jsx
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
@@ -8,8 +7,14 @@ import {
   getPhaseById,
 } from "../redux/phase/phaseSlice";
 import { getMaterialsByPhaseType } from "../axios/phaseApis";
-import { Material } from "../components/Material";
-import { PhaseMaterial } from "../components/phaseMaterial";
+import { Material } from "../components/customer/Material";
+import { PhaseMaterial } from "../components/customer/PhaseMaterial";
+import {
+  PlusCircle,
+  XCircle,
+  CheckCircle,
+  PackagePlus,
+} from "lucide-react";
 
 export function PhasePage() {
   const { phaseId } = useParams();
@@ -71,8 +76,9 @@ export function PhasePage() {
       {!addMode ? (
         <button
           onClick={() => updateAddMode(true)}
-          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 inline-flex items-center"
         >
+          <PlusCircle className="w-5 h-5 mr-2" />
           Add Materials
         </button>
       ) : (
@@ -91,8 +97,9 @@ export function PhasePage() {
             {chosenMaterialsList.length > 0 && (
               <button
                 onClick={addPhaseMaterialsOnClickHandler}
-                className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+                className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 inline-flex items-center"
               >
+                <CheckCircle className="w-5 h-5 mr-2" />
                 Add Chosen Materials to Phase
               </button>
             )}
@@ -101,8 +108,9 @@ export function PhasePage() {
                 updateAddMode(false);
                 dispatch(clearChosenMaterialsList());
               }}
-              className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+              className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 inline-flex items-center"
             >
+              <XCircle className="w-5 h-5 mr-2" />
               Cancel
             </button>
           </div>
