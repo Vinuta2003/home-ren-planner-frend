@@ -13,6 +13,7 @@ import VendorListDisplay from "./pages/VendorListDisplay";
 import UpdateProfile from "./pages/UpdateProfile";
 import NavBar from "./components/NavBar";
 import Footer from "./components/Footer";
+import { PhasePage } from "./pages/PhasePage";
 
 function App() {
   let location = useLocation();
@@ -58,7 +59,7 @@ function App() {
           }
         />
         <Route path="/vendor-dashboard" />
-        <Route path="/phases/:phaseId" element={<PhasePage/>}/>
+        <Route path="/phases/:phaseId" element={<ProtectedRoute allowedRoles={["CUSTOMER"]}><PhasePage/></ProtectedRoute>}/>
         <Route path="*" element={<PageNotFound />} />
       </Routes>
       {location.pathname !== "/admin-dashboard" && <Footer/>}
