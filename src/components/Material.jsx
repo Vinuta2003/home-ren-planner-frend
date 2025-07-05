@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addMaterial, deleteMaterial, updateMaterialQuantity } from "../app/features/phaseSlice";
+import { addMaterial, deleteMaterial, updateMaterialQuantity } from "../redux/phase/phaseSlice";
 
 export function Material({ material }) {
   const [addMode, updateAddMode] = useState(false);
@@ -88,10 +88,10 @@ export function Material({ material }) {
         <div className="space-y-2">
           <div className="flex items-center space-x-2">
             <span className="text-gray-700">Quantity:</span>
-            <button onClick={decrement} className="px-2 py-1 bg-gray-200 rounded">-</button>
+            <button onClick={decrement} className="px-2 py-1 bg-gray-300 rounded">-</button>
             {/* <span>{quantity}</span> */}
             <input type="number" min={1} value={quantity} onChange={(event)=>{quantityInputHandler(event.target.value);}} className="w-16 px-2 py-1 border border-gray-300 rounded text-center appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"/>
-            <button onClick={increment} className="px-2 py-1 bg-gray-200 rounded">+</button>
+            <button onClick={increment} className="px-2 py-1 bg-gray-300 rounded">+</button>
             <span className="text-sm text-gray-500">{material.unit}</span>
           </div>
           <button

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { getPhaseById } from "../app/features/phaseSlice";
-import { deletePhaseMaterial, updatePhaseMaterialQuantity } from "../app/apis/phaseApis";
+import { getPhaseById } from "../redux/phase/phaseSlice";
+import { deletePhaseMaterial, updatePhaseMaterialQuantity } from "../axios/phaseApis";
 
 export function PhaseMaterial({ phaseMaterial }) {
   const [editMode, updateEditMode] = useState(false);
@@ -75,10 +75,10 @@ export function PhaseMaterial({ phaseMaterial }) {
         {editMode ? (
           <div className="flex items-center space-x-2">
             <span>Quantity:</span>{" "}
-            <button onClick={decrement} className="px-2 py-1 bg-gray-200 rounded">-</button>
+            <button onClick={decrement} className="px-2 py-1 bg-gray-300 rounded">-</button>
             {/* <span className="px-2">{quantity}</span> */}
             <input type="number" min={1} value={quantity} onChange={(event)=>{quantityInputHandler(event.target.value);}} className="w-16 px-2 py-1 border border-gray-300 rounded text-center appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"/>
-            <button onClick={increment} className="px-2 py-1 bg-gray-200 rounded">+</button>
+            <button onClick={increment} className="px-2 py-1 bg-gray-300 rounded">+</button>
             <span className="ml-1 text-sm text-gray-600">{phaseMaterial.unit}</span>
           </div>
         ) : (
@@ -100,8 +100,8 @@ export function PhaseMaterial({ phaseMaterial }) {
       <div className="space-x-2">
         {editMode ? (
           <>
-            <button onClick={save} className="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700">Save</button>
-            <button onClick={cancel} className="px-3 py-1 bg-red-600 text-white rounded hover:bg-gray-500">Cancel</button>
+            {quantity!="" && <button onClick={save} className="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700">Save</button>}
+            <button onClick={cancel} className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700">Cancel</button>
           </>
         ) : (
           <>

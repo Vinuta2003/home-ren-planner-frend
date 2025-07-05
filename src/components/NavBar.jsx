@@ -33,7 +33,7 @@ export default function NavBar() {
   };
 
   return (
-    <nav className="fixed top-0 left-0 w-full bg-white shadow-md z-50 border-b border-blue-100">
+    <nav className="fixed top-0 left-0 w-full h-20 bg-white shadow-md z-50 border-b border-blue-100">
       <div className=" mx-auto px-6 h-20 flex items-center justify-between">
 
         <div

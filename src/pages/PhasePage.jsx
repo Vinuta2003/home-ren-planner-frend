@@ -6,8 +6,8 @@ import {
   addPhaseMaterialsToPhase,
   clearChosenMaterialsList,
   getPhaseById,
-} from "../app/features/phaseSlice";
-import { getMaterialsByPhaseType } from "../app/apis/phaseApis";
+} from "../redux/phase/phaseSlice";
+import { getMaterialsByPhaseType } from "../axios/phaseApis";
 import { Material } from "../components/Material";
 import { PhaseMaterial } from "../components/phaseMaterial";
 
