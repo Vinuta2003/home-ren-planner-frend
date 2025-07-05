@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useNavigate, useLocation } from "react-router-dom";
 import { createPhaseApi } from "../app/apis/phaseListAPIs";
 import axios from "axios";
 
 function PhaseForm() {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const location = useLocation();
 
   const [selectedRenovationType, setSelectedRenovationType] = useState('');
   const [phaseTypes, setPhaseTypes] = useState([]);
@@ -22,6 +21,15 @@ function PhaseForm() {
     vendor: "",
     room: ""
   });
+
+  // Handle vendorId passed from VendorListDisplay
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const vendorId = params.get("vendorId");
+    if (vendorId) {
+      setFormData((prev) => ({ ...prev, vendor: vendorId }));
+    }
+  }, [location.search]);
 
   useEffect(() => {
     axios.get("http://localhost:8080/api/enums/phase-statuses")
@@ -44,6 +52,15 @@ function PhaseForm() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const handleSelectVendorClick = () => {
+    if (!formData.phaseType) {
+      alert("Please select a phase type first");
+      return;
+    }
+    navigate(`/vendor-list?phaseType=${formData.phaseType}`);
+  };
+
+ 
   const handleSubmit = async (e) => {
   e.preventDefault();
 
@@ -120,7 +137,7 @@ function PhaseForm() {
           className="w-full px-4 py-2 border border-gray-300 rounded mb-3 text-gray-500"
         />
 
-<input
+        <input
           type="text"
           name="room"
           placeholder="Room ID"
@@ -128,6 +145,7 @@ function PhaseForm() {
           onChange={handleChange}
           className="w-full px-4 py-2 border border-gray-300 rounded mb-3"
         />
+
         <input
           type="text"
           name="vendor"
@@ -136,6 +154,14 @@ function PhaseForm() {
           onChange={handleChange}
           className="w-full px-4 py-2 border border-gray-300 rounded mb-3"
         />
+
+        <button
+          type="button"
+          onClick={handleSelectVendorClick}
+          className="w-full bg-green-600 text-white py-2 rounded mb-3 hover:bg-green-700"
+        >
+          Choose Vendor From List
+        </button>
 
         <select
           value={selectedRenovationType}

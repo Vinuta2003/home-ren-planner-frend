@@ -8,6 +8,7 @@ import PhaseForm from './pages/PhaseForm'
 import RoomPage from './pages/RoomPage'
 import PhasePage from './pages/PhasePage'
 import PhaseList from './pages/PhaseList'
+import VendorListDisplay from './pages/VendorListDisplay'
 import ProtectedRoute from './routes/ProtectedRoute'
 import UpdateProfile from './pages/UpdateProfile'
 import VendorListDisplay from './pages/VendorListDisplay'
@@ -29,6 +30,8 @@ function App() {
         <Route path="/" element={<RoomPage />} />
         <Route path="/register" element={<RegisterForm />} />
         <Route path="/login" element={<LoginForm />} />
+        <Route path="/vendor-list" element={<VendorListDisplay />} />
+        
         <Route path="/phase-form" element={<PhaseForm />} />
         <Route path="/phase/room/:roomId" element={<PhaseList />} />
         <Route path="/phase/:phaseId" element={<PhasePage />} />
