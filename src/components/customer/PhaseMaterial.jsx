@@ -82,7 +82,7 @@ export function PhaseMaterial({ phaseMaterial }) {
       <div className="text-gray-700 text-base">
         {editMode ? (
           <div className="flex items-center space-x-2">
-            <span className="font-medium">Quantity:</span>
+            <span className="font-medium text-blue-600">Quantity:</span>
             <button
               onClick={decrement}
               className="w-10 h-10 flex items-center justify-center bg-gray-300 rounded"
@@ -102,11 +102,11 @@ export function PhaseMaterial({ phaseMaterial }) {
             >
               <Plus className="w-4 h-4" />
             </button>
-            <span className="ml-1 text-sm text-gray-600">{phaseMaterial.unit}</span>
+            <span className="text-gray-900 font-semibold">{phaseMaterial.unit}</span>
           </div>
         ) : (
           <div className="text-base">
-            <span className="font-medium">Quantity:</span>{" "}
+            <span className="font-medium text-blue-600">Quantity:</span>{" "}
             <span className="text-gray-900 font-semibold">{phaseMaterial.quantity} {phaseMaterial.unit}</span>
           </div>
         )}
@@ -114,13 +114,13 @@ export function PhaseMaterial({ phaseMaterial }) {
 
       {/* Price per Quantity */}
       <div className="text-gray-700 text-base">
-        <span className="font-medium">{`Price per ${phaseMaterial.unit}:`}</span>{" "}
+        <span className="font-medium text-blue-600">Price per </span><span className="font-medium text-red-600">{phaseMaterial.unit}:</span>{" "}
         <span className="text-gray-900 font-semibold">₹{phaseMaterial.pricePerQuantity}</span>
       </div>
 
       {/* Total Price */}
       <div className="text-gray-700 text-base">
-        <span className="font-medium">Total Price:</span>{" "}
+        <span className="font-medium text-blue-600">Total Price:</span>{" "}
         <span className="text-gray-900 font-semibold">
           ₹{editMode ? totalPrice : phaseMaterial.totalPrice}
         </span>

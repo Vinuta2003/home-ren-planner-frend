@@ -117,7 +117,7 @@ export function Material({ material }) {
 
       {/* Price & Unit */}
       <div className="text-gray-900 font-semibold">
-        ₹{material.pricePerQuantity} / {material.unit}
+        <span className="text-gray-900 font-semibold">₹{material.pricePerQuantity}</span><span className="text-blue-600 font-semibold"> / {material.unit}</span>
       </div>
 
       {/* Add or Quantity Controls */}
@@ -132,7 +132,7 @@ export function Material({ material }) {
       ) : (
         <div className="space-y-2">
           <div className="flex items-center space-x-2">
-            <span className="text-gray-700">Quantity:</span>
+            <span className="font-medium text-blue-600">Quantity:</span>
             <button
               onClick={decrement}
               className="w-10 h-10 flex items-center justify-center bg-gray-300 rounded"
@@ -154,7 +154,7 @@ export function Material({ material }) {
             >
               <Plus className="w-4 h-4" />
             </button>
-            <span className="text-sm text-gray-500">{material.unit}</span>
+            <span className="text-gray-900 font-semibold">{material.unit}</span>
           </div>
           <button
             onClick={remove}

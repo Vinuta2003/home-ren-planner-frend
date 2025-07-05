@@ -3,14 +3,14 @@ import axios from "axios";
 import axiosInstance from "../../axios/axiosInstance";
 
 export const getPhaseById = createAsyncThunk('getPhaseById',async(phaseId)=>{
-    const res = await axiosInstance.get(`http://localhost:8080/api/user/phase/${phaseId}/phase-materials`)
+    const res = await axiosInstance.get(`/api/user/phase/${phaseId}/phase-materials`)
     const data = res.data;
     return data;
 })
 
 export const addPhaseMaterialsToPhase = createAsyncThunk('addPhaseMaterialsToPhase', async(phaseId,{getState})=>{
     const {chosenMaterialsList} = getState().phase;
-    const res = await axiosInstance.post(`http://localhost:8080/api/user/phase/${phaseId}/phase-materials`,chosenMaterialsList);
+    const res = await axiosInstance.post(`/api/user/phase/${phaseId}/phase-materials`,chosenMaterialsList);
     const data = res.data;
     return data;
 })
