@@ -4,9 +4,13 @@ const BASE_URL = "http://localhost:8080/phase";
 
 
 export const createPhaseApi = async (phaseRequestDTO) => {
-  console.log("api called");
+  try{
   const res = await axios.post(`${BASE_URL}`, phaseRequestDTO);
-  return res.data;
+  return res.data;}
+  catch(e){
+    console.log("error:",e);
+    throw e;
+  }
 };
 
 export const updatePhaseApi = async (id, updatedPhaseRequestDTO) => {

@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getPhasesByProject } from "../app/features/phaseListSlice"; // adjust if needed
 import { Plus } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useMemo } from "react";
 
 
 function PhaseList() {
@@ -11,8 +12,10 @@ function PhaseList() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const phases = useSelector((state) => state.phaselist.projectPhases || []);
-  const loading = useSelector((state) => state.phaselist.loading);
+const projectPhases = useSelector((state) => state.phaselist?.projectPhases);
+const phases = useMemo(() => projectPhases || [], [projectPhases]);
+const loading = useSelector((state) => state.phaselist?.loading || false);
+
 
   useEffect(() => {
     if (projectId) dispatch(getPhasesByProject(projectId));
@@ -20,27 +23,8 @@ function PhaseList() {
 
   return (
 
-    <div className="flex min-h-screen bg-blue-50">
-      {/* Collapsible Sidebar */}
-      <aside className="group w-16 hover:w-64 transition-all duration-300 bg-white shadow-lg p-4 overflow-hidden">
-        <div className="flex flex-col items-start">
-          {/* Hamburger Icon */}
-          <div className="mb-6">
-            <div className="space-y-1">
-              <div className="w-6 h-0.5 bg-blue-600"></div>
-              <div className="w-6 h-0.5 bg-blue-600"></div>
-              <div className="w-6 h-0.5 bg-blue-600"></div>
-            </div>
-          </div>
-
-          {/* Sidebar Links */}
-          <ul className="space-y-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            <li className="text-blue-600 font-medium cursor-pointer hover:underline">Dashboard</li>
-            <li className="text-blue-600 font-medium cursor-pointer hover:underline">Profile</li>
-            <li className="text-blue-600 font-medium cursor-pointer hover:underline">Phases</li>
-          </ul>
-        </div>
-      </aside>
+    <div className="flex min-h-screen bg-blue-50 pt-15">
+      
 
 
       {/* Main Content */}

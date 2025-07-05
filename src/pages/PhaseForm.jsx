@@ -59,13 +59,20 @@ function PhaseForm() {
     };
 console.log("Payload:", payload);
 
-    createPhaseApi(payload)
-      .then(() => navigate(`/phase/project/${formData.project}`))
-      .catch((err) => console.error("Error creating phase:", err));
-  };
+  createPhaseApi(payload)
+  .then(() => navigate(`/phase/project/${formData.project}`))
+  .catch((err) => {
+    if (err.response?.status === 409) {
+      alert("Phase of this type already exists for the room.");
+    } else {
+      console.error("Error creating phase:", err);
+      alert("An error occurred while creating the phase.");
+    }
+  });
 
+  };
   return (
-    <div className="min-h-screen bg-blue-50 flex justify-center items-center">
+    <div className="min-h-screen bg-blue-50 flex justify-center items-center pt-23">
       <form onSubmit={handleSubmit} className="bg-white p-8 rounded-xl shadow-md w-full max-w-xl">
         <h2 className="text-2xl font-bold text-blue-600 mb-6 text-center">Create Phase</h2>
 
