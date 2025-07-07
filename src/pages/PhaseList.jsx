@@ -1,32 +1,39 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getPhasesByRoom } from "../app/features/phaseListSlice"; // adjust if needed
+import { getPhasesByRoom } from "../app/features/phaseListSlice";
 import { Plus } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useMemo } from "react";
-
+import { FaTrash } from "react-icons/fa";
+import axios from "axios";
 
 function PhaseList() {
   const { roomId } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-const roomPhases = useSelector((state) => state.phaselist?.roomPhases);
-const phases = useMemo(() => roomPhases || [], [roomPhases]);
-const loading = useSelector((state) => state.phaselist?.loading || false);
-
+  const roomPhases = useSelector((state) => state.phaselist?.roomPhases);
+  const phases = useMemo(() => roomPhases || [], [roomPhases]);
+  const loading = useSelector((state) => state.phaselist?.loading || false);
 
   useEffect(() => {
     if (roomId) dispatch(getPhasesByRoom(roomId));
   }, [dispatch, roomId]);
 
+  const handleDelete = (id) => {
+    if (window.confirm("Delete this phase?")) {
+      axios
+        .delete(`http://localhost:8080/phase/delete/${id}`)
+        .then(() => dispatch(getPhasesByRoom(roomId)))
+        .catch((err) => {
+          console.error("Failed to delete phase", err);
+          alert("Error deleting phase");
+        });
+    }
+  };
+
   return (
-
     <div className="flex min-h-screen bg-blue-50 pt-15">
-      
-
-
       {/* Main Content */}
       <div className="flex-1 p-8">
         <div className="bg-white p-6 rounded-2xl shadow-xl">
@@ -41,32 +48,42 @@ const loading = useSelector((state) => state.phaselist?.loading || false);
           ) : (
             <div className="flex flex-col space-y-4">
               {phases.map((phase) => (
-                <Link to={`/phase/${phase.id}`}  key={phase.id}>
-                  <div
-                    className="bg-blue-100 border border-blue-300 p-4 rounded-xl shadow-md flex justify-between items-start hover:shadow-lg transition"
-                  >
-                    <div>
+                <div
+                  key={phase.id}
+                  className="bg-blue-100 border border-blue-300 p-4 rounded-xl shadow-md flex justify-between items-start hover:shadow-lg transition"
+                >
+                  <Link to={`/phase/${phase.id}`} className="flex-1">
+                    <h3 className="font-bold text-blue-800 text-lg mb-1">
+                      {phase.phaseName}
+                    </h3>
+                    <p className="text-sm text-blue-800">{phase.description}</p>
+                  </Link>
 
-                      <h3 className="font-bold text-blue-800 text-lg mb-1">{phase.phaseName}</h3>
-                      <p className="text-sm text-blue-800">{phase.description}</p>
-                    </div>
+                  <div className="flex items-center gap-2 py-3">
                     <span
-                      className={`text-xs font-semibold px-3 py-1 rounded-full mt-1
-        ${phase.phaseStatus === "NOTSTARTED"
-                          ? "bg-red-100 text-red-700"
-                          : phase.phaseStatus === "INSPECTION"
+                      className={`text-xs font-semibold px-3 py-1 rounded-full
+                        ${
+                          phase.phaseStatus === "NOTSTARTED"
+                            ? "bg-red-100 text-red-700"
+                            : phase.phaseStatus === "INSPECTION"
                             ? "bg-yellow-100 text-yellow-700"
                             : phase.phaseStatus === "INPROGRESS"
-                              ? "bg-green-100 text-green-700"
-                              : "bg-blue-200 text-blue-800"
+                            ? "bg-green-100 text-green-700"
+                            : "bg-blue-200 text-blue-800"
                         }`}
                     >
                       {phase.phaseStatus}
                     </span>
+
+                    <button
+                      onClick={() => handleDelete(phase.id)}
+                      className="text-red-600 hover:text-red-800"
+                      title="Delete Phase"
+                    >
+                      <FaTrash />
+                    </button>
                   </div>
-                </Link>
-
-
+                </div>
               ))}
             </div>
           )}
@@ -75,7 +92,7 @@ const loading = useSelector((state) => state.phaselist?.loading || false);
 
       {/* Floating Button */}
       <button
-        onClick={() => navigate(`/phase-form`)}
+        onClick={() => navigate(`/phase-form/${roomId}`)}
         className="fixed bottom-6 right-6 bg-blue-600 text-white rounded-full p-4 shadow-lg group hover:bg-blue-700 transition"
       >
         <div className="flex items-center space-x-2">

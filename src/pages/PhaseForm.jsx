@@ -2,12 +2,17 @@ import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { createPhaseApi } from "../app/apis/phaseListAPIs";
 import axios from "axios";
+import { useParams } from "react-router-dom";
+
+
 
 function PhaseForm() {
   const navigate = useNavigate();
   const location = useLocation();
+const { roomId } = useParams();
 
-  const [selectedRenovationType, setSelectedRenovationType] = useState('');
+const [renovationType, setRenovationType] = useState('');
+
   const [phaseTypes, setPhaseTypes] = useState([]);
   const [phaseStatuses, setPhaseStatuses] = useState([]);
 
@@ -21,6 +26,22 @@ function PhaseForm() {
     vendor: "",
     room: ""
   });
+  useEffect(() => {
+  if (roomId) {
+    axios.get(`http://localhost:8080/rooms/${roomId}`)
+      .then(res => {
+        const type = res.data.renovationType;
+        setRenovationType(type);
+      })
+      .catch(err => console.error("Error fetching room:", err));
+  }
+}, [roomId]);
+
+useEffect(() => {
+  if (roomId) {
+    setFormData((prev) => ({ ...prev, room: roomId }));
+  }
+}, [roomId]);
 
   // Handle vendorId passed from VendorListDisplay
   useEffect(() => {
@@ -38,16 +59,16 @@ function PhaseForm() {
   }, []);
 
   useEffect(() => {
-    if (selectedRenovationType) {
+    if (renovationType) {
       axios
-        .get(`http://localhost:8080/phase/phases/by-renovation-type/${selectedRenovationType}`)
+        .get(`http://localhost:8080/phase/phases/by-renovation-type/${renovationType}`)
         .then(res => setPhaseTypes(res.data))
         .catch(err => console.error(err));
     } else {
       setPhaseTypes([]);
     }
-  }, [selectedRenovationType]);
-
+  }, [renovationType]);
+console.log(renovationType);
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -66,7 +87,7 @@ function PhaseForm() {
 
   const payload = {
     vendor: { id: formData.vendor },
-    room: { id: formData.room },
+    room: { id: roomId },
     phaseName: formData.phaseName,
     description: formData.description,
     startDate: formData.startDate,
@@ -82,7 +103,6 @@ function PhaseForm() {
     if (res.data) {
       alert("Phase of this type already exists for the room.");
     } else {
-      // Proceed to create
       createPhaseApi(payload)
         .then(() => navigate(`/phase/room/${formData.room}`))
         .catch(err => {
@@ -137,14 +157,17 @@ function PhaseForm() {
           className="w-full px-4 py-2 border border-gray-300 rounded mb-3 text-gray-500"
         />
 
-        <input
-          type="text"
-          name="room"
-          placeholder="Room ID"
-          value={formData.room}
+        <select
+          name="phaseType"
+          value={formData.phaseType}
           onChange={handleChange}
-          className="w-full px-4 py-2 border border-gray-300 rounded mb-3"
-        />
+          className="w-full px-4 py-2 border border-gray-300 rounded mb-3 bg-white"
+        >
+          <option value="">-- Select Phase Type --</option>
+          {phaseTypes.map((type) => (
+            <option key={type} value={type}>{type.replaceAll("_", " ")}</option>
+          ))}
+        </select>
 
         <input
           type="text"
@@ -163,28 +186,9 @@ function PhaseForm() {
           Choose Vendor From List
         </button>
 
-        <select
-          value={selectedRenovationType}
-          onChange={(e) => setSelectedRenovationType(e.target.value)}
-          className="w-full px-4 py-2 border border-gray-300 rounded mb-3 bg-white"
-        >
-          <option value="">-- Select Renovation Type --</option>
-          <option value="KITCHEN_RENOVATION">Kitchen Renovation</option>
-          <option value="BATHROOM_RENOVATION">Bathroom Renovation</option>
-          <option value="BEDROOM_RENOVATION">Bedroom Renovation</option>
-        </select>
+       
 
-        <select
-          name="phaseType"
-          value={formData.phaseType}
-          onChange={handleChange}
-          className="w-full px-4 py-2 border border-gray-300 rounded mb-3 bg-white"
-        >
-          <option value="">-- Select Phase Type --</option>
-          {phaseTypes.map((type) => (
-            <option key={type} value={type}>{type.replaceAll("_", " ")}</option>
-          ))}
-        </select>
+        
 
         <select
           name="phaseStatus"

@@ -11,7 +11,6 @@ import PhaseList from './pages/PhaseList'
 import VendorListDisplay from './pages/VendorListDisplay'
 import ProtectedRoute from './routes/ProtectedRoute'
 import UpdateProfile from './pages/UpdateProfile'
-import VendorListDisplay from './pages/VendorListDisplay'
 import AdminDashboard from './pages/AdminDashboard'
 import PageNotFound from './pages/PageNotFound'
 import NavBar from './components/NavBar'
@@ -32,7 +31,7 @@ function App() {
         <Route path="/login" element={<LoginForm />} />
         <Route path="/vendor-list" element={<VendorListDisplay />} />
         
-        <Route path="/phase-form" element={<PhaseForm />} />
+        <Route path="/phase-form/:roomId" element={<PhaseForm />} />
         <Route path="/phase/room/:roomId" element={<PhaseList />} />
         <Route path="/phase/:phaseId" element={<PhasePage />} />
         <Route path="/editphase/:id" element={<EditPhaseForm/>}/>
@@ -52,7 +51,7 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route path="/vendorlist" element={<VendorListDisplay />} />
+        
         <Route
           path="/admin-dashboard"
           element={
