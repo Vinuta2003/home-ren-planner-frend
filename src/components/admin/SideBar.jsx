@@ -1,7 +1,7 @@
 import { useDispatch } from "react-redux";
 import { Navigate } from "react-router-dom";
 import { logout } from "../../redux/auth/authSlice";
-import { Users, Building2, Package, LogOut } from "lucide-react";
+import { Users, Building2, Package, LogOut, LayoutDashboard } from "lucide-react";
 
 export default function SideBar({ setActiveTab, activeTab }) {
 
@@ -13,6 +13,7 @@ export default function SideBar({ setActiveTab, activeTab }) {
   }
 
   const tabs = [
+    { name: "dashboard", label: "Dashboard", icon: <LayoutDashboard size={18} /> },
     { name: "customer", label: "Customer", icon: <Users size={18} /> },
     { name: "vendor", label: "Vendor", icon: <Building2 size={18} /> },
     { name: "material", label: "Material", icon: <Package size={18} /> },
@@ -21,7 +22,7 @@ export default function SideBar({ setActiveTab, activeTab }) {
   return (
     <div className="h-screen w-64 bg-blue-100 text-blue-900 flex flex-col shadow-md fixed top-0 left-0 z-20">
       <div className="p-6 font-bold text-xl text-center border-b border-blue-200">
-        Admin Panel
+        Admin Dashboard
       </div>
 
       <nav className="flex-1 p-4 space-y-2">

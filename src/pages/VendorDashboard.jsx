@@ -6,17 +6,30 @@ import PhaseCard from "../components/vendor/PhaseCard";
 import axiosInstance from "../axios/axiosInstance";
 import UpdateProfile from "./UpdateProfile";
 import SideBar from "../components/vendor/SideBar";
+import NavBar from "../components/NavBar";
 
 const VendorDashboard = () => {
   const dispatch = useDispatch();
   const [phases, setPhases] = useState([]);
   const [quotes, setQuotes] = useState({});
+  const [approval, setApproval] = useState(null);
 
   const [activeTab, setActiveTab] = useState("assignedPhases");
 
   useEffect(() => {
     fetchPhases();
+    fetchVendorDetails();
   }, []);
+
+  const fetchVendorDetails = async () => {
+    try {
+      const res = await axiosInstance.get("/vendor/getVendorDetails");
+      setApproval(res.data.approval);
+      console.log(res.data);
+    } catch (err) {
+      console.log("Error Fetching Vendor Approval Status:", err);
+    }
+  };
 
   const fetchPhases = async () => {
     try {
@@ -49,7 +62,7 @@ const VendorDashboard = () => {
     navigate("/login");
   };
 
-  return (
+  return approval === true ? (
     <div className="flex min-h-screen font-sans bg-blue-50">
       <SideBar setActiveTab={setActiveTab} handleLogout={handleLogout} />
       {activeTab === "updateProfile" ? (
@@ -78,6 +91,17 @@ const VendorDashboard = () => {
         </main>
       )}
     </div>
+  ) : approval === false ? (
+    <p className="text-red-600 text-center mt-10 text-lg font-semibold">
+      Your Request has been Rejected
+    </p>
+  ) : (
+    <>
+      <NavBar />
+      <p className="text-gray-700 text-center mt-32 text-4xl font-bold">
+        Your request is not approved yet
+      </p>
+    </>
   );
 };
 

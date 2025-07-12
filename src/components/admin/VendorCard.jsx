@@ -1,76 +1,131 @@
-import { CheckCircle2, XCircle, Trash2, Mail, Phone, AlertCircle } from "lucide-react";
+import { CheckCircle2, XCircle, Trash2, Mail, Phone, AlertCircle, Star, Clock } from "lucide-react";
 
 export default function VendorCard({ vendor, onApprove, onReject, onRemove }) {
   return (
-    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 shadow-md flex flex-col h-full">
-      <div className="flex items-center gap-4 mb-3">
-        <img
-          src={vendor?.pic || "https://img.icons8.com/?size=100&id=12438&format=png&color=000000"}
-          alt="Profile"
-          className="w-14 h-14 rounded-lg"
-        />
-        <div>
-          <h5 className="text-lg font-extrabold text-blue-900 leading-tight">{vendor.companyName}</h5>
-          <p className="text-base font-semibold text-blue-700 mt-1">{vendor.name}</p>
-          <p className="text-xs text-gray-500 font-medium mt-0.5 flex items-center gap-1"><Mail size={14} className="inline-block" />{vendor.email}</p>
-          <p className="text-xs text-gray-500 font-medium mt-0.5 flex items-center gap-1"><Phone size={14} className="inline-block" />{vendor.contact}</p>
+    <div className="backdrop-blur-sm bg-blue-50/90 border border-blue-200/50 rounded-xl p-4 shadow-lg hover:shadow-xl transition-all duration-300 flex flex-col h-full group max-w-sm relative overflow-hidden">
+      {/* Subtle Background Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-100/30 to-white/20 rounded-xl"></div>
+      <div className="relative z-10 flex flex-col h-full">
+      {/* Header Section with Gradient Background */}
+      <div className="flex items-start gap-3 mb-3">
+        <div className="relative flex-shrink-0">
+          <img
+            src={vendor?.pic || "https://img.icons8.com/?size=100&id=12438&format=png&color=000000"}
+            alt="Profile"
+            className="w-12 h-12 rounded-lg object-cover border-2 border-gray-200 shadow-md group-hover:scale-105 transition-transform duration-300"
+          />
+          <div className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-white ${
+            vendor.available ? 'bg-green-400' : 'bg-red-400'
+          }`}></div>
+        </div>
+        <div className="flex-1 min-w-0">
+          <h5 className="text-base font-bold text-gray-900 leading-tight mb-1">
+            {vendor.companyName}
+          </h5>
+          <p className="text-sm font-semibold text-gray-700 mb-2">
+            {vendor.name}
+          </p>
+          
+          {/* Contact Information with Icons */}
+          <div className="space-y-1">
+            <div className="flex items-start gap-2 text-xs text-gray-600 bg-blue-50 rounded-md px-2 py-1">
+              <Mail size={12} className="flex-shrink-0 text-blue-500 mt-0.5" />
+              <span className="break-all leading-relaxed min-w-0 flex-1">{vendor.email}</span>
+            </div>
+            <div className="flex items-center gap-2 text-xs text-gray-600 bg-blue-50 rounded-md px-2 py-1">
+              <Phone size={12} className="flex-shrink-0 text-blue-500" />
+              <span className="break-all">{vendor.contact}</span>
+            </div>
+          </div>
         </div>
       </div>
-      <div className="flex items-center gap-4 mb-2 mt-1">
-        <span className="text-blue-800 text-sm font-semibold">Experience:</span>
-        <span className="text-gray-700 text-sm font-bold">{vendor.experience} years</span>
-        <span className={`ml-auto text-xs font-bold rounded px-2 py-0.5 ${vendor.available ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>
+
+      {/* Experience and Availability with Enhanced Design */}
+      <div className="flex items-center justify-between mb-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
+        <div className="flex items-center gap-2">
+          <Clock size={14} className="text-blue-600" />
+          <span className="text-gray-700 text-xs font-medium">Experience:</span>
+          <span className="text-gray-900 text-xs font-bold bg-white px-2 py-0.5 rounded-md border border-gray-200">
+            {vendor.experience} years
+          </span>
+        </div>
+        <span className={`text-xs font-semibold rounded-md px-3 py-1 ${
+          vendor.available 
+            ? "bg-blue-100 text-blue-800 border border-blue-200" 
+            : "bg-gray-100 text-gray-800 border border-gray-200"
+        }`}>
           {vendor.available ? "Available" : "Unavailable"}
         </span>
       </div>
-      <div className="mb-2">
-        <p className="font-semibold text-blue-900 mb-1">Skills:</p>
+
+      {/* Skills Section with Table Design */}
+      <div className="flex-1">
+        <h6 className="font-bold text-gray-800 mb-3 text-xs uppercase tracking-wider flex items-center gap-2">
+          <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+          Skills & Pricing
+        </h6>
         {vendor.skills && vendor.skills.length > 0 ? (
-          <ul className="text-sm space-y-1 mt-2">
-            {vendor.skills.map((skill, index) => {
-              const [name, price] = skill.split(" - ");
-              return (
-                <li key={index} className="flex justify-between items-center bg-white py-0.5 px-3 rounded-lg">
-                  <span className="font-medium text-blue-900">{name}</span>
-                  <span className="font-semibold text-green-700">{price}</span>
-                </li>
-              );
-            })}
-          </ul>
+          <div className="bg-white/90 rounded-lg border border-blue-200 overflow-hidden shadow-sm">
+            {/* Table Header */}
+            <div className="bg-blue-50 px-3 py-2 border-b border-blue-200">
+              <div className="flex justify-between items-center text-xs font-semibold text-gray-700">
+                <span>Skill</span>
+                <span>Price</span>
+              </div>
+            </div>
+            {/* Table Body */}
+            <div className="divide-y divide-blue-100">
+              {vendor.skills.map((skill, index) => {
+                const [name, price] = skill.split(" - ");
+                const cleanPrice = price ? price.replace(/₹/g, '').trim() : '';
+                return (
+                  <div key={index} className="flex justify-between items-center px-3 py-2 hover:bg-blue-50 transition-colors duration-150">
+                    <span className="font-medium text-gray-800 text-xs">{name}</span>
+                    <span className="font-bold text-blue-600 text-xs bg-blue-100 px-2 py-1 rounded-md">
+                      ₹{cleanPrice}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
         ) : (
-          <div className="flex items-center justify-center text-gray-400 italic text-md gap-1 mt-1">
-            <AlertCircle size={14} />
+          <div className="flex items-center justify-center text-gray-400 italic text-xs gap-2 py-4 bg-blue-50 rounded-lg border border-blue-200">
+            <AlertCircle size={14} className="text-gray-400" />
             No Skills Found
           </div>
         )}
       </div>
-      <div className="flex gap-2 mt-auto pt-1">
+
+      {/* Action Buttons with Enhanced Design */}
+      <div className="flex gap-2 mt-4 pt-3 border-t border-blue-200">
         {onApprove && onReject ? (
           <>
             <button
               onClick={() => onApprove(vendor.exposedId)}
-              className="flex-1 px-3 py-1 rounded bg-green-600 text-white hover:bg-green-700 flex items-center gap-2 justify-center cursor-pointer"
+              className="flex-1 px-4 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700 transition-all duration-200 flex items-center gap-2 justify-center font-semibold text-xs shadow-sm hover:shadow-md transform hover:scale-105 cursor-pointer"
             >
-              <CheckCircle2 size={16} />
+              <CheckCircle2 size={14} />
               Approve
             </button>
             <button
               onClick={() => onReject(vendor.exposedId)}
-              className="flex-1 px-3 py-1 rounded bg-yellow-500 text-white hover:bg-yellow-600 flex items-center gap-2 justify-center cursor-pointer"
+              className="flex-1 px-4 py-2 rounded-lg bg-yellow-500 text-white hover:bg-yellow-600 transition-all duration-200 flex items-center gap-2 justify-center font-semibold text-xs shadow-sm hover:shadow-md transform hover:scale-105 cursor-pointer"
             >
-              <XCircle size={16} />
+              <XCircle size={14} />
               Reject
             </button>
           </>
         ) : onRemove ? (
           <button
             onClick={() => onRemove(vendor.exposedId)}
-            className="flex-1 px-3 py-1 rounded bg-red-600 text-white hover:bg-red-700 flex items-center gap-2 justify-center cursor-pointer"
+            className="w-full px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition-all duration-200 flex items-center gap-2 justify-center font-semibold text-xs shadow-sm hover:shadow-md transform hover:scale-105 cursor-pointer"
           >
-            <Trash2 size={16} />
-            Delete Vendor
+            <Trash2 size={14} />
+            Delete
           </button>
         ) : null}
+      </div>
       </div>
     </div>
   );

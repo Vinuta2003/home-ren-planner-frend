@@ -6,7 +6,7 @@ export default function SideBar({setActiveTab, handleLogout}) {
   return (
     <aside className="w-64 sticky top-0 h-screen bg-gradient-to-b from-blue-50 to-white border-r border-blue-100 shadow-xl rounded-r-2xl flex flex-col justify-between px-4 py-8">
       <div className="space-y-6">
-        <h2 className="text-2xl font-extrabold text-blue-800 px-2 text-center mx-auto tracking-wide mb-2">VENDOR PANEL</h2>
+        <h2 className="text-2xl font-extrabold text-blue-800 px-2 text-center mx-auto tracking-wide mb-2">VENDOR DASHBOARD</h2>
         <hr className="border-blue-200 mb-4" />
         <div
           onClick={() => setActiveTab("assignedPhases")}
