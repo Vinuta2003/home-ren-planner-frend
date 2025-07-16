@@ -19,8 +19,8 @@ export default function RegisterForm() {
     { value: "ELECTRICAL", label: "Electrical" },
     { value: "PAINTING", label: "Painting" },
     { value: "CARPENTRY", label: "Carpentry" },
-    { value: "TILING", label: "Flooring" },
-    { value: "CIVIL", label: "Tiling" },
+    { value: "TILING", label: "Tiling" },
+    { value: "CIVIL", label: "Civil" },
   ];
   const [skillError, setSkillError] = useState("");
 
@@ -90,7 +90,7 @@ export default function RegisterForm() {
             if (responseData?.role === "VENDOR") navigate("/vendor-dashboard");
             else navigate("/");
           },
-          autoClose: 3000,
+          autoClose: 2500
         });
       } else toast.message("Registration Unsuccessful!");
     } catch (e) {
