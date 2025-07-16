@@ -7,25 +7,34 @@ import toast, { Toaster } from "react-hot-toast";
 export default function VendorListDisplay() {
   const location = useLocation();
   const navigate = useNavigate();
+
   const [vendors, setVendors] = useState([]);
   const [selectedVendor, setSelectedVendor] = useState(null);
   const [loading, setLoading] = useState(false);
   const [assignedVendorIds, setAssignedVendorIds] = useState(new Set());
   const [phaseType, setPhaseType] = useState("");
+  const [formData, setFormData] = useState(null); // 🔥 Important fix
 
-  // Get phaseType from query param
+  // Extract phaseType from query param + formData from location.state
   useEffect(() => {
     const params = new URLSearchParams(location.search);
-    const phase = params.get("phaseType");
-    if (!phase) {
+    const type = params.get("phaseType");
+    if (!type) {
       toast.error("No phaseType provided");
-      navigate(-1); // Go back to PhaseForm
+      navigate(-1);
     } else {
-      setPhaseType(phase);
+      setPhaseType(type);
     }
-  }, [location.search]);
 
-  // Fetch vendors based on phaseType === skillType
+    // Retrieve formData passed from PhaseForm
+    if (location.state?.formData) {
+      setFormData(location.state.formData);
+    } else {
+      toast.error("Missing form data");
+      navigate(-1);
+    }
+  }, [location]);
+
   useEffect(() => {
     if (phaseType) fetchVendors();
   }, [phaseType]);
@@ -44,34 +53,22 @@ export default function VendorListDisplay() {
     setLoading(false);
   };
 
-  const toggleAssign = async (vendorId, name) => {
-    const isAssigned = assignedVendorIds.has(vendorId);
-    const action = isAssigned ? "unassign" : "assign";
-    try {
-      await axiosInstance.put(`/api/vendor-assignment/${action}/${vendorId}`);
-      toast.success(`${action === "assign" ? "Assigned" : "Unassigned"} ${name}`);
-      setAssignedVendorIds((prev) => {
-        const newSet = new Set(prev);
-        isAssigned ? newSet.delete(vendorId) : newSet.add(vendorId);
-        return newSet;
-      });
-    } catch (err) {
-      console.error(`Error during ${action}:`, err);
-      toast.error(`${action} failed for ${name}`);
-    }
-  };
-
-  // Pass both vendorId and vendorName to PhaseForm
   const assignToPhaseForm = (vendorId, vendorName) => {
-    navigate(`/phase-form?vendorId=${vendorId}&vendorName=${encodeURIComponent(vendorName)}`);
+    if (!formData || !formData.room) {
+      toast.error("Missing form context");
+      return;
+    }
+
+    navigate(`/phase-form/${formData.room}?vendorId=${vendorId}&vendorName=${encodeURIComponent(vendorName)}`, {
+      state: { formData }
+    });
   };
 
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       <Toaster position="top-center" toastOptions={{ duration: 3000 }} />
       <h2 className="text-center text-xl font-bold mb-6 text-blue-700">
-        Vendor List for Phase Type:{" "}
-        <span className="text-black">{phaseType.replaceAll("_", " ")}</span>
+        Vendor List for Phase Type: <span className="text-black">{phaseType.replaceAll("_", " ")}</span>
       </h2>
 
       {loading ? (
@@ -118,9 +115,7 @@ export default function VendorListDisplay() {
       ) : (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {vendors.length === 0 ? (
-            <p className="col-span-full text-center text-gray-500 italic">
-              No vendors available.
-            </p>
+            <p className="col-span-full text-center text-gray-500 italic">No vendors available.</p>
           ) : (
             vendors.map((vendor) => (
               <div

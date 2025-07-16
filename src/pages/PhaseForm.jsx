@@ -1,221 +1,3 @@
-// import { useEffect, useState } from "react";
-// import { useNavigate, useLocation } from "react-router-dom";
-// import { createPhaseApi } from "../app/apis/phaseListAPIs";
-// import axios from "axios";
-// import { useParams } from "react-router-dom";
-
-
-
-// function PhaseForm() {
-//   const navigate = useNavigate();
-//   const location = useLocation();
-// const { roomId } = useParams();
-
-// const [renovationType, setRenovationType] = useState('');
-
-//   const [phaseTypes, setPhaseTypes] = useState([]);
-//   const [phaseStatuses, setPhaseStatuses] = useState([]);
-
-//   const [formData, setFormData] = useState({
-//     phaseName: "",
-//     description: "",
-//     phaseType: "",
-//     phaseStatus: "",
-//     startDate: "",
-//     endDate: "",
-//     vendor: "",
-//     room: ""
-//   });
-//   useEffect(() => {
-//   if (roomId) {
-//     axios.get(`http://localhost:8080/rooms/${roomId}`)
-//       .then(res => {
-//         const type = res.data.renovationType;
-//         setRenovationType(type);
-//       })
-//       .catch(err => console.error("Error fetching room:", err));
-//   }
-// }, [roomId]);
-
-// useEffect(() => {
-//   if (roomId) {
-//     setFormData((prev) => ({ ...prev, room: roomId }));
-//   }
-// }, [roomId]);
-
-//   // Handle vendorId passed from VendorListDisplay
-//   useEffect(() => {
-//     const params = new URLSearchParams(location.search);
-//     const vendorId = params.get("vendorId");
-//     if (vendorId) {
-//       setFormData((prev) => ({ ...prev, vendor: vendorId }));
-//     }
-//   }, [location.search]);
-
-//   useEffect(() => {
-//     axios.get("http://localhost:8080/api/enums/phase-statuses")
-//       .then(res => setPhaseStatuses(res.data))
-//       .catch(err => console.error(err));
-//   }, []);
-
-//   useEffect(() => {
-//     if (renovationType) {
-//       axios
-//         .get(`http://localhost:8080/phase/phases/by-renovation-type/${renovationType}`)
-//         .then(res => setPhaseTypes(res.data))
-//         .catch(err => console.error(err));
-//     } else {
-//       setPhaseTypes([]);
-//     }
-//   }, [renovationType]);
-// console.log(renovationType);
-//   const handleChange = (e) => {
-//     setFormData({ ...formData, [e.target.name]: e.target.value });
-//   };
-
-//   const handleSelectVendorClick = () => {
-//     if (!formData.phaseType) {
-//       alert("Please select a phase type first");
-//       return;
-//     }
-//     navigate(`/vendor-list?phaseType=${formData.phaseType}`);
-//   };
-
- 
-//   const handleSubmit = async (e) => {
-//   e.preventDefault();
-
-//   const payload = {
-//     vendor: { id: formData.vendor },
-//     room: { id: roomId },
-//     phaseName: formData.phaseName,
-//     description: formData.description,
-//     startDate: formData.startDate,
-//     endDate: formData.endDate,
-//     phaseType: formData.phaseType,
-//     phaseStatus: formData.phaseStatus,
-//   };
-
-//   console.log("Payload:", payload);
-
-//   axios.get(`http://localhost:8080/phase/phase/exists?roomId=${formData.room}&phaseType=${formData.phaseType}`)
-//   .then(res => {
-//     if (res.data) {
-//       alert("Phase of this type already exists for the room.");
-//     } else {
-//       createPhaseApi(payload)
-//         .then(() => navigate(`/phase/room/${formData.room}`))
-//         .catch(err => {
-//           console.error("Error creating phase:", err);
-//           alert("An error occurred while creating the phase.");
-//         });
-//     }
-//   })
-//   .catch(err => {
-//     console.error("Error checking existing phase:", err);
-//     alert("Could not verify existing phase.");
-//   });
-//   }
-
-//   return (
-//     <div className="min-h-screen bg-blue-50 flex justify-center items-center pt-23">
-//       <form onSubmit={handleSubmit} className="bg-white p-8 rounded-xl shadow-md w-full max-w-xl">
-//         <h2 className="text-2xl font-bold text-blue-600 mb-6 text-center">Create Phase</h2>
-
-//         <input
-//           type="text"
-//           name="phaseName"
-//           placeholder="Phase Name"
-//           value={formData.phaseName}
-//           onChange={handleChange}
-//           className="w-full px-4 py-2 border border-gray-300 rounded mb-3"
-//         />
-
-//         <textarea
-//           name="description"
-//           placeholder="Description"
-//           value={formData.description}
-//           onChange={handleChange}
-//           className="w-full px-4 py-2 border border-gray-300 rounded mb-3"
-//         />
-
-//         <input
-//           type="date"
-//           name="startDate"
-//           value={formData.startDate}
-//           onChange={handleChange}
-//           min={new Date().toISOString().split("T")[0]}
-//           className="w-full px-4 py-2 border border-gray-300 rounded mb-3 text-gray-500"
-//         />
-
-//         <input
-//           type="date"
-//           name="endDate"
-//           value={formData.endDate}
-//           onChange={handleChange}
-//           min={new Date().toISOString().split("T")[0]}
-//           className="w-full px-4 py-2 border border-gray-300 rounded mb-3 text-gray-500"
-//         />
-
-//         <select
-//           name="phaseType"
-//           value={formData.phaseType}
-//           onChange={handleChange}
-//           className="w-full px-4 py-2 border border-gray-300 rounded mb-3 bg-white"
-//         >
-//           <option value="">-- Select Phase Type --</option>
-//           {phaseTypes.map((type) => (
-//             <option key={type} value={type}>{type.replaceAll("_", " ")}</option>
-//           ))}
-//         </select>
-
-//         <input
-//           type="text"
-//           name="vendor"
-//           placeholder="Vendor ID"
-//           value={formData.vendor}
-//           onChange={handleChange}
-//           className="w-full px-4 py-2 border border-gray-300 rounded mb-3"
-//         />
-
-//         <button
-//           type="button"
-//           onClick={handleSelectVendorClick}
-//           className="w-full bg-green-600 text-white py-2 rounded mb-3 hover:bg-green-700"
-//         >
-//           Choose Vendor From List
-//         </button>
-
-       
-
-        
-
-//         <select
-//           name="phaseStatus"
-//           value={formData.phaseStatus}
-//           onChange={handleChange}
-//           className="w-full px-4 py-2 border border-gray-300 rounded mb-5 bg-white"
-//         >
-//           <option value="">-- Select Phase Status --</option>
-//           {phaseStatuses.map((status) => (
-//             <option key={status} value={status}>{status.replaceAll("_", " ")}</option>
-//           ))}
-//         </select>
-
-//         <button
-//           type="submit"
-//           className="w-full bg-blue-600 text-white py-2 rounded font-semibold hover:bg-blue-700 transition"
-//         >
-//           Create Phase
-//         </button>
-//       </form>
-//     </div>
-//   );
-// }
-
-// export default PhaseForm;
-
-
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation, useParams } from "react-router-dom";
 import { createPhaseApi } from "../app/apis/phaseListAPIs";
@@ -226,10 +8,9 @@ function PhaseForm() {
   const location = useLocation();
   const { roomId } = useParams();
 
-  const [renovationType, setRenovationType] = useState("");
+  const [renovationType, setRenovationType] = useState('');
   const [phaseTypes, setPhaseTypes] = useState([]);
   const [phaseStatuses, setPhaseStatuses] = useState([]);
-
   const [formData, setFormData] = useState({
     phaseName: "",
     description: "",
@@ -237,35 +18,33 @@ function PhaseForm() {
     phaseStatus: "",
     startDate: "",
     endDate: "",
-    vendor: "",        // vendorId to send to backend
-    vendorName: "",    // vendorName to display on UI
+    vendor: "",
+    vendorName: "",
     room: ""
   });
 
-  // Get room details
+  // Fetch room details
   useEffect(() => {
     if (roomId) {
       axios.get(`http://localhost:8080/rooms/${roomId}`)
         .then(res => {
-          const type = res.data.renovationType;
-          setRenovationType(type);
+          setRenovationType(res.data.renovationType);
+          setFormData(prev => ({ ...prev, room: roomId }));
         })
         .catch(err => console.error("Error fetching room:", err));
-
-      setFormData((prev) => ({ ...prev, room: roomId }));
     }
   }, [roomId]);
 
-  // Get vendorId and vendorName from query params
+  // Handle vendor info from VendorListDisplay
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const vendorId = params.get("vendorId");
     const vendorName = params.get("vendorName");
     if (vendorId && vendorName) {
-      setFormData((prev) => ({
+      setFormData(prev => ({
         ...prev,
         vendor: vendorId,
-        vendorName: decodeURIComponent(vendorName),
+        vendorName: decodeURIComponent(vendorName)
       }));
     }
   }, [location.search]);
@@ -277,9 +56,11 @@ function PhaseForm() {
       .catch(err => console.error(err));
   }, []);
 
+  // Fetch phase types by renovation type
   useEffect(() => {
     if (renovationType) {
-      axios.get(`http://localhost:8080/phase/phases/by-renovation-type/${renovationType}`)
+      axios
+        .get(`http://localhost:8080/phase/phases/by-renovation-type/${renovationType}`)
         .then(res => setPhaseTypes(res.data))
         .catch(err => console.error(err));
     } else {
@@ -288,7 +69,7 @@ function PhaseForm() {
   }, [renovationType]);
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   const handleSelectVendorClick = () => {
@@ -296,7 +77,9 @@ function PhaseForm() {
       alert("Please select a phase type first");
       return;
     }
-    navigate(`/vendor-list?phaseType=${formData.phaseType}`);
+    navigate(`/vendor-list?phaseType=${formData.phaseType}`, {
+      state: { formData }
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -313,114 +96,71 @@ function PhaseForm() {
       phaseStatus: formData.phaseStatus,
     };
 
-    console.log("Payload:", payload);
-
-    try {
-      const existsRes = await axios.get(`http://localhost:8080/phase/phase/exists?roomId=${formData.room}&phaseType=${formData.phaseType}`);
-      if (existsRes.data) {
-        alert("Phase of this type already exists for the room.");
-      } else {
-        await createPhaseApi(payload);
-        navigate(`/phase/room/${formData.room}`);
-      }
-    } catch (err) {
-      console.error("Error creating phase:", err);
-      alert("An error occurred while creating the phase.");
-    }
+    axios.get(`http://localhost:8080/phase/phase/exists?roomId=${formData.room}&phaseType=${formData.phaseType}`)
+      .then(res => {
+        if (res.data) {
+          alert("Phase of this type already exists for the room.");
+        } else {
+          createPhaseApi(payload)
+            .then(() => navigate(`/phase/room/${formData.room}`))
+            .catch(err => {
+              console.error("Error creating phase:", err);
+              alert("An error occurred while creating the phase.");
+            });
+        }
+      })
+      .catch(err => {
+        console.error("Error checking existing phase:", err);
+        alert("Could not verify existing phase.");
+      });
   };
 
   return (
-    <div className="min-h-screen bg-blue-50 flex justify-center items-center pt-20">
+    <div className="min-h-screen bg-blue-50 flex justify-center items-center pt-23">
       <form onSubmit={handleSubmit} className="bg-white p-8 rounded-xl shadow-md w-full max-w-xl">
         <h2 className="text-2xl font-bold text-blue-600 mb-6 text-center">Create Phase</h2>
 
-        <input
-          type="text"
-          name="phaseName"
-          placeholder="Phase Name"
-          value={formData.phaseName}
-          onChange={handleChange}
-          className="w-full px-4 py-2 border border-gray-300 rounded mb-3"
-        />
+        <input name="phaseName" placeholder="Phase Name" value={formData.phaseName} onChange={handleChange}
+          className="w-full px-4 py-2 border border-gray-300 rounded mb-3" />
 
-        <textarea
-          name="description"
-          placeholder="Description"
-          value={formData.description}
-          onChange={handleChange}
-          className="w-full px-4 py-2 border border-gray-300 rounded mb-3"
-        />
+        <textarea name="description" placeholder="Description" value={formData.description} onChange={handleChange}
+          className="w-full px-4 py-2 border border-gray-300 rounded mb-3" />
 
-        <input
-          type="date"
-          name="startDate"
-          value={formData.startDate}
-          onChange={handleChange}
+        <input type="date" name="startDate" value={formData.startDate} onChange={handleChange}
           min={new Date().toISOString().split("T")[0]}
-          className="w-full px-4 py-2 border border-gray-300 rounded mb-3 text-gray-500"
-        />
+          className="w-full px-4 py-2 border border-gray-300 rounded mb-3 text-gray-500" />
 
-        <input
-          type="date"
-          name="endDate"
-          value={formData.endDate}
-          onChange={handleChange}
+        <input type="date" name="endDate" value={formData.endDate} onChange={handleChange}
           min={new Date().toISOString().split("T")[0]}
-          className="w-full px-4 py-2 border border-gray-300 rounded mb-3 text-gray-500"
-        />
+          className="w-full px-4 py-2 border border-gray-300 rounded mb-3 text-gray-500" />
 
-        <select
-          name="phaseType"
-          value={formData.phaseType}
-          onChange={handleChange}
-          className="w-full px-4 py-2 border border-gray-300 rounded mb-3 bg-white"
-        >
+        <select name="phaseType" value={formData.phaseType} onChange={handleChange}
+          className="w-full px-4 py-2 border border-gray-300 rounded mb-3 bg-white">
           <option value="">-- Select Phase Type --</option>
           {phaseTypes.map((type) => (
             <option key={type} value={type}>{type.replaceAll("_", " ")}</option>
           ))}
         </select>
 
-        <div className="mb-3">
-          <label className="block text-gray-700 font-medium mb-1">Selected Vendor:</label>
-          {formData.vendor ? (
-            <div className="flex items-center justify-between bg-gray-100 px-4 py-2 rounded">
-              <span className="text-blue-700 font-semibold">{formData.vendorName}</span>
-              <button
-                type="button"
-                onClick={handleSelectVendorClick}
-                className="text-sm text-green-700 underline"
-              >
-                Change Vendor
-              </button>
-            </div>
-          ) : (
-            <button
-              type="button"
-              onClick={handleSelectVendorClick}
-              className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700"
-            >
-              Choose Vendor From List
-            </button>
-          )}
-        </div>
+        <input type="text" name="vendorName" value={formData.vendorName || ""} disabled
+          placeholder="Selected Vendor"
+          className="w-full px-4 py-2 border border-gray-300 rounded mb-3 bg-gray-100 text-gray-700" />
 
-        <select
-          name="phaseStatus"
-          value={formData.phaseStatus}
-          onChange={handleChange}
-          className="w-full px-4 py-2 border border-gray-300 rounded mb-5 bg-white"
-        >
+        <button type="button" onClick={handleSelectVendorClick}
+          className="w-full bg-green-600 text-white py-2 rounded mb-3 hover:bg-green-700">
+          Choose Vendor From List
+        </button>
+
+        <select name="phaseStatus" value={formData.phaseStatus} onChange={handleChange}
+          className="w-full px-4 py-2 border border-gray-300 rounded mb-5 bg-white">
           <option value="">-- Select Phase Status --</option>
           {phaseStatuses.map((status) => (
             <option key={status} value={status}>{status.replaceAll("_", " ")}</option>
           ))}
         </select>
 
-        <button
-          type="submit"
-          className="w-full bg-blue-600 text-white py-2 rounded font-semibold hover:bg-blue-700 transition"
-        >
+        <button type="submit"
+          className="w-full bg-blue-600 text-white py-2 rounded font-semibold hover:bg-blue-700 transition">
           Create Phase
         </button>
       </form>
