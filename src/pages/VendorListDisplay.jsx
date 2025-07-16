@@ -5,7 +5,6 @@ import { Star, BadgeCheck } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
 
 export default function VendorListDisplay() {
-  console.log("Hello there");
   const location = useLocation();
   const navigate = useNavigate();
   const [vendors, setVendors] = useState([]);
@@ -62,15 +61,17 @@ export default function VendorListDisplay() {
     }
   };
 
-  const assignToPhaseForm = (vendorId) => {
-    navigate(`/phase-form?vendorId=${vendorId}`);
+  // Pass both vendorId and vendorName to PhaseForm
+  const assignToPhaseForm = (vendorId, vendorName) => {
+    navigate(`/phase-form?vendorId=${vendorId}&vendorName=${encodeURIComponent(vendorName)}`);
   };
 
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       <Toaster position="top-center" toastOptions={{ duration: 3000 }} />
       <h2 className="text-center text-xl font-bold mb-6 text-blue-700">
-        Vendor List for Phase Type: <span className="text-black">{phaseType.replaceAll("_", " ")}</span>
+        Vendor List for Phase Type:{" "}
+        <span className="text-black">{phaseType.replaceAll("_", " ")}</span>
       </h2>
 
       {loading ? (
@@ -99,7 +100,7 @@ export default function VendorListDisplay() {
 
               <div className="mt-4 space-x-3">
                 <button
-                  onClick={() => assignToPhaseForm(selectedVendor.id)}
+                  onClick={() => assignToPhaseForm(selectedVendor.id, selectedVendor.name)}
                   className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
                 >
                   Select this Vendor
@@ -117,7 +118,9 @@ export default function VendorListDisplay() {
       ) : (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {vendors.length === 0 ? (
-            <p className="col-span-full text-center text-gray-500 italic">No vendors available.</p>
+            <p className="col-span-full text-center text-gray-500 italic">
+              No vendors available.
+            </p>
           ) : (
             vendors.map((vendor) => (
               <div
@@ -148,7 +151,7 @@ export default function VendorListDisplay() {
                     View Profile
                   </button>
                   <button
-                    onClick={() => assignToPhaseForm(vendor.id)}
+                    onClick={() => assignToPhaseForm(vendor.id, vendor.name)}
                     className="w-full mt-2 bg-green-600 text-white py-2 rounded hover:bg-green-700"
                   >
                     Select Vendor
@@ -162,8 +165,3 @@ export default function VendorListDisplay() {
     </div>
   );
 }
-
-// export default function VendorListDisplay() {
-//   console.log("Hello from VendorListDisplay");
-//   return <h1>Hello there</h1>;
-// }
