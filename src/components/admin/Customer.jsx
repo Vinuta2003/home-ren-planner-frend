@@ -3,7 +3,7 @@ import { toast } from "react-toastify";
 import axiosInstance from "../../axios/axiosInstance";
 import { Trash2, AlertCircle, Loader2 } from "lucide-react";
 
-export default function Customer() {
+export default function Customer({ onAction }) {
   const [customers, setCustomers] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -48,6 +48,7 @@ export default function Customer() {
       if (response?.data?.message === "SUCCESS") {
         toast.success("Customer Deleted Successfully")
         setCustomers((prev) => prev.filter((c) => c.exposedId !== customerToDelete));
+        onAction(); // Call the onAction prop to refresh dashboard stats
       }
     } catch (err) {
       console.error(err);
@@ -110,9 +111,9 @@ export default function Customer() {
                         <div className="flex justify-center">
                           <button
                             onClick={() => deleteCustomer(user.exposedId)}
-                            className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 flex items-center gap-2 cursor-pointer"
+                            className="px-3 py-2 rounded-lg flex items-center gap-2 cursor-pointer bg-red-500 hover:bg-red-600 text-white font-semibold text-sm shadow-sm hover:shadow-md transition-colors duration-150"
                           >
-                            <Trash2 size={16} />
+                            <Trash2 size={14} />
                             Delete
                           </button>
                         </div>
@@ -144,7 +145,7 @@ export default function Customer() {
           </div>
         )}
         {loading && (
-          <div className="flex justify-center items-center py-8">
+          <div role="status" className="flex justify-center items-center py-8">
             <Loader2 className="animate-spin text-blue-600" size={36} />
           </div>
         )}
