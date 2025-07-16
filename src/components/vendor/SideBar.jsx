@@ -26,7 +26,7 @@ export default function SideBar({setActiveTab, handleLogout}) {
 
       <button
         onClick={handleLogout}
-        className="flex items-center gap-2 px-4 py-2 rounded-lg border border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700 transition font-semibold cursor-pointer mt-8 shadow-sm"
+        className="flex items-center gap-2 px-4 py-2 rounded-lg border border-red-200 text-red-600 hover:bg-red-100 hover:text-red-700 transition font-semibold cursor-pointer mt-8 shadow-sm"
       >
         <LogOut size={20} />
         Logout

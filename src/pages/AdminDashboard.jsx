@@ -144,7 +144,7 @@ export default function AdminDashboard()
                         onClick={() => setActiveTab("customer")}
                         className="p-4 bg-blue-50 hover:bg-blue-100 rounded-lg border border-blue-200 transition-colors duration-150 text-left"
                     >
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-3 cursor-pointer">
                             <Users className="text-blue-600" size={20} />
                             <div>
                                 <p className="font-semibold text-blue-900">Manage Customers</p>
@@ -157,7 +157,7 @@ export default function AdminDashboard()
                         onClick={() => setActiveTab("vendor")}
                         className="p-4 bg-green-50 hover:bg-green-100 rounded-lg border border-green-200 transition-colors duration-150 text-left"
                     >
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-3 cursor-pointer">
                             <Building2 className="text-green-600" size={20} />
                             <div>
                                 <p className="font-semibold text-green-900">Manage Vendors</p>
@@ -170,7 +170,7 @@ export default function AdminDashboard()
                         onClick={() => setActiveTab("material")}
                         className="p-4 bg-purple-50 hover:bg-purple-100 rounded-lg border border-purple-200 transition-colors duration-150 text-left"
                     >
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-3 cursor-pointer">
                             <Package className="text-purple-600" size={20} />
                             <div>
                                 <p className="font-semibold text-purple-900">Manage Materials</p>

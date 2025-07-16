@@ -311,7 +311,7 @@ export default function Material({ onAction }) {
               <button
                 key={phaseType}
                 onClick={() => setActiveTab(phaseType)}
-                className={`px-4 py-2 rounded-lg font-semibold transition-all duration-200 ${
+                className={`px-4 py-2 rounded-lg font-semibold transition-all duration-200 cursor-pointer ${
                   activeTab === phaseType
                     ? "bg-blue-600 text-white shadow-md"
                     : "bg-blue-100 text-blue-900 hover:bg-blue-200 hover:shadow-sm"

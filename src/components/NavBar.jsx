@@ -62,7 +62,7 @@ export default function NavBar() {
 }
           {!email ? (
             <button
-              className="flex items-center gap-2 px-5 py-2.5 rounded-lg border-2 border-[#005eb8] text-[#005eb8] bg-white hover:bg-blue-50 shadow-sm text-base font-semibold transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-200"
+              className="flex items-center gap-2 px-5 py-2.5 [&:hover]:bg-[#005eb8] hover:text-white rounded-lg border-2 border-[#005eb8] text-[#005eb8] bg-white hover:bg-blue-50 shadow-sm text-base font-semibold transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-200"
               onClick={() => navigate("/login")}
             >
               <LogIn className="w-5 h-5" />
@@ -71,12 +71,12 @@ export default function NavBar() {
           ) : (
             <>
               <button
-                className="flex items-center gap-2 px-4 py-2.5 rounded-lg border-2 border-red-500 text-red-500 bg-white hover:bg-red-50 shadow-sm text-base font-semibold transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-red-200"
+                className="flex items-center gap-2 px-4 py-2.5 rounded-lg border-2 border-red-500 text-red-500 bg-white hover:bg-red-100 shadow-sm text-base font-semibold transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-red-200"
                 onClick={handleLogout}
                 title="Logout"
               >
                 <LogOut className="w-5 h-5" />
-                <span className="hidden md:inline">Logout</span>
+                <span className="hidden md:inline">Sign Out</span>
               </button>
               <div
                 className="ml-2 flex items-center gap-2 cursor-pointer group"

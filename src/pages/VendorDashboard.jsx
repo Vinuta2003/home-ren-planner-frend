@@ -93,13 +93,13 @@ const VendorDashboard = () => {
     </div>
   ) : approval === false ? (
     <p className="text-red-600 text-center mt-10 text-lg font-semibold">
-      Your Request has been Rejected
+      Your Vendor Request Has Been Rejected
     </p>
   ) : (
     <>
       <NavBar />
       <p className="text-gray-700 text-center mt-32 text-4xl font-bold">
-        Your request is not approved yet
+        Your Vendor Request Is Not Approved Yet
       </p>
     </>
   );
