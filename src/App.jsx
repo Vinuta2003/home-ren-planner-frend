@@ -8,7 +8,12 @@ import LoginForm from "./pages/LoginForm";
 import AdminDashboard from "./pages/AdminDashboard";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import PageNotFound from "./pages/PageNotFound";
-
+import RoomPage from "./pages/RoomPage";
+import PhaseForm from "./pages/PhaseForm";
+import PhaseList from "./pages/PhaseList";
+import EditPhaseForm from "./pages/EditPhase";
+import PhasePage  from "./pages/PhasePage";
+import VendorDashboard from "./pages/VendorDashboard";
 import VendorListDisplay from "./pages/VendorListDisplay"; 
 import UpdateProfile from "./pages/UpdateProfile";
 import NavBar from "./components/NavBar";
