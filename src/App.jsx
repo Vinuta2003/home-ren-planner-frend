@@ -8,6 +8,8 @@ import LoginForm from "./pages/LoginForm";
 import AdminDashboard from "./pages/AdminDashboard";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import PageNotFound from "./pages/PageNotFound";
+import CreateProject from "./pages/CreateProject";
+import UserDashboard from "./pages/UserDashboard"
 
 import VendorListDisplay from "./pages/VendorListDisplay"; 
 import UpdateProfile from "./pages/UpdateProfile";
@@ -45,7 +47,13 @@ function App() {
         />
         <Route path="/create-project" element={
           <ProtectedRoute allowedRoles={["CUSTOMER"]}>
-            {/* Add Create Project Component Here */}
+            <CreateProject />
+          </ProtectedRoute>
+        }/>
+
+           <Route path="/userdashboard" element={
+          <ProtectedRoute allowedRoles={["CUSTOMER"]}>
+            <UserDashboard />
           </ProtectedRoute>
         }/>
         <Route path="/vendorlist" element={<VendorListDisplay />} />
