@@ -15,7 +15,7 @@ const PhaseCard = ({ phase, quote, setQuotes, submitQuote }) => {
               ? "bg-yellow-100 text-yellow-800 border-yellow-200"
               : phase.phaseStatus === "COMPLETED"
               ? "bg-green-100 text-green-800 border-green-200"
-              : phase.phaseStatus === "SETUP"
+              : phase.phaseStatus === "INSPECTION"
               ? "bg-blue-100 text-blue-800 border-blue-200"
               : "bg-gray-100 text-gray-800 border-gray-200")
           }
@@ -63,7 +63,7 @@ const PhaseCard = ({ phase, quote, setQuotes, submitQuote }) => {
         )}
       </div>
 
-      {phase.vendorCost == null && phase.phaseStatus === "NOTSTARTED" && (
+      {phase.vendorCost == null && phase.phaseStatus === "INSPECTION" && (
         <div className="mt-6 flex gap-2 items-center">
           <input
             type="number"
