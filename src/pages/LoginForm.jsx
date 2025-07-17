@@ -76,7 +76,7 @@ export default function LoginForm() {
             else if(responseData?.role === "VENDOR") navigate("/vendor-dashboard")
             else navigate("/")
           },
-          autoClose: 3000
+          autoClose: 2500
         })
       }
       else toast.message("Login Unsuccessful!")

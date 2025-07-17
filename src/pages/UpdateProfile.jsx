@@ -135,7 +135,7 @@ export default function UpdateProfile() {
         <div className="relative group cursor-pointer" onClick={handleImageClick}>
           <div className="w-28 h-28 rounded-full overflow-hidden border-4 border-blue-200 bg-blue-100 flex items-center justify-center shadow-lg transition group-hover:scale-105 group-hover:border-blue-400">
             <img
-              src={imagePreview || "https://ui-avatars.com/api/?name=User&background=E0E7FF&color=1E3A8A&size=100"}
+              src={imagePreview}
               alt="Profile"
               className="object-cover w-full h-full"
             />
@@ -211,7 +211,7 @@ export default function UpdateProfile() {
       {role === "VENDOR" && (
         <>
           {/* Company Name & Experience & Availability */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10 border-b pb-8 bg-blue-50 rounded-xl p-6 border border-blue-100">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-4 bg-blue-50 rounded-xl p-6 border border-blue-100">
             <div>
               <label className="block font-semibold text-blue-700 mb-1">Company Name</label>
               <input
@@ -233,20 +233,18 @@ export default function UpdateProfile() {
                 placeholder="Enter experience in years"
               />
             </div>
-            <div className="w-full">
-              <label className="block font-semibold text-blue-700 mb-1">Availability</label>
-              <select
-                value={available === true ? "true" : "false"}
-                onChange={(e) => setAvailable(e.target.value === "true")}
-                className="px-4 w-full py-2 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white text-blue-900"
-              >
-                <option value="true">Yes</option>
-                <option value="false">No</option>
-              </select>
-            </div>
           </div>
-          {/* Availability */}
-
+          <div className="mb-10 bg-blue-50 rounded-xl p-6 border border-blue-100">
+            <label className="block font-semibold text-blue-700 mb-1">Available for work</label>
+            <select
+              value={available === true ? "true" : "false"}
+              onChange={(e) => setAvailable(e.target.value === "true")}
+              className="px-4 w-full py-2 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white text-blue-900"
+            >
+              <option value="true">Yes</option>
+              <option value="false">No</option>
+            </select>
+          </div>
           {/* Skills (readonly skillName, editable basePrice) */}
           {skills && skills.length > 0 && (
             <div className="mb-8 bg-blue-50 rounded-xl p-6 border border-blue-100">

@@ -1,4 +1,4 @@
-import {  Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
@@ -9,10 +9,11 @@ import AdminDashboard from "./pages/AdminDashboard";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import PageNotFound from "./pages/PageNotFound";
 
-import VendorListDisplay from "./pages/VendorListDisplay"; 
+import VendorListDisplay from "./pages/VendorListDisplay";
 import UpdateProfile from "./pages/UpdateProfile";
 import NavBar from "./components/NavBar";
 import Footer from "./components/Footer";
+import VendorDashboard from "./pages/VendorDashboard";
 import { PhasePage } from "./pages/PhasePage";
 
 function App() {
@@ -31,7 +32,8 @@ function App() {
         pauseOnHover
         theme="light"
       />
-      {location.pathname !== "/admin-dashboard" && <NavBar/>}
+
+      {!location.pathname.includes("dashboard") && <NavBar />}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/register" element={<RegisterForm />} />
@@ -44,11 +46,14 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route path="/create-project" element={
-          <ProtectedRoute allowedRoles={["CUSTOMER"]}>
-            {/* Add Create Project Component Here */}
-          </ProtectedRoute>
-        }/>
+        <Route
+          path="/create-project"
+          element={
+            <ProtectedRoute allowedRoles={["CUSTOMER"]}>
+              {/* Add Create Project Component Here */}
+            </ProtectedRoute>
+          }
+        />
         <Route path="/vendorlist" element={<VendorListDisplay />} />
         <Route
           path="/admin-dashboard"
@@ -58,11 +63,21 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route path="/vendor-dashboard" />
+
+        <Route
+          path="/vendor-dashboard"
+          element={
+            <ProtectedRoute allowedRoles={["VENDOR"]}>
+              <VendorDashboard />
+            </ProtectedRoute>
+          }
+        />
+
         <Route path="/phases/:phaseId" element={<ProtectedRoute allowedRoles={["CUSTOMER"]}><PhasePage/></ProtectedRoute>}/>
         <Route path="*" element={<PageNotFound />} />
       </Routes>
-      {location.pathname !== "/admin-dashboard" && <Footer/>}
+
+      {!location.pathname.includes("dashboard") && <Footer />}
     </>
   );
 }
