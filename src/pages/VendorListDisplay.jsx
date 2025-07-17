@@ -175,18 +175,14 @@ export default function VendorListDisplay() {
   const location = useLocation();
   const navigate = useNavigate();
 
-
   const [vendors, setVendors] = useState([]);
   const [selectedVendor, setSelectedVendor] = useState(null);
   const [loading, setLoading] = useState(false);
   const [phaseType, setPhaseType] = useState("");
   const [formData, setFormData] = useState(null);
-  const [formData, setFormData] = useState(null);
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
-    const type = params.get("phaseType");
-    if (!type) {
     const type = params.get("phaseType");
     if (!type) {
       toast.error("No phaseType provided");
@@ -197,20 +193,10 @@ export default function VendorListDisplay() {
 
     if (location.state?.formData) {
       setFormData(location.state.formData);
-      navigate(-1);
-    } else {
-      setPhaseType(type);
-    }
-
-    if (location.state?.formData) {
-      setFormData(location.state.formData);
     } else {
       toast.error("Missing form data");
       navigate(-1);
-      toast.error("Missing form data");
-      navigate(-1);
     }
-  }, [location]);
   }, [location]);
 
   useEffect(() => {
@@ -232,11 +218,8 @@ export default function VendorListDisplay() {
   };
 
   const assignToPhaseForm = (vendorId, vendorName) => {
-    navigate(`/phase-form?vendorId=${vendorId}`, {
-      state: {
-        formData,
-        vendorName, 
-      },
+    navigate(`/phase-form/${formData.room}?vendorId=${vendorId}&vendorName=${encodeURIComponent(vendorName)}`, {
+      state: { formData }
     });
   };
 
@@ -244,8 +227,6 @@ export default function VendorListDisplay() {
     <div className="min-h-screen bg-gray-50 p-8">
       <Toaster position="top-center" toastOptions={{ duration: 3000 }} />
       <h2 className="text-center text-xl font-bold mb-6 text-blue-700">
-        Vendor List for Phase Type:{" "}
-        <span className="text-black">{phaseType.replaceAll("_", " ")}</span>
         Vendor List for Phase Type:{" "}
         <span className="text-black">{phaseType.replaceAll("_", " ")}</span>
       </h2>
@@ -266,17 +247,18 @@ export default function VendorListDisplay() {
                 <BadgeCheck size={18} className="text-blue-400" />
               </h3>
               <p className="text-gray-500">{phaseType.replaceAll("_", " ")}</p>
-               <span className="bg-gray-100 px-3 py-1 rounded-full text-sm">
-                  Experience: {selectedVendor.experience || '2'} years
-                </span>
-                <span className="bg-gray-100 px-3 py-1 rounded-full text-sm">
-                  Company: {selectedVendor.companyName || 'Independent'}
-                </span>
+              <span className="bg-gray-100 px-3 py-1 rounded-full text-sm">
+                Experience: {selectedVendor.experience || "2"} years
+              </span>
+              <span className="bg-gray-100 px-3 py-1 rounded-full text-sm ml-2">
+                Company: {selectedVendor.companyName || "Independent"}
+              </span>
               <p className="text-sm text-gray-700 mt-3 italic">
-                <strong>About:</strong> {`${selectedVendor.name} is a skilled ${phaseType.toLowerCase()} professional.`}
+                <strong>About:</strong>{" "}
+                {`${selectedVendor.name} is a skilled ${phaseType.toLowerCase()} professional.`}
               </p>
-               <p className="text-black mt-4 text-lg">
-                <strong>Price:</strong> ₹{selectedVendor.basePrice || '500'}
+              <p className="text-black mt-4 text-lg">
+                <strong>Price:</strong> ₹{selectedVendor.basePrice || "500"}
               </p>
 
               <div className="mt-4 space-x-3">
@@ -284,44 +266,44 @@ export default function VendorListDisplay() {
                   onClick={() =>
                     assignToPhaseForm(selectedVendor.id, selectedVendor.name)
                   }
-                  onClick={() =>
-                    assignToPhaseForm(selectedVendor.id, selectedVendor.name)
-                  }
                   className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
                 >
                   Select this Vendor
                 </button>
-                {/* Reviews */}
-              <div className="mt-6">
-                <h3 className="text-lg font-semibold mb-2 text-[#004A7C]">Reviews:</h3>
-                <div className="space-y-3">
-                  {selectedVendor.reviews?.length ? (
-                    selectedVendor.reviews.map((r, i) => (
-                      <div key={i} className="border-b pb-2">
-                        <div className="flex justify-between items-center text-sm font-semibold text-gray-700">
-                          <span>{r.reviewerName}</span>
-                          <span className="text-yellow-500 flex items-center gap-1">
-                            {[...Array(Math.round(r.rating))].map((_, j) => (
-                              <Star key={j} size={14} fill="#FFD700" />
-                            ))}
-                            <span className="text-gray-600 ml-1">({r.rating.toFixed(1)})</span>
-                          </span>
+
+                <div className="mt-6">
+                  <h3 className="text-lg font-semibold mb-2 text-[#004A7C]">Reviews:</h3>
+                  <div className="space-y-3">
+                    {selectedVendor.reviews?.length ? (
+                      selectedVendor.reviews.map((r, i) => (
+                        <div key={i} className="border-b pb-2">
+                          <div className="flex justify-between items-center text-sm font-semibold text-gray-700">
+                            <span>{r.reviewerName}</span>
+                            <span className="text-yellow-500 flex items-center gap-1">
+                              {[...Array(Math.round(r.rating))].map((_, j) => (
+                                <Star key={j} size={14} fill="#FFD700" />
+                              ))}
+                              <span className="text-gray-600 ml-1">
+                                ({r.rating.toFixed(1)})
+                              </span>
+                            </span>
+                          </div>
+                          <p className="text-gray-600 text-sm mt-1 italic">“{r.comment}”</p>
+                          <p className="text-xs text-gray-400 mt-1">
+                            {new Date(r.createdAt).toLocaleDateString("en-IN", {
+                              year: "numeric",
+                              month: "short",
+                              day: "numeric",
+                            })}
+                          </p>
                         </div>
-                        <p className="text-gray-600 text-sm mt-1 italic">“{r.comment}”</p>
-                        <p className="text-xs text-gray-400 mt-1">
-                          {new Date(r.createdAt).toLocaleDateString('en-IN', {
-                            year: 'numeric',
-                            month: 'short',
-                            day: 'numeric',
-                          })}
-                        </p>
-                      </div>
-                    ))
-                  ) : (
-                    <p className="italic text-gray-500">No reviews yet.</p>
-                  )}
+                      ))
+                    ) : (
+                      <p className="italic text-gray-500">No reviews yet.</p>
+                    )}
+                  </div>
                 </div>
-              </div>
+
                 <button
                   onClick={() => setSelectedVendor(null)}
                   className="text-blue-600 underline mt-4"
@@ -338,9 +320,6 @@ export default function VendorListDisplay() {
             <p className="col-span-full text-center text-gray-500 italic">
               No vendors available.
             </p>
-            <p className="col-span-full text-center text-gray-500 italic">
-              No vendors available.
-            </p>
           ) : (
             vendors.map((vendor) => (
               <div
@@ -354,8 +333,10 @@ export default function VendorListDisplay() {
                 />
                 <h4 className="font-bold text-blue-800">{vendor.name}</h4>
                 <p className="text-sm text-gray-500">{vendor.companyName}</p>
-                <p className="text-sm text-gray-500">{vendor.experience} Experience</p>
-                 <p className="text-sm text-gray-500"> Price: ₹{vendor.basePrice} </p>
+                <p className="text-sm text-gray-500">
+                  {vendor.experience} yrs experience
+                </p>
+                <p className="text-sm text-gray-500">Price: ₹{vendor.basePrice}</p>
                 <div className="flex justify-center items-center mt-2 text-yellow-500">
                   {[...Array(Math.round(vendor.rating || 0))].map((_, i) => (
                     <Star key={i} size={16} fill="#FFD700" />
@@ -372,7 +353,6 @@ export default function VendorListDisplay() {
                     View Profile
                   </button>
                   <button
-                    onClick={() => assignToPhaseForm(vendor.id, vendor.name)}
                     onClick={() => assignToPhaseForm(vendor.id, vendor.name)}
                     className="w-full mt-2 bg-green-600 text-white py-2 rounded hover:bg-green-700"
                   >

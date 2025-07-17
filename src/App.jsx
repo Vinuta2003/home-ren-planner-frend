@@ -17,6 +17,9 @@ import NavBar from './components/NavBar'
 import Footer from './components/Footer'
 import Home from './pages/Home'
 import EditPhaseForm from './pages/EditPhase'
+import CreateProject from './pages/CreateProject'
+import UserDashboard from './pages/UserDashboard'
+import VendorDashboard from './pages/VendorDashboard'
 
 
 function App() {
@@ -53,14 +56,17 @@ function App() {
           }
         />
 
-        <Route
-          path="/create-project"
-          element={
-            <ProtectedRoute allowedRoles={["CUSTOMER"]}>
-              {/* Add Create Project Component Here */}
-            </ProtectedRoute>
-          }
-        />
+        <Route path="/create-project" element={
+          <ProtectedRoute allowedRoles={["CUSTOMER"]}>
+            <CreateProject />
+          </ProtectedRoute>
+        }/>
+
+        <Route path="/userdashboard" element={
+          <ProtectedRoute allowedRoles={["CUSTOMER"]}>
+            <UserDashboard />
+          </ProtectedRoute>
+        }/>
 
         <Route path="/vendorlist" element={<VendorListDisplay />} />
         <Route path="/vendor-list" element={<VendorListDisplay />} />
