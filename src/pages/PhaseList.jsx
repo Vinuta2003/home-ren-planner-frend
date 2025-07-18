@@ -8,7 +8,7 @@ import { FaTrash } from "react-icons/fa";
 import axios from "axios";
 
 function PhaseList() {
-  const { roomId } = useParams();
+  const { exposedId } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -17,14 +17,15 @@ function PhaseList() {
   const loading = useSelector((state) => state.phaselist?.loading || false);
 
   useEffect(() => {
-    if (roomId) dispatch(getPhasesByRoom(roomId));
-  }, [dispatch, roomId]);
+    console.log("in phaselist",exposedId);
+    if (exposedId) dispatch(getPhasesByRoom(exposedId));
+  }, [dispatch, exposedId]);
 
   const handleDelete = (id) => {
     if (window.confirm("Delete this phase?")) {
       axios
         .delete(`http://localhost:8080/phase/delete/${id}`)
-        .then(() => dispatch(getPhasesByRoom(roomId)))
+        .then(() => dispatch(getPhasesByRoom(exposedId)))
         .catch((err) => {
           console.error("Failed to delete phase", err);
           alert("Error deleting phase");
@@ -92,7 +93,7 @@ function PhaseList() {
 
       {/* Floating Button */}
       <button
-        onClick={() => navigate(`/phase-form/${roomId}`)}
+        onClick={() => navigate(`/phase-form/${exposedId}`)}
         className="fixed bottom-6 right-6 bg-blue-600 text-white rounded-full p-4 shadow-lg group hover:bg-blue-700 transition"
       >
         <div className="flex items-center space-x-2">

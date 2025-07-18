@@ -8,7 +8,7 @@ export const getPhaseById = createAsyncThunk("getPhaseById", async (id) => {
 
 export const getPhasesByRoom = createAsyncThunk("getPhasesByRoom", async (roomId) => {
   const res = await axios.get(`http://localhost:8080/phase/room/${roomId}`);
-  return res.data;
+   return Array.isArray(res.data) ? res.data : [];
 });
 
 export const createPhase = createAsyncThunk("createPhase", async (phaseRequestDTO) => {
@@ -78,6 +78,7 @@ const phaseListSlice = createSlice({
       })
       .addCase(getPhasesByRoom.pending, (state) => {
         state.loading = true;
+        state.roomPhases = [];
       })
       .addCase(getPhasesByRoom.fulfilled, (state, action) => {
         state.roomPhases = action.payload;
@@ -85,6 +86,7 @@ const phaseListSlice = createSlice({
       })
       .addCase(getPhasesByRoom.rejected, (state) => {
         state.loading = false;
+        state.roomPhases = [];
       })
 
       .addCase(createPhase.fulfilled, (state, action) => {

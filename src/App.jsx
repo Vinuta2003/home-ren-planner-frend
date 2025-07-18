@@ -5,7 +5,6 @@ import './App.css'
 import RegisterForm from './pages/RegisterForm'
 import LoginForm from './pages/LoginForm'
 import PhaseForm from './pages/PhaseForm'
-import RoomPage from './pages/RoomPage'
 import PhasePage from './pages/PhasePage'
 import PhaseList from './pages/PhaseList'
 import VendorListDisplay from './pages/VendorListDisplay'
@@ -89,8 +88,8 @@ function App() {
           }
         />
 
-        <Route path="/phase-form/:roomId" element={<PhaseForm />} />
-        <Route path="/phase/room/:roomId" element={<PhaseList />} />
+        <Route path="/phase-form/:exposedId" element={<PhaseForm />} />
+        <Route path="/phase/room/:exposedId" element={<PhaseList />} />
         <Route path="/phase/:phaseId" element={<PhasePage />} />
         <Route path="/editphase/:id" element={<EditPhaseForm />} />
 

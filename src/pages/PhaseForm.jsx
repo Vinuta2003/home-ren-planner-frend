@@ -6,7 +6,10 @@ import axios from "axios";
 function PhaseForm() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { exposedId } = useParams();
+  const params = useParams();
+console.log("All URL params:", params); // Check the exact key name
+const { exposedId } = params;
+console.log("exposedId from useParams():", exposedId);
 
   const [renovationType, setRenovationType] = useState('');
   const [phaseTypes, setPhaseTypes] = useState([]);
@@ -33,15 +36,21 @@ function PhaseForm() {
   }, [location.state]);
 
   useEffect(() => {
-    if (exposedId) {
-      axios.get(`http://localhost:8080/rooms/${exposedId}`)
-        .then(res => {
-          setRenovationType(res.data.renovationType);
-          setFormData(prev => ({ ...prev, room: exposedId }));
-        })
-        .catch(err => console.error("Error fetching room:", err));
-    }
-  }, [exposedId]);
+  if (!exposedId) {console.log("no exposed"); return;}
+  axios.get(`http://localhost:8080/rooms/${exposedId}`)
+    .then(res => {
+      console.log("full room response",res.data);
+      const type = res.data.renovationType;
+      if (type) {
+        setRenovationType(type);
+        setFormData(prev => ({ ...prev, room: exposedId }));
+      } else {
+        console.warn("No renovationType found in room data.");
+      }
+    })
+    .catch(err => console.error("Error fetching room:", err));
+}, [exposedId]);
+
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -63,15 +72,22 @@ function PhaseForm() {
   }, []);
 
   useEffect(() => {
-    if (renovationType) {
-      axios
-        .get(`http://localhost:8080/phase/phases/by-renovation-type/${renovationType}`)
-        .then(res => setPhaseTypes(res.data))
-        .catch(err => console.error(err));
-    } else {
-      setPhaseTypes([]);
-    }
-  }, [renovationType]);
+  console.log("RENOVATION TYPE:", renovationType); // ❗ must show correct value
+
+  if (renovationType) {
+    axios
+      .get(`http://localhost:8080/phase/phases/by-renovation-type/${renovationType}`)
+      .then(res => {
+  console.log("Phase Types Response:", res.data);
+  setPhaseTypes(res.data);
+})
+
+
+  } else {
+    setPhaseTypes([]);
+  }
+}, [renovationType]);
+
 
   const handleChange = (e) => {
     setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
@@ -91,8 +107,8 @@ function PhaseForm() {
     e.preventDefault();
 
     const payload = {
-      vendor: { id: formData.vendor },
-      room: { id: exposedId },
+      vendorId: formData.vendor,
+      roomId: exposedId,
       phaseName: formData.phaseName,
       description: formData.description,
       startDate: formData.startDate,
