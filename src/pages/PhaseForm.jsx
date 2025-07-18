@@ -6,11 +6,7 @@ import axios from "axios";
 function PhaseForm() {
   const navigate = useNavigate();
   const location = useLocation();
-  const params = useParams();
-console.log("All URL params:", params); // Check the exact key name
-const { exposedId } = params;
-console.log("exposedId from useParams():", exposedId);
-
+  const { exposedId } = useParams();
   const [renovationType, setRenovationType] = useState('');
   const [phaseTypes, setPhaseTypes] = useState([]);
   const [phaseStatuses, setPhaseStatuses] = useState([]);
@@ -21,11 +17,11 @@ console.log("exposedId from useParams():", exposedId);
     phaseStatus: "",
     startDate: "",
     endDate: "",
-    vendor: "",
+    vendorId: "",
     vendorName: "",
     room: ""
   });
-
+console.log(formData);
   const [reviewData, setReviewData] = useState({ comment: "", rating: 0 });
   const userId = "248cf7fd-7f0b-4cde-8b2f-bc73f26da083"; // Replace with Redux user later
   
@@ -59,7 +55,7 @@ console.log("exposedId from useParams():", exposedId);
     if (vendorId && vendorName) {
       setFormData(prev => ({
         ...prev,
-        vendor: vendorId,
+        vendorId: vendorId,
         vendorName: decodeURIComponent(vendorName),
       }));
     }
@@ -107,7 +103,7 @@ console.log("exposedId from useParams():", exposedId);
     e.preventDefault();
 
     const payload = {
-      vendorId: formData.vendor,
+      vendorId: formData.vendorId,
       roomId: exposedId,
       phaseName: formData.phaseName,
       description: formData.description,
@@ -116,10 +112,10 @@ console.log("exposedId from useParams():", exposedId);
       phaseType: formData.phaseType,
       phaseStatus: formData.phaseStatus,
     };
-
+console.log("payload",payload);
     try {
       const res = await axios.get(
-        `http://localhost:8080/phase/phase/exists?exposedId=${formData.room}&phaseType=${formData.phaseType}`
+        `http://localhost:8080/phase/phase/exists?roomId=${exposedId}&phaseType=${formData.phaseType}`
       );
 
       if (res.data) {
@@ -129,12 +125,12 @@ console.log("exposedId from useParams():", exposedId);
 
         if (
           formData.phaseStatus === "COMPLETED" &&
-          formData.vendor &&
+          formData.vendorId &&
           reviewData.comment &&
           reviewData.rating > 0
         ) {
           const reviewPayload = {
-            vendorId: formData.vendor,
+            vendorId: formData.vendorId,
             userId,
             comment: reviewData.comment,
             rating: Number(reviewData.rating),
@@ -153,7 +149,7 @@ console.log("exposedId from useParams():", exposedId);
   };
 
   const handleIndependentReviewSubmit = async () => {
-    if (!formData.vendor) {
+    if (!formData.vendorId) {
       alert("Please select a vendor.");
       return;
     }
@@ -164,7 +160,7 @@ console.log("exposedId from useParams():", exposedId);
     }
 
     const reviewPayload = {
-      vendorId: formData.vendor,
+      vendorId: formData.vendorId,
       userId,
       comment: reviewData.comment,
       rating: Number(reviewData.rating),
@@ -225,7 +221,7 @@ console.log("exposedId from useParams():", exposedId);
         </select>
 
         {/* ⭐ Review Section - Always visible if vendor selected */}
-        {formData.phaseStatus === "COMPLETED" && formData.vendor &&(
+        {formData.phaseStatus === "COMPLETED" && formData.vendorId &&(
           <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg shadow-inner">
             <h3 className="text-lg font-semibold text-blue-700 mb-3">Leave a Review</h3>
 

@@ -17,7 +17,6 @@ function PhaseList() {
   const loading = useSelector((state) => state.phaselist?.loading || false);
 
   useEffect(() => {
-    console.log("in phaselist",exposedId);
     if (exposedId) dispatch(getPhasesByRoom(exposedId));
   }, [dispatch, exposedId]);
 
