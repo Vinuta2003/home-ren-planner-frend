@@ -285,7 +285,7 @@ function EditPhaseForm() {
         </form>
 
         {/* ⭐ Review section only if phase is COMPLETED and vendor is assigned */}
-        {phaseData.phaseStatus === "COMPLETED" && phaseData.vendor?.id && (
+        {phaseData?.phaseStatus?.toUpperCase() === "COMPLETED" && phaseData.vendor?.id &&(
           <div className="mt-8 border-t pt-6 text-left">
             <h2 className="text-lg font-semibold text-blue-800 mb-2">
               Leave a Review for {phaseData.vendor.name || "Vendor"}
