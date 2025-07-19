@@ -92,10 +92,6 @@ const phaseListSlice = createSlice({
       .addCase(createPhase.fulfilled, (state, action) => {
         state.roomPhases.push(action.payload);
       })
-
-      .addCase(getPhaseMaterialsByPhaseId.fulfilled, (state, action) => {
-        state.phaseMaterials = action.payload;
-      })
       .addCase(getPhaseTotalCost.fulfilled, (state, action) => {
         state.totalCost = action.payload;
       })

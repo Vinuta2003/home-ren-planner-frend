@@ -1,7 +1,7 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getPhasesByRoom } from "../app/features/phaseListSlice";
+import { getPhasesByRoom } from "../redux/phase/phaseListSlice";
 import { Plus } from "lucide-react";
 import { Link } from "react-router-dom";
 import { FaTrash } from "react-icons/fa";
@@ -11,6 +11,8 @@ function PhaseList() {
   const { exposedId } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [phaseToDelete, setPhaseToDelete] = useState(null);
 
   const roomPhases = useSelector((state) => state.phaselist?.roomPhases);
   const phases = useMemo(() => roomPhases || [], [roomPhases]);
@@ -20,16 +22,28 @@ function PhaseList() {
     if (exposedId) dispatch(getPhasesByRoom(exposedId));
   }, [dispatch, exposedId]);
 
-  const handleDelete = (id) => {
-    if (window.confirm("Delete this phase?")) {
-      axios
-        .delete(`http://localhost:8080/phase/delete/${id}`)
-        .then(() => dispatch(getPhasesByRoom(exposedId)))
-        .catch((err) => {
-          console.error("Failed to delete phase", err);
-          alert("Error deleting phase");
-        });
-    }
+  const handleDeleteClick = (id) => {
+    setPhaseToDelete(id);
+    setShowDeleteModal(true);
+  };
+
+  const confirmDelete = () => {
+    axios
+      .delete(`http://localhost:8080/phase/delete/${phaseToDelete}`)
+      .then(() => {
+        dispatch(getPhasesByRoom(exposedId));
+        setShowDeleteModal(false);
+      })
+      .catch((err) => {
+        console.error("Failed to delete phase", err);
+        alert("Error deleting phase");
+        setShowDeleteModal(false);
+      });
+  };
+
+  const cancelDelete = () => {
+    setPhaseToDelete(null);
+    setShowDeleteModal(false);
   };
 
   return (
@@ -76,7 +90,7 @@ function PhaseList() {
                     </span>
 
                     <button
-                      onClick={() => handleDelete(phase.id)}
+                      onClick={() => handleDeleteClick(phase.id)}
                       className="text-red-600 hover:text-red-800"
                       title="Delete Phase"
                     >
@@ -90,7 +104,35 @@ function PhaseList() {
         </div>
       </div>
 
-      {/* Floating Button */}
+     {/* Delete Confirmation Popup */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-xl shadow-2xl border border-gray-200 max-w-md w-full mx-4">
+            <h3 className="text-xl font-bold text-gray-800 mb-4">
+              Confirm Deletion
+            </h3>
+            <p className="text-gray-600 mb-6">
+              Are you sure you want to delete this phase? This action cannot be
+              undone.
+            </p>
+            <div className="flex justify-end space-x-4">
+              <button
+                onClick={cancelDelete}
+                className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmDelete}
+                className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <button
         onClick={() => navigate(`/phase-form/${exposedId}`)}
         className="fixed bottom-6 right-6 bg-blue-600 text-white rounded-full p-4 shadow-lg group hover:bg-blue-700 transition"

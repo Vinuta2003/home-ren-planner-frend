@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation, useParams } from "react-router-dom";
-import { createPhaseApi } from "../app/apis/phaseListAPIs";
+import { createPhaseApi } from "../axios/phaseListAPIs";
 import axios from "axios";
 
 function PhaseForm() {
@@ -122,23 +122,6 @@ console.log("payload",payload);
         alert("Phase of this type already exists for the room.");
       } else {
         await createPhaseApi(payload);
-
-        if (
-          formData.phaseStatus === "COMPLETED" &&
-          formData.vendorId &&
-          reviewData.comment &&
-          reviewData.rating > 0
-        ) {
-          const reviewPayload = {
-            vendorId: formData.vendorId,
-            userId,
-            comment: reviewData.comment,
-            rating: Number(reviewData.rating),
-          };
-
-          await axios.post("http://localhost:8080/api/vendor-reviews/reviews", reviewPayload);
-          alert("Review submitted!");
-        }
 
         navigate(`/phase/room/${formData.room}`);
       }
