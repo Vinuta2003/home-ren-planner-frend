@@ -17,7 +17,9 @@ export function PhasePage() {
   const { phaseId } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
+const safeArray = (value) => {
+    return Array.isArray(value) ? value : [];
+};
   const {
     currentPhase,
     phaseMaterialsList,
@@ -46,18 +48,25 @@ export function PhasePage() {
 
   useEffect(() => {
     const handleMaterials = async () => {
-      if (!addMode || !phaseType) return;
-      const currentMaterialIds = phaseMaterialsList.map(
-        (val) => val.materialUserResponse.exposedId
-      );
-      const materials = await getMaterialsByPhaseType(phaseType);
-      const newMaterials = materials.filter(
-        (val) => !currentMaterialIds.includes(val.exposedId)
-      );
-      updateNewMaterialsList(newMaterials);
+        if (!addMode || !phaseType) return;
+        
+  const currentMaterialIds = safeArray(phaseMaterialsList).map(
+            (val) => val?.materialUserResponse?.exposedId
+        ).filter(Boolean);
+        
+        try {
+            const materials = await getMaterialsByPhaseType(phaseType);
+            const newMaterials = safeArray(materials).filter(
+                (val) => val?.exposedId && !currentMaterialIds.includes(val.exposedId)
+            );
+            updateNewMaterialsList(newMaterials);
+        } catch (error) {
+            console.error("Error fetching materials:", error);
+            updateNewMaterialsList([]);
+        }
     };
     handleMaterials();
-  }, [addMode, phaseMaterialsList.length, phaseType]);
+}, [addMode, phaseMaterialsList, phaseType]);
 
   const addButtonOnClickHandler = () => updateAddMode(true);
 
