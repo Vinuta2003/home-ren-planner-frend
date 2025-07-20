@@ -76,8 +76,6 @@ export function PhasePage() {
     }
   };
 
-  console.log("phaseStatus:", phaseStatus);
-  console.log("vendor:", vendor); // This should now log the VendorDTO object (e.g., { exposedId: "...", companyName: "..." })
 
   return (
     <div className="min-h-screen bg-blue-50 p-70 pt-24">
