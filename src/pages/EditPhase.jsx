@@ -200,7 +200,7 @@ function EditPhaseForm() {
   if (!phaseData) return <p className="text-center mt-20 text-gray-600">Loading...</p>;
 
   return (
-    <div className="min-h-screen bg-blue-50 p-70 pt-24">
+    <div className="bg-blue-50 p-80 pt-26 pb-8">
       <div className="ml-10 max-w-5xl bg-white pt-12 pb-35 px-12 rounded-2xl shadow-lg text-center">
         <h1 className="text-2xl font-bold text-blue-800 text-center mb-6">Edit Phase</h1>
 

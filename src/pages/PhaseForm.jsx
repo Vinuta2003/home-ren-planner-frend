@@ -23,7 +23,6 @@ function PhaseForm() {
   });
 console.log(formData);
   const [reviewData, setReviewData] = useState({ comment: "", rating: 0 });
-  const userId = "248cf7fd-7f0b-4cde-8b2f-bc73f26da083"; // Replace with Redux user later
   
   useEffect(() => {
     if (location.state?.formData) {
@@ -123,56 +122,11 @@ console.log("payload",payload);
       } else {
         await createPhaseApi(payload);
 
-        if (
-          formData.phaseStatus === "COMPLETED" &&
-          formData.vendorId &&
-          reviewData.comment &&
-          reviewData.rating > 0
-        ) {
-          const reviewPayload = {
-            vendorId: formData.vendorId,
-            userId,
-            comment: reviewData.comment,
-            rating: Number(reviewData.rating),
-          };
-
-          await axios.post("http://localhost:8080/api/vendor-reviews/reviews", reviewPayload);
-          alert("Review submitted!");
-        }
-
         navigate(`/phase/room/${formData.room}`);
       }
     } catch (err) {
-      console.error("Error creating phase or submitting review:", err);
+      console.error("Error creating phase", err);
       alert("An error occurred.");
-    }
-  };
-
-  const handleIndependentReviewSubmit = async () => {
-    if (!formData.vendorId) {
-      alert("Please select a vendor.");
-      return;
-    }
-
-    if (!reviewData.comment || reviewData.rating === 0) {
-      alert("Please provide a comment and rating.");
-      return;
-    }
-
-    const reviewPayload = {
-      vendorId: formData.vendorId,
-      userId,
-      comment: reviewData.comment,
-      rating: Number(reviewData.rating),
-    };
-
-    try {
-      await axios.post("http://localhost:8080/api/vendor-reviews/reviews", reviewPayload);
-      alert("Review submitted independently!");
-      setReviewData({ comment: "", rating: 0 });
-    } catch (err) {
-      console.error("Error submitting independent review:", err);
-      alert("Failed to submit review.");
     }
   };
 
@@ -215,55 +169,14 @@ console.log("payload",payload);
         <select name="phaseStatus" value={formData.phaseStatus} onChange={handleChange}
           className="w-full px-4 py-2 border border-gray-300 rounded mb-5 bg-white">
           <option value="">-- Select Phase Status --</option>
-          {phaseStatuses.map((status) => (
-            <option key={status} value={status}>{status.replaceAll("_", " ")}</option>
-          ))}
-        </select>
-
-        {/* ⭐ Review Section - Always visible if vendor selected */}
-        {formData.phaseStatus === "COMPLETED" && formData.vendorId &&(
-          <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg shadow-inner">
-            <h3 className="text-lg font-semibold text-blue-700 mb-3">Leave a Review</h3>
-
-            <textarea
-              className="w-full p-2 border border-gray-300 rounded mb-3"
-              placeholder="Write your comment"
-              value={reviewData.comment}
-              onChange={(e) =>
-                setReviewData((prev) => ({ ...prev, comment: e.target.value }))
-              }
-            />
-
-            <div className="flex items-center gap-1 mb-3">
-              {[1, 2, 3, 4, 5].map((star) => (
-                <button
-                  key={star}
-                  type="button"
-                  onClick={() =>
-                    setReviewData((prev) => ({ ...prev, rating: star }))
-                  }
-                  className={`text-2xl ${
-                    star <= reviewData.rating ? "text-yellow-400" : "text-gray-300"
-                  } focus:outline-none`}
-                >
-                  ★
-                </button>
-              ))}
-              <span className="ml-2 text-sm text-gray-600">
-                {reviewData.rating > 0 ? `${reviewData.rating} Star${reviewData.rating > 1 ? "s" : ""}` : "No rating"}
-              </span>
-            </div>
-
-            <button
-              type="button"
-              onClick={handleIndependentReviewSubmit}
-              className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600"
-            >
-              Submit Review
-            </button>
-          </div>
-        )}
-
+          {phaseStatuses
+    .filter((status) => status !== "COMPLETED")
+    .map((status) => (
+      <option key={status} value={status}>
+        {status.replaceAll("_", " ")}
+      </option>
+    ))}
+</select>
         <button type="submit"
           className="w-full mt-6 bg-blue-600 text-white py-2 rounded font-semibold hover:bg-blue-700 transition">
           Create Phase
