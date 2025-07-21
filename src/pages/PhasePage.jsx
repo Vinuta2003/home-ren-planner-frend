@@ -106,7 +106,7 @@ export function PhasePage() {
             <p><span className="font-semibold">Start Date:</span> {startDate}</p>
             <p><span className="font-semibold">Total Cost:</span> ₹{totalPhaseCost || 0}</p>
             {vendor && ( // Check if vendor object exists (it will be VendorDTO)
-              <p><span className="font-semibold">Vendor:</span> {vendor.companyName}</p>
+              <p><span className="font-semibold">Vendor:</span> {vendor.name}</p>
             )}
           </div>
           <div className="space-y-2 text-right p-6 px-18">
@@ -183,5 +183,6 @@ export function PhasePage() {
     </div>
   );
 }
+
 
 export default PhasePage;
