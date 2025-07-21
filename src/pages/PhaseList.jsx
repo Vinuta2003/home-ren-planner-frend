@@ -33,7 +33,7 @@ function PhaseList() {
   };
 
   return (
-    <div className="flex min-h-screen bg-blue-50 pt-15">
+    <div className="flex  bg-blue-50 pt-20 py-70">
       {/* Main Content */}
       <div className="flex-1 p-8">
         <div className="bg-white p-6 rounded-2xl shadow-xl">
@@ -53,23 +53,24 @@ function PhaseList() {
                   className="bg-blue-100 border border-blue-300 p-4 rounded-xl shadow-md flex justify-between items-start hover:shadow-lg transition"
                 >
                   <Link to={`/phase/${phase.id}`} className="flex-1">
-                    <h3 className="font-bold text-blue-800 text-lg mb-1">
+                    <h3 className="font-bold text-blue-900 text-lg mb-1">
                       {phase.phaseName}
                     </h3>
-                    <p className="text-sm text-blue-800">{phase.description}</p>
-                  </Link>
+                    <div className="space-y-2 text-left p-4 px-2">
+                      <p><span className="font-semibold text-blue-800">Start Date:</span> {phase.startDate}</p>
+                      <p><span className="font-semibold text-blue-800 ">End Date:</span> {phase.endDate}</p>
+                    </div></Link>
 
                   <div className="flex items-center gap-2 py-3">
                     <span
                       className={`text-xs font-semibold px-3 py-1 rounded-full
-                        ${
-                          phase.phaseStatus === "NOTSTARTED"
-                            ? "bg-red-100 text-red-700"
-                            : phase.phaseStatus === "INSPECTION"
+                        ${phase.phaseStatus === "NOTSTARTED"
+                          ? "bg-red-100 text-red-700"
+                          : phase.phaseStatus === "INSPECTION"
                             ? "bg-yellow-100 text-yellow-700"
                             : phase.phaseStatus === "INPROGRESS"
-                            ? "bg-green-100 text-green-700"
-                            : "bg-blue-200 text-blue-800"
+                              ? "bg-green-100 text-green-700"
+                              : "bg-blue-200 text-blue-800"
                         }`}
                     >
                       {phase.phaseStatus}
