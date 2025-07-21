@@ -42,9 +42,9 @@ const phaseSlice = createSlice({
     extraReducers:(builder)=>{
         builder.addCase(getPhaseById.fulfilled,(state,action)=>{
             state.currentPhase = action.payload;
-            state.phaseMaterialsList = Array.isArray(action.payload.phaseMaterials) 
-        ? action.payload.phaseMaterials 
-        : [];
+        //     state.phaseMaterialsList = Array.isArray(action.payload.phaseMaterials) 
+        // ? action.payload.phaseMaterials 
+        // : [];
             state.loaded = true;
         }).addCase(addPhaseMaterialsToPhase.fulfilled,(state,action)=>{
             state.chosenMaterialsList = [];
