@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import axiosInstance from "../../axios/axiosInstance";
 import VendorCard from "./VendorCard";
 
-export default function Vendor() {
+export default function Vendor({ onAction }) {
   const [approvedVendors, setApprovedVendors] = useState([]);
   const [pendingVendors, setPendingVendors] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -72,6 +72,7 @@ export default function Vendor() {
       if (response?.data?.message === "SUCCESS") {
         toast.success(`Vendor Approval Request ${approved ? "Accepted" : "Rejected"}`)
         setPendingVendors((prev) => prev.filter((v) => v.exposedId !== id));
+        onAction(); // Call the onAction prop to refresh dashboard stats
       }
     } catch (err) {
       console.error(err);
@@ -91,6 +92,7 @@ export default function Vendor() {
       if (response?.data?.message === "SUCCESS") {
         toast.success(`Vendor Deleted Successfully`)
         setApprovedVendors((prev) => prev.filter((v) => v.exposedId !== vendorToDelete));
+        onAction(); // Call the onAction prop to refresh dashboard stats
       }
     } catch (err) {
       console.error(err);
