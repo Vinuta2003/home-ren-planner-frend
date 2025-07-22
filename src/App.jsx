@@ -1,23 +1,29 @@
-import {  Routes, Route, useLocation } from "react-router-dom";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import "./App.css";
-import Home from "./pages/Home";
-import RegisterForm from "./pages/RegisterForm";
-import LoginForm from "./pages/LoginForm";
-import AdminDashboard from "./pages/AdminDashboard";
-import ProtectedRoute from "./routes/ProtectedRoute";
-import PageNotFound from "./pages/PageNotFound";
-import CreateProject from "./pages/CreateProject";
-import UserDashboard from "./pages/UserDashboard"
+import { Routes, Route, useLocation } from 'react-router-dom'
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+import './App.css'
+import RegisterForm from './pages/RegisterForm'
+import LoginForm from './pages/LoginForm'
+import PhaseForm from './pages/PhaseForm'
+import PhasePage from './pages/PhasePage'
+import PhaseList from './pages/PhaseList'
+import VendorListDisplay from './pages/VendorListDisplay'
+import ProtectedRoute from './routes/ProtectedRoute'
+import UpdateProfile from './pages/UpdateProfile'
+import AdminDashboard from './pages/AdminDashboard'
+import PageNotFound from './pages/PageNotFound'
+import NavBar from './components/NavBar'
+import Footer from './components/Footer'
+import Home from './pages/Home'
+import EditPhaseForm from './pages/EditPhase'
+import CreateProject from './pages/CreateProject'
+import UserDashboard from './pages/UserDashboard'
+import VendorDashboard from './pages/VendorDashboard'
 
-import VendorListDisplay from "./pages/VendorListDisplay"; 
-import UpdateProfile from "./pages/UpdateProfile";
-import NavBar from "./components/NavBar";
-import Footer from "./components/Footer";
 
 function App() {
-  let location = useLocation();
+  const location = useLocation();
+
   return (
     <>
       <ToastContainer
@@ -32,11 +38,14 @@ function App() {
         pauseOnHover
         theme="light"
       />
-      {location.pathname !== "/admin-dashboard" && <NavBar/>}
+
+      {!location.pathname.includes("dashboard") && <NavBar />}
+
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/register" element={<RegisterForm />} />
         <Route path="/login" element={<LoginForm />} />
+
         <Route
           path="/update-profile"
           element={
@@ -45,18 +54,22 @@ function App() {
             </ProtectedRoute>
           }
         />
+
         <Route path="/create-project" element={
           <ProtectedRoute allowedRoles={["CUSTOMER"]}>
             <CreateProject />
           </ProtectedRoute>
         }/>
 
-           <Route path="/userdashboard" element={
+        <Route path="/userdashboard" element={
           <ProtectedRoute allowedRoles={["CUSTOMER"]}>
             <UserDashboard />
           </ProtectedRoute>
         }/>
+
         <Route path="/vendorlist" element={<VendorListDisplay />} />
+        <Route path="/vendor-list" element={<VendorListDisplay />} />
+
         <Route
           path="/admin-dashboard"
           element={
@@ -65,10 +78,26 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route path="/vendor-dashboard" />
+
+        <Route
+          path="/vendor-dashboard"
+          element={
+            <ProtectedRoute allowedRoles={["VENDOR"]}>
+              <VendorDashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route path="/phase-form/:exposedId" element={<PhaseForm />} />
+        <Route path="/phase/room/:exposedId" element={<PhaseList />} />
+        <Route path="/phase/:phaseId" element={<PhasePage />} />
+        <Route path="/editphase/:id" element={<EditPhaseForm />} />
+
         <Route path="*" element={<PageNotFound />} />
       </Routes>
-      {location.pathname !== "/admin-dashboard" && <Footer/>}
+
+      {!location.pathname.includes("dashboard") && <Footer />}
+
     </>
   );
 }

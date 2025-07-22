@@ -1,15 +1,17 @@
-import { useState } from 'react'; 
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import RoomEditForm from './RoomEditForm';
 import { useNavigate } from 'react-router-dom';
 
 export default function RoomCard({ room, onDelete, onEdit, onView }) {
   const [isEditing, setIsEditing] = useState(false);
   const navigate = useNavigate();
-  
-  // // Handle card click (excluding buttons)
-  // const handleCardClick = () => {
-  //   if (onView) onView(room.id);
-  // };
+
+
+  const handleCardClick = () => {
+    navigate(`/phase/room/${room.exposedId}`);
+  };
+
 
   return (
     <div className="border p-4 rounded-lg shadow hover:shadow-md transition-shadow">
@@ -23,7 +25,14 @@ export default function RoomCard({ room, onDelete, onEdit, onView }) {
           }}
         />
       ) : (
+
         <div className="flex flex-col h-full">
+
+        <div 
+          className="cursor-pointer"
+          onClick={handleCardClick}
+        >
+
           <div className="flex justify-between items-start">
          
             <div 
@@ -35,11 +44,17 @@ export default function RoomCard({ room, onDelete, onEdit, onView }) {
                 {room.renovationType?.replace(/_/g, ' ').toLowerCase()}
               </p>
             </div>
+
             
             {/* Buttons with isolated click */}
             <div 
               className="flex gap-2"
               onClick={(e) => e.stopPropagation()}  // Prevent card click
+
+            <div 
+              className="flex gap-2"
+              onClick={(e) => e.stopPropagation()} // Prevent card click
+
             >
               <button 
                 onClick={() => setIsEditing(true)}
@@ -59,7 +74,7 @@ export default function RoomCard({ room, onDelete, onEdit, onView }) {
           {/* Clickable details section */}
           <div 
             className="mt-3 cursor-pointer flex-1" 
-            onClick={() => navigate('/')}  // ✅ Creates a click handler function
+            onClick={handleCardClick}  
           >
             <p className="text-sm text-gray-500">
               View phase details →   
