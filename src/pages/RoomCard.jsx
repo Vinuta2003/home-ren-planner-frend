@@ -1,14 +1,17 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import RoomEditForm from './RoomEditForm';
+import { useNavigate } from 'react-router-dom';
 
-export default function RoomCard({ room, onDelete, onEdit }) {
+export default function RoomCard({ room, onDelete, onEdit, onView }) {
   const [isEditing, setIsEditing] = useState(false);
   const navigate = useNavigate();
+
 
   const handleCardClick = () => {
     navigate(`/phase/room/${room.exposedId}`);
   };
+
 
   return (
     <div className="border p-4 rounded-lg shadow hover:shadow-md transition-shadow">
@@ -22,20 +25,36 @@ export default function RoomCard({ room, onDelete, onEdit }) {
           }}
         />
       ) : (
+
+        <div className="flex flex-col h-full">
+
         <div 
           className="cursor-pointer"
           onClick={handleCardClick}
         >
+
           <div className="flex justify-between items-start">
-            <div>
+         
+            <div 
+              className="flex-1 cursor-pointer" 
+             
+            >
               <h3 className="font-bold text-lg">{room.name}</h3>
               <p className="text-sm text-gray-600 capitalize">
                 {room.renovationType?.replace(/_/g, ' ').toLowerCase()}
               </p>
             </div>
+
+            
+            {/* Buttons with isolated click */}
+            <div 
+              className="flex gap-2"
+              onClick={(e) => e.stopPropagation()}  // Prevent card click
+
             <div 
               className="flex gap-2"
               onClick={(e) => e.stopPropagation()} // Prevent card click
+
             >
               <button 
                 onClick={() => setIsEditing(true)}
@@ -51,8 +70,15 @@ export default function RoomCard({ room, onDelete, onEdit }) {
               </button>
             </div>
           </div>
-          <div className="mt-3">
-            <p className="text-sm text-gray-500">Phase details are not shown.</p>
+          
+          {/* Clickable details section */}
+          <div 
+            className="mt-3 cursor-pointer flex-1" 
+            onClick={handleCardClick}  
+          >
+            <p className="text-sm text-gray-500">
+              View phase details →   
+            </p>
           </div>
         </div>
       )}

@@ -23,7 +23,6 @@ function PhaseForm() {
   });
 console.log(formData);
   const [reviewData, setReviewData] = useState({ comment: "", rating: 0 });
-  const userId = "248cf7fd-7f0b-4cde-8b2f-bc73f26da083"; // Replace with Redux user later
   
   useEffect(() => {
     if (location.state?.formData) {
@@ -128,7 +127,7 @@ console.log("payload",payload);
         navigate(`/phase/room/${formData.room}`);
       }
     } catch (err) {
-      console.error("Error creating phase or submitting review:", err);
+      console.error("Error creating phase", err);
       alert("An error occurred.");
     }
   };
@@ -174,11 +173,14 @@ console.log("payload",payload);
         <select name="phaseStatus" value={formData.phaseStatus} onChange={handleChange}
           className="w-full px-4 py-2 border border-gray-300 rounded mb-5 bg-white">
           <option value="">-- Select Phase Status --</option>
-          {phaseStatuses.map((status) => (
-            <option key={status} value={status}>{status.replaceAll("_", " ")}</option>
-          ))}
-        </select>
-
+          {phaseStatuses
+    .filter((status) => status !== "COMPLETED")
+    .map((status) => (
+      <option key={status} value={status}>
+        {status.replaceAll("_", " ")}
+      </option>
+    ))}
+</select>
         <button type="submit"
           className="w-full mt-6 bg-blue-600 text-white py-2 rounded font-semibold hover:bg-blue-700 transition">
           Create Phase

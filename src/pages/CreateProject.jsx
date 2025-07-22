@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import axiosInstance from '../axios/axiosInstance';
 import { toast } from 'react-toastify';
 import { FiX } from 'react-icons/fi';
@@ -13,14 +13,33 @@ const ServiceType = {
 export default function CreateProject({ existingProject, onProjectSaved, onCancel }) {
   const navigate = useNavigate();
   const isEdit = !!existingProject;
+  
+  const getCurrentDate = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
 
+  const [currentDate] = useState(() => getCurrentDate());
   const [formData, setFormData] = useState({
     name: existingProject?.name || '',
     estimatedBudget: existingProject?.estimatedBudget || '',
-    startDate: existingProject?.startDate?.split('T')[0] || '', // Format date for input
-    endDate: existingProject?.endDate?.split('T')[0] || '',     // Format date for input
+    startDate: existingProject?.startDate?.split('T')[0] || currentDate,
+    endDate: existingProject?.endDate?.split('T')[0] || currentDate,
     serviceType: existingProject?.serviceType || ServiceType.select
   });
+
+  useEffect(() => {
+    if (!existingProject) {
+      setFormData(prev => ({
+        ...prev,
+        startDate: currentDate,
+        endDate: currentDate
+      }));
+    }
+  }, [currentDate, existingProject]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -43,118 +62,136 @@ export default function CreateProject({ existingProject, onProjectSaved, onCance
       }
 
       onProjectSaved(response.data);
-      onCancel(); // Close the form
-          navigate('/userdashboard');
+      onCancel();
+      navigate('/userdashboard');
     } catch (error) {
-          navigate('/userdashboard');
+      navigate('/userdashboard');
     }
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    
+    if ((name === 'startDate' || name === 'endDate') && value < currentDate) {
+      toast.warning("Please select a date from today or later");
+      return;
+    }
+    
+    if (name === 'endDate' && value < formData.startDate) {
+      toast.warning("End date cannot be before start date");
+      return;
+    }
+
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
-        <div className="flex justify-between items-center border-b p-4">
-          <h2 className="text-xl font-bold">
-            {isEdit ? 'Edit Project' : 'Create New Project'}
-          </h2>
-          <button onClick={onCancel} className="text-gray-500 hover:text-gray-700">
-            <FiX size={24} />
-          </button>
-        </div>
-
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
-                    <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Project Name *</label>
-            <input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500"
-              required
-              placeholder="e.g., Whole Home Renovation"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Service Type</label>
-            <select
-              name="serviceType"
-              value={formData.serviceType}
-              onChange={handleChange}
-              className="w-full p-2 border rounded"
+    <div className="min-h-screen bg-blue-50 flex justify-center items-center p-4">
+      <div className="bg-white rounded-xl shadow-md w-full max-w-md">
+        <div className="p-6">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-2xl font-bold text-blue-700">
+              {isEdit ? 'Edit Project' : 'Create New Project'}
+            </h2>
+            <button 
+             
+              onClick={() => navigate('/')}
+              className="text-blue-500 hover:text-blue-700 transition-colors"
             >
-              {Object.values(ServiceType).map((type) => (
-                <option key={type} value={type}>
-                  {type.charAt(0) + type.slice(1).toLowerCase()}
-                </option>
-              ))}
-            </select>
+              <FiX size={24} />
+            </button>
           </div>
 
-          <div className="grid gap-4">
+          <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Estimated Cost ($)</label>
+              <label className="block text-sm font-medium text-blue-900 mb-1">Project Name *</label>
+              <input
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
+                placeholder="e.g., Whole Home Renovation"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-blue-900 mb-1">Service Type</label>
+              <select
+                name="serviceType"
+                value={formData.serviceType}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                {Object.values(ServiceType).map((type) => (
+                  <option key={type} value={type}>
+                    {type === 'select' ? 'Select Service Type' :
+ type === 'WHOLE_HOUSE' ? 'Whole House' :
+ type === 'ROOM_WISE' ? 'Room Wise' : type}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-blue-900 mb-1">Estimated Cost ($)</label>
               <input
                 type="number"
                 name="estimatedBudget"
                 value={formData.estimatedBudget}
                 onChange={handleChange}
-                className="w-full p-2 border rounded"
+                className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                 min="0"
                 step="0.01"
-                placeholder="50000"
+                placeholder="Enter estimated budget"
               />
             </div>
-          </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
-              <input
-                type="date"
-                name="startDate"
-                value={formData.startDate}
-                onChange={handleChange}
-                className="w-full p-2 border rounded"
-              />
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-blue-900 mb-1">Start Date *</label>
+                <input
+                  type="date"
+                  name="startDate"
+                 // value={formData.startDate}
+                  onChange={handleChange}
+                  min={currentDate}
+                  className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-blue-900 mb-1">End Date *</label>
+                <input
+                  type="date"
+                  name="endDate"
+                 // value={formData.endDate}
+                  onChange={handleChange}
+                  min={formData.startDate || currentDate}
+                  className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  required
+                />
+              </div>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">End Date</label>
-              <input
-                type="date"
-                name="endDate"
-                value={formData.endDate}
-                onChange={handleChange}
-                min={formData.startDate}
-                className="w-full p-2 border rounded"
-              />
-            </div>
-          </div>
 
-         
-          
-          <div className="flex justify-end space-x-3 pt-4">
-            <button
-              type="button"
-              onClick={onCancel}
-              className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-            >
-              {isEdit ? 'Update Project' : 'Create Project'}
-            </button>
-          </div>
-        </form>
+            <div className="flex justify-between items-center pt-6">
+              <button
+                type="button"
+                onClick={onCancel}
+                className="px-6 py-2 text-blue-700 hover:text-blue-900 hover:bg-blue-100 rounded transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+              >
+                {isEdit ? 'Update Project' : 'Create Project'}
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   );
