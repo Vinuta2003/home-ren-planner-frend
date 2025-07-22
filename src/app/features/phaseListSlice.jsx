@@ -40,8 +40,8 @@ export const getPhasesByRenovationType = createAsyncThunk("getPhasesByRenovation
 });
 
 
-export const getPhaseTotalCost = createAsyncThunk("getPhaseTotalCost", async (id) => {
-  const res = await axios.get(`http://localhost:8080/phase/${id}/total-cost`);
+export const getPhaseTotalCost = createAsyncThunk("getPhaseTotalCost", async (phaseId) => {
+  const res = await axios.get(`http://localhost:8080/phase/${phaseId}/total-cost`);
   return res.data;
 });
 
