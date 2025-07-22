@@ -19,6 +19,7 @@ import EditPhaseForm from './pages/EditPhase'
 import CreateProject from './pages/CreateProject'
 import UserDashboard from './pages/UserDashboard'
 import VendorDashboard from './pages/VendorDashboard'
+import BudgetOverviewPage from './pages/BudgetOverviewPage'
 
 
 function App() {
@@ -58,6 +59,12 @@ function App() {
         <Route path="/create-project" element={
           <ProtectedRoute allowedRoles={["CUSTOMER"]}>
             <CreateProject />
+          </ProtectedRoute>
+        }/>
+
+        <Route path="/:projectId/budget-overview" element={
+          <ProtectedRoute allowedRoles={["CUSTOMER"]}>
+            <BudgetOverviewPage />
           </ProtectedRoute>
         }/>
 
