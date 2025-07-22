@@ -4,7 +4,8 @@ import ProjectCard from './ProjectCard';
 import CreateProject from './CreateProject';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
-
+import NavBar from '../components/NavBar';
+import Footer from '../components/Footer';
 export default function Dashboard() {
   const [projects, setProjects] = useState([]);
   const [selectedProjectId, setSelectedProjectId] = useState(null);
@@ -71,19 +72,10 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="container mx-auto p-4">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">My Renovation Projects</h1>
-        <button
-          onClick={() => {
-            setProjectToEdit(null);
-            setShowProjectForm(true);
-          }}
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-        >
-          + New Project
-        </button>
-      </div>
+   <> <NavBar/>
+    <div className="container mt-[5%] mx-auto p-4">
+     
+    
 
       {showProjectForm && (
         <CreateProject
@@ -138,6 +130,8 @@ export default function Dashboard() {
           </button>
         </div>
       )}
-    </div>
+    <Footer/>
+    </div></>
+
   );
 }
