@@ -22,7 +22,7 @@ const safeArray = (value) => {
 };
   const {
     currentPhase,
-    phaseMaterialsList,
+    // phaseMaterialsList,
     loaded,
     chosenMaterialsList,
   } = useSelector((state) => state.phase);
@@ -35,8 +35,9 @@ const safeArray = (value) => {
     endDate,
     phaseStatus,
     totalPhaseCost,
+    phaseMaterialList
   } = currentPhase || {};
-
+console.log("currentphase is:",currentPhase);
   const [addMode, updateAddMode] = useState(false);
   const [newMaterialsList, updateNewMaterialsList] = useState([]);
 
@@ -50,7 +51,7 @@ const safeArray = (value) => {
     const handleMaterials = async () => {
         if (!addMode || !phaseType) return;
         
-  const currentMaterialIds = safeArray(phaseMaterialsList).map(
+  const currentMaterialIds = safeArray(phaseMaterialList).map(
             (val) => val?.materialUserResponse?.exposedId
         ).filter(Boolean);
         
@@ -66,7 +67,7 @@ const safeArray = (value) => {
         }
     };
     handleMaterials();
-}, [addMode, phaseMaterialsList, phaseType]);
+}, [addMode, phaseMaterialList, phaseType]);
 
   const addButtonOnClickHandler = () => updateAddMode(true);
 
@@ -123,8 +124,8 @@ const safeArray = (value) => {
         <h2 className="text-2xl font-semibold text-blue-800">Materials in Phase</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {loaded ? (
-            phaseMaterialsList.length > 0 ? (
-              phaseMaterialsList.map((val) => (
+            phaseMaterialList.length > 0 ? (
+              phaseMaterialList.map((val) => (
                 <PhaseMaterial phaseMaterial={val} key={val.exposedId} />
               ))
             ) : (

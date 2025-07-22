@@ -24,7 +24,7 @@ export function PhaseMaterial({ phaseMaterial }) {
 
   const confirmDeleteButtonOnClickHandler = async () => {
     await deletePhaseMaterial(phaseMaterial.exposedId);
-    await dispatch(getPhaseById(phaseMaterial.phaseResponse.id));
+    await dispatch(getPhaseById(phaseMaterial.phaseResponse.id));//phaseId
   };
 
   const increment = () => {

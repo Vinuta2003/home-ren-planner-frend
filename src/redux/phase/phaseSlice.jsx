@@ -17,8 +17,16 @@ export const addPhaseMaterialsToPhase = createAsyncThunk('addPhaseMaterialsToPha
 const phaseSlice = createSlice({
     name:"phaseSlice",
     initialState:{
-        currentPhase: {},
-        phaseMaterialsList: [],
+        currentPhase: {
+            phaseType:null,
+            phaseName:null,
+            description:null,
+            startDate:null,
+            endDate:null,
+            phaseStatus:null,
+            totalPhaseCost:null,
+            phaseMaterialList:[]
+        },
         chosenMaterialsList: [],
         loaded: false
     },
@@ -41,7 +49,16 @@ const phaseSlice = createSlice({
     },
     extraReducers:(builder)=>{
         builder.addCase(getPhaseById.fulfilled,(state,action)=>{
-            state.currentPhase = action.payload;
+            // state.currentPhase = action.payload;
+            state.currentPhase.phaseName = action.payload.phaseName;
+            state.currentPhase.phaseType = action.payload.phaseType;
+            state.currentPhase.description=action.payload.description;
+            state.currentPhase.startDate=action.payload.startDate;
+            state.currentPhase.endDate=action.payload.endDate;
+            state.currentPhase.phaseStatus=action.payload.phaseStatus;
+            state.currentPhase.phaseMaterialList=action.payload.phaseMaterialList;
+            state.currentPhase.totalPhaseCost=action.payload.totalPhaseCost;
+console.log("in slice",state.currentPhase.phaseMaterialList);
         //     state.phaseMaterialsList = Array.isArray(action.payload.phaseMaterials) 
         // ? action.payload.phaseMaterials 
         // : [];
