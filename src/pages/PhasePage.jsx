@@ -11,12 +11,23 @@ import { getMaterialsByPhaseType } from "../app/apis/phaseApis";
 import { PhaseMaterial } from "../components/PhaseMaterial";
 import { Material } from "../components/Material";
 import ReviewModal from "../components/ReviewModal";
+import {getPhaseTotalCost} from "../app/features/phaseListSlice";
 
 export function PhasePage() {
   const { phaseId } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [calculatedCost, setCalculatedCost] = useState(null);
 
+  const fetchPhaseTotalCost = async () => {
+    try {
+      const response = dispatch(getPhaseTotalCost(phaseId));
+      setCalculatedCost(response.data);
+    } catch (error) {
+      console.error("Error fetching total cost:", error);
+    }
+  };
+  
   const {
     currentPhase,
     phaseMaterialsList,
@@ -42,6 +53,7 @@ export function PhasePage() {
   useEffect(() => {
     dispatch(clearChosenMaterialsList());
     dispatch(getPhaseById(phaseId));
+    fetchPhaseTotalCost();
   }, [dispatch, phaseId]);
 
   useEffect(() => {
@@ -75,29 +87,49 @@ export function PhasePage() {
       await dispatch(getPhaseById(phaseId));
     }
   };
-
-
+console.log("cost",totalPhaseCost);
   return (
-    <div className="min-h-screen bg-blue-50 p-70 pt-24">
+    
+    <div className="bg-blue-50 px-80 pt-26 pb-8 ">
       <div className="ml-10 max-w-5xl bg-white pt-12 pb-20 px-12 rounded-2xl shadow-lg text-center">
-        {/* Heading Section */}
-        <div className="relative mb-6 grid grid-cols-3 items-start">
-          <div></div>
-          <div className="text-center">
-            <h1 className="text-2xl font-bold text-blue-800">Phase Details</h1>
-            <h2 className="text-3xl font-bold text-blue-900 mt-2">{phaseName}</h2>
-            <p className="text-gray-700">{description}</p>
-          </div>
-          <div className="text-right">
-            <button
-              onClick={() => navigate(`/editphase/${phaseId}`)}
-              className="inline-block text-blue-600 hover:text-blue-800"
-              title="Edit Phase"
-            >
-              <Pencil size={24} />
-            </button>
-          </div>
-        </div>
+        {/* Header */}
+       {/* Heading Section */}
+<div className="relative mb-6 grid grid-cols-3 items-start">
+  {/* Left placeholder */}
+  <div></div>
+
+  {/* Center Heading */}
+  <div className="text-center">
+    <h1 className="text-2xl font-bold text-blue-900 ">PHASE DETAILS</h1>
+    <h2 className="text-3xl font-bold text-blue-800 mt-2">{phaseName}</h2>
+    
+    <p className="text-blue-900 py-2 mt-2">{description}</p>
+  </div>
+
+  {/* Edit button in right column */}
+  <div className="text-right">
+    <button
+      onClick={() => navigate(`/editphase/${phaseId}`)}
+      className="inline-block text-blue-900 hover:text-blue-800"
+      title="Edit Phase"
+    >
+      <Pencil size={24} />
+    </button>
+  </div>
+</div>
+
+{/* Phase Info */}
+<div className="grid grid-cols-2 text-blue-900 mb-8 py-2">
+  <div className="space-y-2 text-left p-6 px-18">
+    <p><span className="font-semibold">Phase Type:</span> {phaseType}</p>
+    <p><span className="font-semibold">Start Date:</span> {startDate}</p>
+    <p><span className="font-semibold">End Date:</span> {endDate}</p>
+  </div>
+  <div className="space-y-2 text-right p-6 px-18">
+  <p><span className="font-semibold">Total Cost:</span> ₹{totalPhaseCost || 0}</p>
+    <p><span className="font-semibold">Status:</span> {phaseStatus}</p>
+  </div>
+</div>
 
         {/* Phase Info */}
         <div className="grid grid-cols-2 text-blue-900 mb-10 py-5">

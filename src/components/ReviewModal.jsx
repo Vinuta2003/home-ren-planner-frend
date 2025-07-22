@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 export default function ReviewModal({ vendor, onReviewSubmit }) {
   console.log("🚀 ReviewModal mounted", vendor);
@@ -43,7 +44,7 @@ export default function ReviewModal({ vendor, onReviewSubmit }) {
 
   const submitReview = async () => {
     if (!review.comment || review.rating === 0) {
-      alert("Please add comment and rating");
+      toast.error("Please add comment and rating");
       return;
     }
 
@@ -58,12 +59,12 @@ export default function ReviewModal({ vendor, onReviewSubmit }) {
       console.log("Submitting review payload:", payload);
 
       await axios.post("http://localhost:8080/api/vendor-reviews/reviews", payload);
-      alert("Review submitted successfully!");
+      toast.success("Review submitted successfully!");
       setReview({ comment: "", rating: 0 });
       onReviewSubmit(); // callback to parent
     } catch (error) {
       console.error("Error submitting review:", error);
-      alert("Failed to submit review");
+      toast.error("Failed to submit review");
     }
   };
 
