@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation, useParams } from "react-router-dom";
-import { createPhaseApi } from "../app/apis/phaseListAPIs";
+import { createPhaseApi } from "../axios/phaseListAPIs";
 import axios from "axios";
 
 function PhaseForm() {
@@ -121,8 +121,6 @@ console.log("payload",payload);
         alert("Phase of this type already exists for the room.");
       } else {
         await createPhaseApi(payload);
-
-       
 
         navigate(`/phase/room/${formData.room}`);
       }
