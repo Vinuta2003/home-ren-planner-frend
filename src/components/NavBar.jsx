@@ -2,7 +2,7 @@ import logo from "../assets/imgs/logo.png";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../redux/auth/authSlice";
-import { LogIn, LogOut, User, PlusCircle } from "lucide-react";
+import { LogIn, LogOut, User, PlusCircle, Home } from "lucide-react";
 
 export default function NavBar() {
   const navigate = useNavigate();
@@ -51,15 +51,26 @@ export default function NavBar() {
         </div>
 
         <div className="flex items-center gap-2 md:gap-4">
+          {role === "CUSTOMER" && (
+            <>
+              <button
+                className="flex items-center gap-2 px-4 py-2.5 rounded-lg border-2 border-[#005eb8] text-[#005eb8] bg-white hover:bg-blue-50 shadow-sm text-base font-semibold transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-200"
+                onClick={() => navigate("/userdashboard")}
+                title="View Projects"
+              >
+                <Home className="w-5 h-5" />
+                <span className="hidden md:inline">View Projects</span>
+              </button>
 
-          {role=="CUSTOMER" && <button
-            className="bg-[#005eb8] text-white px-5 py-2.5 rounded-lg shadow-sm hover:bg-[#004a94] transition-all text-base font-semibold tracking-wide cursor-pointer border-2 border-[#005eb8] focus:outline-none focus:ring-2 focus:ring-blue-200 flex items-center gap-2"
-            onClick={() => navigate("/create-project")}
-          >
-            <PlusCircle className="w-5 h-5" />
-            Create Project
-          </button>
-}
+              <button
+                className="bg-[#005eb8] text-white px-5 py-2.5 rounded-lg shadow-sm hover:bg-[#004a94] transition-all text-base font-semibold tracking-wide cursor-pointer border-2 border-[#005eb8] focus:outline-none focus:ring-2 focus:ring-blue-200 flex items-center gap-2"
+                onClick={() => navigate("/create-project")}
+              >
+                <PlusCircle className="w-5 h-5" />
+                Create Project
+              </button>
+            </>
+          )}
           {!email ? (
             <button
               className="flex items-center gap-2 px-5 py-2.5 [&:hover]:bg-[#005eb8] hover:text-white rounded-lg border-2 border-[#005eb8] text-[#005eb8] bg-white hover:bg-blue-50 shadow-sm text-base font-semibold transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-200"
