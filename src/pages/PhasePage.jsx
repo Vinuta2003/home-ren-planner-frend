@@ -10,6 +10,7 @@ import {
 import { getMaterialsByPhaseType } from "../app/apis/phaseApis";
 import { PhaseMaterial } from "../components/PhaseMaterial";
 import { Material } from "../components/Material";
+import ReviewModal from "../components/ReviewModal";
 import {getPhaseTotalCost} from "../app/features/phaseListSlice";
 
 export function PhasePage() {
@@ -42,10 +43,12 @@ export function PhasePage() {
     endDate,
     phaseStatus,
     totalPhaseCost,
+    vendor, // This will now be your VendorDTO object from the backend
   } = currentPhase || {};
 
   const [addMode, updateAddMode] = useState(false);
   const [newMaterialsList, updateNewMaterialsList] = useState([]);
+  const [hasSubmittedReview, setHasSubmittedReview] = useState(false);
 
   useEffect(() => {
     dispatch(clearChosenMaterialsList());
@@ -68,7 +71,7 @@ export function PhasePage() {
     };
 
     handleMaterials();
-  }, [addMode, phaseMaterialsList.length, phaseId]);
+  }, [addMode, phaseMaterialsList.length, phaseType]);
 
   const addButtonOnClickHandler = () => updateAddMode(true);
   const cancelButtonOnClickHandler = () => {
@@ -128,6 +131,21 @@ console.log("cost",totalPhaseCost);
   </div>
 </div>
 
+        {/* Phase Info */}
+        <div className="grid grid-cols-2 text-blue-900 mb-10 py-5">
+          <div className="space-y-2 text-left p-6 px-18">
+            <p><span className="font-semibold">Phase Type:</span> {phaseType}</p>
+            <p><span className="font-semibold">Start Date:</span> {startDate}</p>
+            <p><span className="font-semibold">Total Cost:</span> ₹{totalPhaseCost || 0}</p>
+            {vendor && ( // Check if vendor object exists (it will be VendorDTO)
+              <p><span className="font-semibold">Vendor:</span> {vendor.name}</p>
+            )}
+          </div>
+          <div className="space-y-2 text-right p-6 px-18">
+            <p><span className="font-semibold">End Date:</span> {endDate}</p>
+            <p><span className="font-semibold">Status:</span> {phaseStatus}</p>
+          </div>
+        </div>
 
         {/* Materials in Phase */}
         <h2 className="text-2xl font-semibold text-blue-800 mb-4">Materials in Phase</h2>
@@ -185,9 +203,18 @@ console.log("cost",totalPhaseCost);
             </div>
           </div>
         )}
+
+        {/* Review Prompt */}
+        {phaseStatus === "COMPLETED" && vendor && !hasSubmittedReview && (
+          <ReviewModal
+            vendor={vendor} // Pass the VendorDTO object
+            onReviewSubmit={() => setHasSubmittedReview(true)}
+          />
+        )}
       </div>
     </div>
   );
 }
+
 
 export default PhasePage;
