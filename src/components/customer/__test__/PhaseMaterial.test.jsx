@@ -8,7 +8,6 @@ import * as phaseApis from "../../../axios/phaseApis";
 import * as phaseSlice from "../../../redux/phase/phaseSlice";
 import "@testing-library/jest-dom";
 
-// Mock APIs
 jest.mock("../../../axios/phaseApis", () => ({
   deletePhaseMaterial: jest.fn(),
   updatePhaseMaterialQuantity: jest.fn(),
@@ -111,7 +110,6 @@ describe("PhaseMaterial Component", () => {
     .spyOn(phaseSlice, "getPhaseById")
     .mockReturnValue(() => Promise.resolve({}));
 
-  // Mock the store's dispatch to handle thunks
   store.dispatch = jest.fn((fn) => typeof fn === "function" ? fn() : fn);
 
   renderWithStore(<PhaseMaterial phaseMaterial={sampleMaterial} />, store);
@@ -152,7 +150,6 @@ describe("PhaseMaterial Component", () => {
     .spyOn(phaseSlice, "getPhaseById")
     .mockReturnValue(() => Promise.resolve({}));
 
-  // Mock the store's dispatch to support thunks
   store.dispatch = jest.fn((fn) => typeof fn === "function" ? fn() : fn);
 
   renderWithStore(<PhaseMaterial phaseMaterial={sampleMaterial} />, store);

@@ -3,9 +3,8 @@ import { render, fireEvent, screen } from "@testing-library/react";
 import { Provider } from "react-redux";
 import configureStore from "redux-mock-store";
 import { Material } from "../Material";
-import "@testing-library/jest-dom"; // ✅ REQUIRED for toBeInTheDocument()
+import "@testing-library/jest-dom"; 
 
-// ✅ Mock actions to return plain action objects
 jest.mock("../../../redux/phase/phaseSlice", () => ({
   addMaterial: jest.fn(({ materialExposedId, quantity }) => ({
     type: "ADD_MATERIAL",
@@ -101,7 +100,6 @@ describe("Material component", () => {
     const decrementBtn = screen.getByTestId("decrement-btn")
     fireEvent.click(decrementBtn);
 
-    // No additional dispatch beyond initial add
     expect(store.dispatch).toHaveBeenCalledTimes(1);
   });
 
