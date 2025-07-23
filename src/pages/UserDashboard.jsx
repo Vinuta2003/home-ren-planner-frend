@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react';
 import axiosInstance from '../axios/axiosInstance';
 import ProjectCard from './ProjectCard';
-import CreateProject from './CreateProject'; // Make sure this import is correct
-import RoomList from './RoomList';
+import CreateProject from './CreateProject';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
-
+import NavBar from '../components/NavBar';
+import Footer from '../components/Footer';
 export default function Dashboard() {
   const [projects, setProjects] = useState([]);
-  const [selectedProject, setSelectedProject] = useState(null);
+  const [selectedProjectId, setSelectedProjectId] = useState(null);
   const [showProjectForm, setShowProjectForm] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [projectToEdit, setProjectToEdit] = useState(null);
@@ -41,16 +41,12 @@ export default function Dashboard() {
     toast.success('Project created successfully!');
   };
 
-  const handleRoomsUpdate = (updatedRooms) => {
-    setProjects(prevProjects => prevProjects.map(project => {
-      if (project.exposedId === selectedProject.exposedId) { // Changed from id to exposedId
-        return {
-          ...project,
-          rooms: updatedRooms
-        };
-      }
-      return project;
-    }));
+  const handleRoomsUpdate = (projectId, updatedRooms) => {
+    setProjects(prevProjects =>
+      prevProjects.map(project =>
+        project.exposedId === projectId ? { ...project, rooms: updatedRooms } : project
+      )
+    );
   };
 
   const handleEditProject = (project) => {
@@ -62,8 +58,8 @@ export default function Dashboard() {
     try {
       await axiosInstance.delete(`/projects/${exposedId}`);
       setProjects(projects.filter(p => p.exposedId !== exposedId));
-      if (selectedProject?.exposedId === exposedId) {
-        setSelectedProject(null);
+      if (selectedProjectId === exposedId) {
+        setSelectedProjectId(null);
       }
       toast.success('Project deleted successfully');
     } catch (error) {
@@ -76,31 +72,20 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="container mx-auto p-4">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">My Renovation Projects</h1>
-        <button
-          onClick={() => {
-            setProjectToEdit(null);
-            setShowProjectForm(true);
-          }}
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-        >
-          + New Project
-        </button>
-      </div>
+   <> <NavBar/>
+    <div className="container mt-[5%] mx-auto p-4">
+     
+    
 
       {showProjectForm && (
         <CreateProject
           existingProject={projectToEdit}
           onProjectSaved={(updatedProject) => {
             if (projectToEdit) {
-              // Update existing project
-              setProjects(projects.map(p => 
+              setProjects(projects.map(p =>
                 p.exposedId === updatedProject.exposedId ? updatedProject : p
               ));
             } else {
-              // Add new project
               setProjects([updatedProject, ...projects]);
             }
             setShowProjectForm(false);
@@ -113,34 +98,23 @@ export default function Dashboard() {
         />
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+      <div className="grid grid-cols-1 gap-4">
         {projects.map(project => (
           <ProjectCard
             key={project.exposedId}
             project={project}
-            onClick={() => setSelectedProject(project)}
+            onClick={() =>
+              setSelectedProjectId(
+                selectedProjectId === project.exposedId ? null : project.exposedId
+              )
+            }
             onDelete={() => deleteProject(project.exposedId)}
             onEdit={() => handleEditProject(project)}
-            isSelected={selectedProject?.exposedId === project.exposedId}
+            isSelected={selectedProjectId === project.exposedId}
+            onRoomsUpdate={(rooms) => handleRoomsUpdate(project.exposedId, rooms)}
           />
         ))}
       </div>
-
-      {selectedProject && (
-        <div className="mt-8">
-          <div className="flex items-center mb-4">
-            <h2 className="text-xl font-bold">{selectedProject.name}</h2>
-            <span className="ml-2 px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
-              {selectedProject.rooms?.length || 0} Rooms
-            </span>
-          </div>
-          <RoomList 
-            projectId={selectedProject.exposedId}
-            rooms={selectedProject.rooms || []}
-            onRoomsUpdate={handleRoomsUpdate}
-          />
-        </div>
-      )}
 
       {projects.length === 0 && !showProjectForm && (
         <div className="text-center py-12 border rounded-lg bg-gray-50">
@@ -156,6 +130,8 @@ export default function Dashboard() {
           </button>
         </div>
       )}
-    </div>
+    <Footer/>
+    </div></>
+
   );
 }
