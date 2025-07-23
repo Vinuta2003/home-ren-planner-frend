@@ -9,6 +9,8 @@ function PhaseForm() {
   const { exposedId } = useParams();
   const [renovationType, setRenovationType] = useState('');
   const [phaseTypes, setPhaseTypes] = useState([]);
+  const [errors, setErrors] = useState({});
+
   const [phaseStatuses, setPhaseStatuses] = useState([]);
   const [formData, setFormData] = useState({
     phaseName: "",
@@ -22,7 +24,7 @@ function PhaseForm() {
     room: ""
   });
 console.log(formData);
-  const [reviewData, setReviewData] = useState({ comment: "", rating: 0 });
+
   
   useEffect(() => {
     if (location.state?.formData) {
@@ -45,8 +47,31 @@ console.log(formData);
     })
     .catch(err => console.error("Error fetching room:", err));
 }, [exposedId]);
+console.log("phase name is",formData.phaseName);
+const validate = () => {
+  const newErrors = {};
 
 
+
+
+  if (formData.phaseName == "") {
+    newErrors.phaseName = "Please enter phase name";
+  }
+  if (formData.phaseStatus == "") {
+    newErrors.phaseStatus = "Please select phase status";
+  }
+  if (formData.phaseType == "") {
+    newErrors.phaseType = "Please select phase type";
+  }
+  if (formData.startDate == "") {
+    newErrors.startDate = "Please enter start date";
+  }
+  if (formData.endDate == "") {
+    newErrors.endDate = "Please enter end date";
+  }
+
+  return newErrors;
+};
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const vendorId = params.get("vendorId");
@@ -100,7 +125,11 @@ console.log(formData);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    
+    const validationErrors = validate();
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;}
     const payload = {
       vendorId: formData.vendorId,
       roomId: exposedId,
@@ -137,8 +166,12 @@ console.log("payload",payload);
       <form onSubmit={handleSubmit} className="bg-white p-8 rounded-xl shadow-md w-full max-w-xl">
         <h2 className="text-2xl font-bold text-blue-600 mb-6 text-center">Create Phase</h2>
 
-        <input name="phaseName" placeholder="Phase Name" value={formData.phaseName} onChange={handleChange}
-          className="w-full px-4 py-2 border border-gray-300 rounded mb-3" />
+        <input  name="phaseName" placeholder="Phase Name" value={formData.phaseName} onChange={handleChange}
+  className="w-full px-4 py-2 border border-gray-300 rounded mb-3" />
+{errors.phaseName && (
+          <p className="text-red-500 text-sm mb-3">{errors.phaseName}</p>
+        )}
+
 
         <textarea name="description" placeholder="Description" value={formData.description} onChange={handleChange}
           className="w-full px-4 py-2 border border-gray-300 rounded mb-3" />
@@ -146,11 +179,15 @@ console.log("payload",payload);
         <input type="date" name="startDate" value={formData.startDate} onChange={handleChange}
           min={new Date().toISOString().split("T")[0]}
           className="w-full px-4 py-2 border border-gray-300 rounded mb-3 text-gray-500" />
-
+{errors.startDate && (
+          <p className="text-red-500 text-sm mb-3">{errors.startDate}</p>
+        )}
         <input type="date" name="endDate" value={formData.endDate} onChange={handleChange}
           min={new Date().toISOString().split("T")[0]}
           className="w-full px-4 py-2 border border-gray-300 rounded mb-3 text-gray-500" />
-
+{errors.endDate && (
+          <p className="text-red-500 text-sm mb-3">{errors.endDate}</p>
+        )}
         <select name="phaseType" value={formData.phaseType} onChange={handleChange}
           className="w-full px-4 py-2 border border-gray-300 rounded mb-3 bg-white">
           <option value="">-- Select Phase Type --</option>
@@ -158,6 +195,9 @@ console.log("payload",payload);
             <option key={type} value={type}>{type.replaceAll("_", " ")}</option>
           ))}
         </select>
+        {errors.phaseType && (
+          <p className="text-red-500 text-sm mb-3">{errors.phaseType}</p>
+        )}
 
         <input type="text" name="vendorName" value={formData.vendorName || ""} disabled
           placeholder="Selected Vendor"
@@ -177,8 +217,12 @@ console.log("payload",payload);
       <option key={status} value={status}>
         {status.replaceAll("_", " ")}
       </option>
+      
     ))}
 </select>
+{errors.phaseStatus && (
+          <p className="text-red-500 text-sm mb-3">{errors.phaseStatus}</p>
+        )}
         <button type="submit"
           className="w-full mt-6 bg-blue-600 text-white py-2 rounded font-semibold hover:bg-blue-700 transition">
           Create Phase

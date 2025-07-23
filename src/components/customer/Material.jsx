@@ -130,12 +130,12 @@ export function Material({ material }) {
           Add
         </button>
       ) : (
-        <div className="space-y-2 ">
-          <div className="flex  space-x-2">
+        <div className="space-y-2">
+          <div className="flex space-x-2">
             <span className="font-medium text-blue-600">Quantity:</span>
             <button
               onClick={decrement}
-              className="w-10 h-10 flex  bg-gray-300 rounded"
+              className="w-10 h-10 flex px-3 items-center  bg-gray-300 rounded"
             >
               <Minus className="w-4 h-4" />
             </button>
@@ -146,7 +146,7 @@ export function Material({ material }) {
               onChange={(event) => {
                 quantityInputHandler(event.target.value);
               }}
-              className="h-10 w-16 px-2 py-1 border border-gray-300 rounded appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              className="h-10 w-17 px-7 py-1 border border-gray-300 rounded appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
             />
             <button
               onClick={increment}
