@@ -134,7 +134,7 @@ export function PhasePage() {
         </div>
 
         {/* Phase Materials */}
-        <h2 className="text-2xl font-semibold text-blue-800">Materials in Phase</h2>
+        <h2 className="text-2xl font-semibold text-blue-800">Materials Added To Phase</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {loaded ? (
             phaseMaterialList.length > 0 ? (
@@ -142,7 +142,7 @@ export function PhasePage() {
                 <PhaseMaterial phaseMaterial={val} key={val.exposedId} />
               ))
             ) : (
-              <div className="text-gray-500 col-span-full">No Phase Materials Added</div>
+              <div className="text-gray-500 col-span-full">No Materials Added</div>
             )
           ) : (
             <div className="text-gray-500 col-span-full">Loading Materials...</div>
@@ -160,7 +160,7 @@ export function PhasePage() {
           </button>
         ) : (
           <div className="space-y-6">
-            <h2 className="text-xl font-semibold text-blue-800 mb-4">Available Materials</h2>
+            <h2 className="text-2xl font-semibold text-blue-800">Available Materials To Add</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {newMaterialsList.length > 0 ? (
                 newMaterialsList.map((val) => (
