@@ -68,12 +68,12 @@ export default function Dashboard() {
   };
 
   if (isLoading) {
-    return <div className="container mx-auto p-4 text-center">Loading projects...</div>;
+    return <div className="container bg-blue-50 mx-auto p-4 text-center">Loading projects...</div>;
   }
 
   return (
    <> <NavBar/>
-    <div className="container mt-[5%] mx-auto p-4">
+    <div className=" bg-blue-50 mt-[5%]  p-4">
      
     
 
