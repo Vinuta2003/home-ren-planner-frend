@@ -97,9 +97,9 @@ function App() {
 
         <Route path="/phase-form/:exposedId" element={<PhaseForm />} />
         <Route path="/phase/room/:exposedId" element={<PhaseList />} />
-        <Route path="/phase/:phaseId" element={<PhasePage />} />
         <Route path="/editphase/:id" element={<EditPhaseForm />} />
 
+        <Route path="/phase/:phaseId" element={<ProtectedRoute allowedRoles={["CUSTOMER"]}><PhasePage/></ProtectedRoute>}/>
         <Route path="*" element={<PageNotFound />} />
       </Routes>
 
