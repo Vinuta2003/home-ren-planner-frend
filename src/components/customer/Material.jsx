@@ -124,18 +124,18 @@ export function Material({ material }) {
       {!addMode ? (
         <button
           onClick={add}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 inline-flex items-center"
+          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 inline-flex "
         >
           <PlusCircle className="w-4 h-4 mr-1" />
           Add
         </button>
       ) : (
-        <div className="space-y-2">
-          <div className="flex items-center space-x-2">
+        <div className="space-y-2 ">
+          <div className="flex  space-x-2">
             <span className="font-medium text-blue-600">Quantity:</span>
             <button
               onClick={decrement}
-              className="w-10 h-10 flex items-center justify-center bg-gray-300 rounded"
+              className="w-10 h-10 flex  bg-gray-300 rounded"
             >
               <Minus className="w-4 h-4" />
             </button>
@@ -146,7 +146,7 @@ export function Material({ material }) {
               onChange={(event) => {
                 quantityInputHandler(event.target.value);
               }}
-              className="h-10 w-16 px-2 py-1 border border-gray-300 rounded text-center appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              className="h-10 w-16 px-2 py-1 border border-gray-300 rounded appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
             />
             <button
               onClick={increment}
@@ -158,7 +158,7 @@ export function Material({ material }) {
           </div>
           <button
             onClick={remove}
-            className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 inline-flex items-center"
+            className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 inline-flex"
           >
             <Trash2 className="w-4 h-4 mr-1" />
             Remove

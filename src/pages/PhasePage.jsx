@@ -39,7 +39,9 @@ export function PhasePage() {
     phaseStatus,
     totalPhaseCost,
     vendor,
-    phaseMaterialList = []
+    phaseMaterialList = [],
+    totalPhaseMaterialCost,
+    vendorCost
   } = currentPhase || {};
 
   const [addMode, updateAddMode] = useState(false);
@@ -124,8 +126,10 @@ export function PhasePage() {
             {vendor && <p><span className="font-semibold">Vendor:</span> {vendor.name}</p>}
           </div>
           <div className="space-y-2 text-right p-6 px-18">
-            <p><span className="font-semibold">Total Cost:</span> ₹{totalPhaseCost || 0}</p>
             <p><span className="font-semibold">Status:</span> {phaseStatus}</p>
+            <p><span className="font-semibold">Total PhaseMaterial Cost:</span> ₹{totalPhaseMaterialCost||0}</p>
+            <p><span className="font-semibold">Total Vendor Cost:</span> ₹{vendorCost||0}</p>
+            <p><span className="font-semibold">Total Cost:</span> ₹{totalPhaseCost || 0}</p>
           </div>
         </div>
 

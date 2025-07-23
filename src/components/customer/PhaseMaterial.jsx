@@ -94,11 +94,11 @@ export function PhaseMaterial({ phaseMaterial }) {
               min={1}
               value={quantity}
               onChange={(event) => quantityInputHandler(event.target.value)}
-              className="h-10 w-16 px-2 border border-gray-300 rounded text-center appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              className="h-10 w-16 px-2 border border-gray-300 rounded text-left appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
             />
             <button
               onClick={increment}
-              className="w-10 h-10 flex items-center justify-center bg-gray-300 rounded"
+              className="w-10 h-10 flex items-left justify-center bg-gray-300 rounded"
             >
               <Plus className="w-4 h-4" />
             </button>

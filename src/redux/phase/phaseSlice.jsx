@@ -26,7 +26,9 @@ const phaseSlice = createSlice({
             phaseStatus:null,
             totalPhaseCost:null,
             phaseMaterialList:[],
-            vendor:{}
+            vendor:{},
+            totalPhaseMaterialCost:null,
+            vendorCost:null
         },
         chosenMaterialsList: [],
         loaded: false
@@ -60,6 +62,8 @@ const phaseSlice = createSlice({
             state.currentPhase.phaseMaterialList=action.payload.phaseMaterialUserResponseList;
             state.currentPhase.totalPhaseCost=action.payload.totalPhaseCost;
             state.currentPhase.vendor=action.payload.vendor;
+            state.currentPhase.vendorCost=action.payload.vendorCost;
+            state.currentPhase.totalPhaseMaterialCost=action.payload.totalPhaseMaterialCost;
 console.log("in slice",state.currentPhase.phaseMaterialList);
         //     state.phaseMaterialsList = Array.isArray(action.payload.phaseMaterials) 
         // ? action.payload.phaseMaterials 
