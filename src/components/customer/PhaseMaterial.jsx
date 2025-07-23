@@ -73,7 +73,7 @@ export function PhaseMaterial({ phaseMaterial }) {
   };
 
   return (
-    <div className="rounded-2xl shadow-md border border-gray-200 hover:shadow-lg transition-shadow duration-300 p-4 bg-white space-y-4">
+    <div className="rounded-2xl shadow-md border border-gray-200 hover:shadow-lg transition-shadow duration-300 p-4 bg-white space-y-4 text-left">
       {/* Title */}
       <div className="text-xl font-semibold text-gray-800">{phaseMaterial.name}</div>
       <div className="border-t border-black-200" />
@@ -94,11 +94,11 @@ export function PhaseMaterial({ phaseMaterial }) {
               min={1}
               value={quantity}
               onChange={(event) => quantityInputHandler(event.target.value)}
-              className="h-10 w-16 px-2 border border-gray-300 rounded text-left appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              className="h-10 w-16 px-2 border border-gray-300 rounded text-center appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
             />
             <button
               onClick={increment}
-              className="w-10 h-10 flex items-left justify-center bg-gray-300 rounded"
+              className="w-10 h-10 flex px-3 items-center bg-gray-300 rounded"
             >
               <Plus className="w-4 h-4" />
             </button>
