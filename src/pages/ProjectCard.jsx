@@ -66,7 +66,9 @@ export default function ProjectCard({
 
   // Function to navigate to budget overview
   const goToBudgetOverview = () => {
-    navigate(`/budget-overview/${project.exposedId}`);
+    // navigate(`/budget-overview/${project.exposedId}`);
+    navigate(`/${project.exposedId}/budget-overview`);    
+
   };
 
   return (

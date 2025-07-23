@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getBudgetOverview } from "../app/apis/getBudgetOverview";
+import { getBudgetOverview } from "../axios/getBudgetOverview";
 
 import {
   PieChart, Pie, Cell, Tooltip,
