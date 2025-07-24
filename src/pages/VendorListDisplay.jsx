@@ -121,7 +121,7 @@ export default function VendorListDisplay() {
                   {selectedVendor.reviews?.length ? (
                     selectedVendor.reviews.map((r, i) => (
                       <div key={i} className="border-b pb-2">
-                        <div className="flex justify-between items-center text-sm font-semibold text-gray-700">
+                        <div className="flex justify-between items-center text-sm font-semibold text-gray-600">
                           <span>{r.reviewerName}</span>
                           <span className="text-yellow-500 flex items-center gap-1">
                             {[...Array(Math.round(r.rating))].map((_, j) => (
@@ -132,7 +132,7 @@ export default function VendorListDisplay() {
                             </span>
                           </span>
                         </div>
-                        <p className="text-gray-600 text-sm mt-1 italic">“{r.comment}”</p>
+                        <p className="font-semibold text-gray-800 text-sm mt-1 italic">{r.comment}</p>
                         <p className="text-xs text-gray-400 mt-1">
                           {new Date(r.createdAt).toLocaleDateString("en-IN", {
                             year: "numeric",
