@@ -6,11 +6,12 @@ import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 
 
-function HomeButton() {
+function HomeButton({projectId}) {
   const navigate = useNavigate();
 
   function handleClick() {
-    navigate('/budget-overview'); 
+    // navigate('/budget-overview'); 
+    navigate(`/${projectId}/budget-overview`)
   }
 
   return (
@@ -105,7 +106,7 @@ const handleEditRoom = async (updatedRoom) => {
         >
           + Add Room
         </button>
-           <HomeButton />
+           <HomeButton projectId={projectId}/>
          </div>
       </div>
 
