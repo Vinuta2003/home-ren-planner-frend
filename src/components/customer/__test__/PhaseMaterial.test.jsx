@@ -16,8 +16,8 @@ jest.mock("../../../axios/phaseApis", () => ({
 const mockStore = configureStore([]);
 
 const sampleMaterial = {
-  exposedId: "mat-123",
-  phaseId: "phase-abc",
+  exposedId: "7534045f-45c5-4dd6-81cb-2cf06e19b2f8",
+  phaseId: "e5d09e73-7f2d-4ab6-aff7-6d6f29f03c49",
   name: "Cement",
   unit: "kg",
   quantity: 10,
@@ -120,9 +120,9 @@ describe("PhaseMaterial Component", () => {
   fireEvent.click(screen.getByText("Save"));
 
   await waitFor(() =>
-    expect(phaseApis.updatePhaseMaterialQuantity).toHaveBeenCalledWith("mat-123", 15)
+    expect(phaseApis.updatePhaseMaterialQuantity).toHaveBeenCalledWith("7534045f-45c5-4dd6-81cb-2cf06e19b2f8", 15)
   );
-  expect(getPhaseSpy).toHaveBeenCalledWith("phase-abc");
+  expect(getPhaseSpy).toHaveBeenCalledWith("e5d09e73-7f2d-4ab6-aff7-6d6f29f03c49");
 });
 
 
@@ -158,8 +158,8 @@ describe("PhaseMaterial Component", () => {
   fireEvent.click(screen.getAllByText("Delete")[1]);
 
   await waitFor(() => {
-    expect(phaseApis.deletePhaseMaterial).toHaveBeenCalledWith("mat-123");
-    expect(getPhaseSpy).toHaveBeenCalledWith("phase-abc");
+    expect(phaseApis.deletePhaseMaterial).toHaveBeenCalledWith("7534045f-45c5-4dd6-81cb-2cf06e19b2f8");
+    expect(getPhaseSpy).toHaveBeenCalledWith("e5d09e73-7f2d-4ab6-aff7-6d6f29f03c49");
   });
 });
 

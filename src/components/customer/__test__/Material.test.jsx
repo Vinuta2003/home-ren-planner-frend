@@ -30,7 +30,7 @@ const mockStore = configureStore([]);
 
 const mockMaterial = {
   name: "Cement",
-  exposedId: "mat-001",
+  exposedId: "d5cd7930-a960-4078-b08a-5eaff632e749",
   pricePerQuantity: 50,
   unit: "kg",
 };
@@ -49,7 +49,7 @@ describe("Material component", () => {
   beforeEach(() => {
     store = mockStore({
       phase: {
-        chosenMaterialsList: [{ materialExposedId: "mat-001", quantity: 1 }],
+        chosenMaterialsList: [{ materialExposedId: "d5cd7930-a960-4078-b08a-5eaff632e749", quantity: 1 }],
       },
     });
     store.dispatch = jest.fn();
@@ -73,7 +73,7 @@ describe("Material component", () => {
     expect(store.dispatch).toHaveBeenCalledWith(
       expect.objectContaining({
         type: "ADD_MATERIAL",
-        payload: { materialExposedId: "mat-001", quantity: 1 },
+        payload: { materialExposedId: "d5cd7930-a960-4078-b08a-5eaff632e749", quantity: 1 },
       })
     );
     expect(screen.getByText("Quantity:")).toBeInTheDocument();
@@ -89,7 +89,7 @@ describe("Material component", () => {
     expect(store.dispatch).toHaveBeenCalledWith(
       expect.objectContaining({
         type: "UPDATE_MATERIAL_QUANTITY",
-        payload: { materialExposedId: "mat-001", quantity: 2 },
+        payload: { materialExposedId: "d5cd7930-a960-4078-b08a-5eaff632e749", quantity: 2 },
       })
     );
   });
@@ -113,7 +113,7 @@ describe("Material component", () => {
     expect(store.dispatch).toHaveBeenCalledWith(
       expect.objectContaining({
         type: "UPDATE_MATERIAL_QUANTITY",
-        payload: { materialExposedId: "mat-001", quantity: 5 },
+        payload: { materialExposedId: "d5cd7930-a960-4078-b08a-5eaff632e749", quantity: 5 },
       })
     );
   });
@@ -128,7 +128,7 @@ describe("Material component", () => {
     expect(store.dispatch).toHaveBeenCalledWith(
       expect.objectContaining({
         type: "ADD_MATERIAL",
-        payload: { materialExposedId: "mat-001", quantity: 1 },
+        payload: { materialExposedId: "d5cd7930-a960-4078-b08a-5eaff632e749", quantity: 1 },
       })
     );
   });
@@ -143,7 +143,7 @@ describe("Material component", () => {
     expect(store.dispatch).toHaveBeenCalledWith(
       expect.objectContaining({
         type: "DELETE_MATERIAL",
-        payload: "mat-001",
+        payload: "d5cd7930-a960-4078-b08a-5eaff632e749",
       })
     );
   });
@@ -156,7 +156,7 @@ describe("Material component", () => {
     expect(store.dispatch).toHaveBeenCalledWith(
       expect.objectContaining({
         type: "DELETE_MATERIAL",
-        payload: "mat-001",
+        payload: "d5cd7930-a960-4078-b08a-5eaff632e749",
       })
     );
   });
