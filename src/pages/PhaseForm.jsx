@@ -50,10 +50,6 @@ console.log(formData);
 console.log("phase name is",formData.phaseName);
 const validate = () => {
   const newErrors = {};
-
-
-
-
   if (formData.phaseName == "") {
     newErrors.phaseName = "Please enter phase name";
   }
@@ -68,6 +64,9 @@ const validate = () => {
   }
   if (formData.endDate == "") {
     newErrors.endDate = "Please enter end date";
+  }
+  if(new Date(formData.endDate)<new Date(formData.startDate)){
+    newErrors.endDate="End date cannot be before start date";
   }
 
   return newErrors;
@@ -92,7 +91,7 @@ const validate = () => {
   }, []);
 
   useEffect(() => {
-  console.log("RENOVATION TYPE:", renovationType); // ❗ must show correct value
+  console.log("RENOVATION TYPE:", renovationType); 
 
   if (renovationType) {
     axios
