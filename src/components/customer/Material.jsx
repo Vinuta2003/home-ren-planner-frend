@@ -117,21 +117,21 @@ export function Material({ material }) {
 
       {/* Price & Unit */}
       <div className="text-gray-900 font-semibold">
-        <span className="text-gray-900 font-semibold">₹{material.pricePerQuantity}</span><span className="text-blue-600 font-semibold"> / {material.unit}</span>
+        <span className="text-gray-900 font-semibold">₹{material.pricePerQuantity}</span><span className="text-red-600 font-semibold"> / {material.unit}</span>
       </div>
 
       {/* Add or Quantity Controls */}
       {!addMode ? (
         <button
           onClick={add}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 inline-flex "
+          className="px-4 py-2 bg-blue-600 text-white items-center rounded-lg hover:bg-blue-700 inline-flex "
         >
           <PlusCircle className="w-4 h-4 mr-1" />
           Add
         </button>
       ) : (
         <div className="space-y-2">
-          <div className="flex space-x-2">
+          <div className="flex items-center space-x-2 ml-4">
             <span className="font-medium text-blue-600">Quantity:</span>
             <button
               onClick={decrement}
@@ -158,7 +158,7 @@ export function Material({ material }) {
           </div>
           <button
             onClick={remove}
-            className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 inline-flex"
+            className="px-4 py-2 bg-red-600 items-center text-white rounded-lg hover:bg-red-700 inline-flex"
           >
             <Trash2 className="w-4 h-4 mr-1" />
             Remove

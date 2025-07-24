@@ -39,9 +39,11 @@ export default function VendorListDisplay() {
   const fetchVendors = async () => {
     setLoading(true);
     try {
+      console.log(phaseType);
       const res = await axiosInstance.get("/api/vendor-reviews/by-phaseType", {
         params: { phaseType },
       });
+      
       setVendors(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
       console.error("Error fetching vendors:", err);
