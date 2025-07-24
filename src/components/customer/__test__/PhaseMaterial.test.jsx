@@ -19,7 +19,7 @@ const sampleMaterial = {
   exposedId: "7534045f-45c5-4dd6-81cb-2cf06e19b2f8",
   phaseId: "e5d09e73-7f2d-4ab6-aff7-6d6f29f03c49",
   name: "Cement",
-  unit: "kg",
+  unit: "KG",
   quantity: 10,
   pricePerQuantity: 50,
   totalPrice: 500,
@@ -42,7 +42,7 @@ describe("PhaseMaterial Component", () => {
 
     expect(screen.getByText("Cement")).toBeInTheDocument();
     expect(screen.getByText("Quantity:")).toBeInTheDocument();
-    expect(screen.getByText("10 kg")).toBeInTheDocument();
+    expect(screen.getByText("10 KG")).toBeInTheDocument();
     expect(screen.getByText("Price per")).toBeInTheDocument();
     expect(screen.getByText("₹50")).toBeInTheDocument();
     expect(screen.getByText("Total Price:")).toBeInTheDocument();
@@ -100,7 +100,7 @@ describe("PhaseMaterial Component", () => {
     fireEvent.click(screen.getByText("Cancel"));
 
     expect(screen.queryByRole("spinbutton")).not.toBeInTheDocument();
-    expect(screen.getByText("10 kg")).toBeInTheDocument();
+    expect(screen.getByText("10 KG")).toBeInTheDocument();
   });
 
   test("clicking Save triggers updatePhaseMaterialQuantity and fetches updated phase", async () => {

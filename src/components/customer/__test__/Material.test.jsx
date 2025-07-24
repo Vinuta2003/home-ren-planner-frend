@@ -32,7 +32,7 @@ const mockMaterial = {
   name: "Cement",
   exposedId: "d5cd7930-a960-4078-b08a-5eaff632e749",
   pricePerQuantity: 50,
-  unit: "kg",
+  unit: "KG",
 };
 
 const renderWithStore = (store) => {
@@ -59,7 +59,7 @@ describe("Material component", () => {
     renderWithStore(store);
     expect(screen.getByText("Cement")).toBeInTheDocument();
     expect(screen.getByText("₹50")).toBeInTheDocument();
-    expect(screen.getByText("/ kg")).toBeInTheDocument();
+    expect(screen.getByText("/ KG")).toBeInTheDocument();
   });
 
   test("shows Add button initially", () => {
