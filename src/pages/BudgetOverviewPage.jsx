@@ -5,8 +5,8 @@ const BudgetOverviewPage = () => {
   const { projectId } = useParams();
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6">Budget Overview</h1>
+    <div className="p-7 bg-blue-50">
+      <h1 className="text-2xl  font-bold mb-6">Budget Overview</h1>
       <BudgetOverview projectId={projectId} />      
     </div>
   );
