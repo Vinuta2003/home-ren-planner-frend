@@ -1,4 +1,4 @@
-// Import all dependencies first
+
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import PhasePage from "../../pages/PhasePage";
 import { MemoryRouter } from "react-router-dom";
@@ -6,7 +6,7 @@ import * as reactRedux from "react-redux";
 import * as phaseSlice from "../../redux/phase/phaseSlice";
 import * as phaseApis from "../../axios/phaseApis";
 
-// Mocks BEFORE usage
+
 const mockDispatch = jest.fn();
 
 jest.mock("react-redux", () => ({
@@ -79,7 +79,7 @@ jest.spyOn(reactRedux, "useSelector").mockImplementation((selector) =>
   })
 );
 
-// ✅ Setup function
+
 const setup = () => {
   render(
     <MemoryRouter initialEntries={["/phase/123"]}>
@@ -88,7 +88,7 @@ const setup = () => {
   );
 };
 
-// ✅ Tests
+
 describe("PhasePage Main Functionalities", () => {
   beforeEach(() => {
     jest.clearAllMocks();

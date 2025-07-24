@@ -5,14 +5,12 @@ import PhaseForm from '../PhaseForm';
 import '@testing-library/jest-dom';
 import axios from 'axios';
 
-// Mock axios and API
 jest.mock('axios');
 jest.mock('../../axios/phaseListAPIs', () => ({
   createPhaseApi: jest.fn(),
 }));
 const { createPhaseApi } = require('../../axios/phaseListAPIs');
 
-// Mock navigation and routing hooks
 const mockNavigate = jest.fn();
 jest.mock('react-router-dom', () => {
   const original = jest.requireActual('react-router-dom');
@@ -112,18 +110,18 @@ describe('PhaseForm', () => {
     fireEvent.change(screen.getByPlaceholderText(/Description/i), {
       target: { value: 'Phase description' },
     });
-    const dateInputs = screen.getAllByRole('textbox'); // returns [startDate, endDate]
-    fireEvent.change(dateInputs[0], { target: { value: '2025-08-01' } }); // startDate
-    fireEvent.change(dateInputs[1], { target: { value: '2025-08-05' } }); // endDate
+    const dateInputs = screen.getAllByRole('textbox'); 
+    fireEvent.change(dateInputs[0], { target: { value: '2025-08-01' } }); 
+    fireEvent.change(dateInputs[1], { target: { value: '2025-08-05' } }); 
     
    
 
-    const phaseTypeSelect = screen.getAllByRole('combobox')[0]; // or [1], depending on order
+    const phaseTypeSelect = screen.getAllByRole('combobox')[0];
 fireEvent.change(phaseTypeSelect, { target: { value: 'TILING' } });
 
 
 const selects = screen.getAllByRole('combobox');
-const phaseStatusSelect = selects[1]; // index may vary depending on form
+const phaseStatusSelect = selects[1]; 
 fireEvent.change(phaseStatusSelect, { target: { value: 'NOTSTARTED' } });
 
 
