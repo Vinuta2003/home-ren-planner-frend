@@ -118,6 +118,7 @@ export function Material({ material }) {
       {/* Price & Unit */}
       <div className="text-gray-900 font-semibold">
         <span className="text-gray-900 font-semibold">₹{material.pricePerQuantity}</span><span className="text-red-600 font-semibold"> / {material.unit}</span>
+        <span className="text-gray-900 font-semibold">₹{material.pricePerQuantity}</span><span className="text-red-600 font-semibold"> / {material.unit}</span>
       </div>
 
       {/* Add or Quantity Controls */}
@@ -134,8 +135,9 @@ export function Material({ material }) {
           <div className="flex items-center space-x-2 ml-4">
             <span className="font-medium text-blue-600">Quantity:</span>
             <button
+              data-testid="decrement-btn"
               onClick={decrement}
-              className="w-10 h-10 flex px-3 items-center  bg-gray-300 rounded"
+              className="w-10 h-10 flex items-center justify-center bg-gray-300 rounded"
             >
               <Minus className="w-4 h-4" />
             </button>
@@ -146,9 +148,10 @@ export function Material({ material }) {
               onChange={(event) => {
                 quantityInputHandler(event.target.value);
               }}
-              className="h-10 w-17 px-7 py-1 border border-gray-300 rounded appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              className="h-10 w-16 px-2 border border-gray-300 rounded text-center appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
             />
             <button
+              data-testid="increment-btn"
               onClick={increment}
               className="w-10 h-10 flex items-center justify-center bg-gray-300 rounded"
             >
@@ -158,7 +161,7 @@ export function Material({ material }) {
           </div>
           <button
             onClick={remove}
-            className="px-4 py-2 bg-red-600 items-center text-white rounded-lg hover:bg-red-700 inline-flex"
+            className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 inline-flex items-center"
           >
             <Trash2 className="w-4 h-4 mr-1" />
             Remove
