@@ -22,3 +22,14 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Test coverage reports
+coverage/
+coverage
+
+# Specific Cypress test file to exclude
+cypress/e2e/phasePage.cy.js
+
+# Cypress artifacts
+cypress/screenshots/
+cypress/videos/

@@ -1,0 +1,15 @@
+/* #phase-materials-display{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+#phase-materials-div{
+    border: 2px solid black;
+    width: 1200px; 
+}
+
+h1{
+    font-size: revert;
+} */
+
