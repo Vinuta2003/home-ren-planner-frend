@@ -163,4 +163,65 @@ describe("PhaseMaterial Component", () => {
   });
 });
 
+
+
+test("clicking increment when quantity is empty sets quantity to 1 and totalPrice to pricePerQuantity", () => {
+  const blankQuantityMaterial = {
+    ...sampleMaterial,
+    quantity: "",
+  };
+
+  renderWithStore(<PhaseMaterial phaseMaterial={blankQuantityMaterial} />, store);
+
+  fireEvent.click(screen.getByText("Edit"));
+  const input = screen.getByRole("spinbutton");
+
+  fireEvent.change(input, { target: { value: "" } }); // set to empty
+  fireEvent.click(screen.getByTestId("increment-btn"));
+
+  expect(screen.getByDisplayValue("1")).toBeInTheDocument();
+  const priceList = screen.getAllByText("₹50")
+  expect(Array.isArray(priceList)).toBe(true);
+  expect(priceList).toHaveLength(2);
+});
+
+test("typing empty string into quantity input sets total price to '---'", () => {
+  renderWithStore(<PhaseMaterial phaseMaterial={sampleMaterial} />, store);
+
+  fireEvent.click(screen.getByText("Edit"));
+  const input = screen.getByRole("spinbutton");
+
+  fireEvent.change(input, { target: { value: "" } });
+
+  expect(screen.getByDisplayValue("")).toBeInTheDocument();
+  expect(screen.getByText("₹---")).toBeInTheDocument();
+});
+
+test("typing 0 into quantity input resets it to 1 and updates total price", () => {
+  renderWithStore(<PhaseMaterial phaseMaterial={sampleMaterial} />, store);
+
+  fireEvent.click(screen.getByText("Edit"));
+  const input = screen.getByRole("spinbutton");
+
+  fireEvent.change(input, { target: { value: "0" } });
+
+  expect(screen.getByDisplayValue("1")).toBeInTheDocument();
+  const priceList = screen.getAllByText("₹50")
+  expect(Array.isArray(priceList)).toBe(true);
+  expect(priceList).toHaveLength(2);
+});
+
+test("cancel resets quantity and exits edit mode", () => {
+  renderWithStore(<PhaseMaterial phaseMaterial={sampleMaterial} />, store);
+
+  fireEvent.click(screen.getByText("Edit"));
+  const input = screen.getByRole("spinbutton");
+
+  fireEvent.change(input, { target: { value: "7" } });
+  fireEvent.click(screen.getByText("Cancel"));
+
+  expect(screen.queryByRole("spinbutton")).not.toBeInTheDocument();
+  expect(screen.getByText("10 KG")).toBeInTheDocument(); // original quantity
+});
+
 });

@@ -118,7 +118,6 @@ export function Material({ material }) {
       {/* Price & Unit */}
       <div className="text-gray-900 font-semibold">
         <span className="text-gray-900 font-semibold">₹{material.pricePerQuantity}</span><span className="text-red-600 font-semibold"> / {material.unit}</span>
-        <span className="text-gray-900 font-semibold">₹{material.pricePerQuantity}</span><span className="text-red-600 font-semibold"> / {material.unit}</span>
       </div>
 
       {/* Add or Quantity Controls */}

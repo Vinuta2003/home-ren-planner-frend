@@ -11,7 +11,7 @@ import {
   Minus,
 } from "lucide-react";
 
-export function PhaseMaterial({ phaseMaterial }) {
+export function PhaseMaterial({ phaseMaterial, phaseStatus }) {
   const [editMode, updateEditMode] = useState(false);
   const [quantity, updateQuantity] = useState(phaseMaterial.quantity);
   const [showDeleteModal, updateShowDeleteModal] = useState(false);
@@ -129,7 +129,7 @@ export function PhaseMaterial({ phaseMaterial }) {
       </div>
 
       {/* Action Buttons */}
-      <div className="space-x-3 pt-2">
+      {phaseStatus!="COMPLETED" && <div className="space-x-3 pt-2">
         {editMode ? (
           <>
             {quantity !== "" && (
@@ -168,7 +168,7 @@ export function PhaseMaterial({ phaseMaterial }) {
             </button>
           </>
         )}
-      </div>
+      </div>}
 
       {/* Confirmation Modal */}
       {showDeleteModal && (

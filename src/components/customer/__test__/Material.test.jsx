@@ -160,4 +160,55 @@ describe("Material component", () => {
       })
     );
   });
+
+
+
+  test("increment sets quantity to 1 and dispatches addMaterial when quantity is empty", () => {
+    renderWithStore(store);
+    fireEvent.click(screen.getByText("Add"));
+
+    const input = screen.getByRole("spinbutton");
+    fireEvent.change(input, { target: { value: "" } });
+
+    const incrementBtn = screen.getByTestId("increment-btn");
+    fireEvent.click(incrementBtn);
+
+    expect(store.dispatch).toHaveBeenCalledWith(
+        expect.objectContaining({
+        type: "ADD_MATERIAL",
+        payload: { materialExposedId: mockMaterial.exposedId, quantity: 1 },
+      })
+    );
+  });
+
+  test("decrement decreases quantity and dispatches updateMaterialQuantity when quantity > 1", () => {
+    renderWithStore(store);
+    fireEvent.click(screen.getByText("Add"));
+
+    const input = screen.getByRole("spinbutton");
+    fireEvent.change(input, { target: { value: "3" } });
+
+    const decrementBtn = screen.getByTestId("decrement-btn");
+    fireEvent.click(decrementBtn);
+
+    expect(store.dispatch).toHaveBeenCalledWith(
+        expect.objectContaining({
+        type: "UPDATE_MATERIAL_QUANTITY",
+        payload: { materialExposedId: mockMaterial.exposedId, quantity: 2 },
+       })
+     );
+   });
+
+   test("input remains controlled when value is empty string", () => {
+        renderWithStore(store);
+        fireEvent.click(screen.getByText("Add"));
+
+        const input = screen.getByRole("spinbutton");
+        fireEvent.change(input, { target: { value: "" } });
+
+        expect(input.value).toBe("");
+    });
+
+
+
 });
