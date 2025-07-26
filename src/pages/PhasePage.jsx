@@ -92,7 +92,7 @@ export function PhasePage() {
     }
   };
   console.log("phaseStatus:", phaseStatus);
-  console.log("vendor:", vendor.name);
+  console.log("vendor:", vendor?.name);
   console.log("hasSubmittedReview:", hasSubmittedReview);
   
   return (
