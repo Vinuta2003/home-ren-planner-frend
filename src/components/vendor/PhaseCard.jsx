@@ -11,7 +11,7 @@ const PhaseCard = ({ phase, quote, setQuotes, submitQuote }) => {
             `text-sm px-3 py-1 rounded-full font-semibold border ` +
             (phase.phaseStatus === "NOTSTARTED"
               ? "bg-red-100 text-red-800 border-red-200"
-              : phase.phaseStatus === "INPROGRESS"
+              : phase.phaseStatus === "IN PROGRESS"
               ? "bg-yellow-100 text-yellow-800 border-yellow-200"
               : phase.phaseStatus === "COMPLETED"
               ? "bg-green-100 text-green-800 border-green-200"
