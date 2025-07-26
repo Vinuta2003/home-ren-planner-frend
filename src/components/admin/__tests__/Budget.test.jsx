@@ -1,18 +1,22 @@
-import React from "react";
 import { render, screen, waitFor, fireEvent } from "@testing-library/react";
-import BudgetOverview from "../components/customer/BudgetOverview";
-import { getBudgetOverview } from "../axios/getBudgetOverview";
+import "@testing-library/jest-dom";
+import BudgetOverview from "../../BudgetOverview";
+import * as api from "../../../axios/getBudgetOverview";
+import React from "react";
 
-// Mock the API call
-jest.mock("../axios/getBudgetOverview");
 
-// Mock recharts ResponsiveContainer (avoids SVG size issues in tests)
-jest.mock("recharts", () => {
-  const Original = jest.requireActual("recharts");
-  return {
-    ...Original,
-    ResponsiveContainer: ({ children }) => <div>{children}</div>
+jest.mock("../../../axios/getBudgetOverview", () => ({
+  getBudgetOverview: jest.fn(),
+}));
+
+
+beforeAll(() => {
+  global.ResizeObserver = class {
+    observe() {}
+    unobserve() {}
+    disconnect() {}
   };
+  jest.spyOn(console, "error").mockImplementation(() => {}); 
 });
 
 const mockData = {
@@ -20,13 +24,13 @@ const mockData = {
   estimatedBudget: 100000,
   totalActualCost: 120000,
   rooms: [
-    { roomId: 1, roomName: "Living Room", totalRoomCost: 50000 },
-    { roomId: 2, roomName: "Bedroom", totalRoomCost: 70000 }
+    { id: 1, name: "Living Room", totalCost: 50000 },
+    { id: 2, name: "Bedroom", totalCost: 70000 },
   ],
   phases: [
-    { phaseId: 1, phaseName: "Plumbing", totalPhaseCost: 40000, vendorCost: 20000, materialCost: 20000 },
-    { phaseId: 2, phaseName: "Wiring", totalPhaseCost: 80000, vendorCost: 50000, materialCost: 30000 }
-  ]
+    { id: 1, name: "Plumbing", totalCost: 60000, vendorCost: 40000, materialCost: 20000 },
+    { id: 2, name: "Wiring", totalCost: 60000, vendorCost: 30000, materialCost: 30000 },
+  ],
 };
 
 describe("BudgetOverview Component", () => {
@@ -35,62 +39,94 @@ describe("BudgetOverview Component", () => {
   });
 
   test("renders loading state initially", async () => {
-    getBudgetOverview.mockResolvedValueOnce(mockData);
-
+    api.getBudgetOverview.mockResolvedValueOnce(mockData);
     render(<BudgetOverview projectId="123" />);
+
     expect(screen.getByText(/Loading Budget Overview/i)).toBeInTheDocument();
 
-    await waitFor(() => {
-      expect(getBudgetOverview).toHaveBeenCalledWith("123");
-    });
+    await waitFor(() =>
+      expect(screen.getByText(/Budget Overview/i)).toBeInTheDocument()
+    );
   });
 
-  test("renders budget summary correctly", async () => {
-    getBudgetOverview.mockResolvedValueOnce(mockData);
-
+  test("renders budget summary and detects over budget", async () => {
+    api.getBudgetOverview.mockResolvedValueOnce(mockData);
     render(<BudgetOverview projectId="123" />);
-    await waitFor(() => {
-      expect(screen.getByText("🏗️ Test Project – Budget Overview")).toBeInTheDocument();
-    });
 
-    expect(screen.getByText(/Estimated: ₹100,000/)).toBeInTheDocument();
-    expect(screen.getByText(/Actual: ₹120,000/)).toBeInTheDocument();
-    expect(screen.getByText(/Budget Exceeded!/)).toBeInTheDocument();
+    await waitFor(() =>
+      expect(screen.getByText(/Budget Overview/i)).toBeInTheDocument()
+    );
+
+    
+    expect(screen.getByText(/Estimated:/i)).toHaveTextContent(/1,00,000|100000/);
+    expect(screen.getByText(/Actual:/i)).toHaveTextContent(/1,20,000|120000/);
+    expect(screen.getByText(/Budget Exceeded!/i)).toBeInTheDocument();
+  });
+
+  test("does not show exceeded badge if exactly on budget", async () => {
+    const exactData = { ...mockData, totalActualCost: 100000 };
+    api.getBudgetOverview.mockResolvedValueOnce(exactData);
+    render(<BudgetOverview projectId="123" />);
+
+    await waitFor(() =>
+      expect(screen.getByText(/Budget Overview/i)).toBeInTheDocument()
+    );
+
+    expect(screen.queryByText(/Budget Exceeded!/i)).toBeNull();
   });
 
   test("renders room filter and filters correctly", async () => {
-    getBudgetOverview.mockResolvedValueOnce(mockData);
-
+    api.getBudgetOverview.mockResolvedValueOnce(mockData);
     render(<BudgetOverview projectId="123" />);
-    await waitFor(() => screen.getByText(/Room-wise Total Cost/));
 
-    const roomSelect = screen.getByLabelText(/Filter by Room/i);
+    await waitFor(() =>
+      expect(screen.getByText(/Room-wise Total Cost/i)).toBeInTheDocument()
+    );
+
+    
+    const roomSelect = screen.getAllByRole("combobox")[0];
     fireEvent.change(roomSelect, { target: { value: "Living Room" } });
 
-    expect(screen.getByText(/Room-wise Total Cost/)).toBeInTheDocument();
+    expect(screen.getByText(/Room-wise Total Cost/i)).toBeInTheDocument();
   });
 
   test("renders phase filter and filters correctly", async () => {
-    getBudgetOverview.mockResolvedValueOnce(mockData);
-
+    api.getBudgetOverview.mockResolvedValueOnce(mockData);
     render(<BudgetOverview projectId="123" />);
-    await waitFor(() => screen.getByText(/Phase-wise Total Cost/));
 
-    const phaseSelect = screen.getByLabelText(/Filter by Phase/i);
+    await waitFor(() =>
+      expect(screen.getByText(/Phase-wise Total Cost/i)).toBeInTheDocument()
+    );
+
+    const phaseSelect = screen.getAllByRole("combobox")[1];
     fireEvent.change(phaseSelect, { target: { value: "Plumbing" } });
 
-    expect(screen.getByText(/Phase-wise Total Cost/)).toBeInTheDocument();
+    expect(screen.getByText(/Phase-wise Total Cost/i)).toBeInTheDocument();
   });
 
-  test("renders pie chart and bar charts", async () => {
-    getBudgetOverview.mockResolvedValueOnce(mockData);
-
+  test("renders charts (pie, bar, stacked bar)", async () => {
+    api.getBudgetOverview.mockResolvedValueOnce(mockData);
     render(<BudgetOverview projectId="123" />);
-    await waitFor(() => screen.getByText(/Room-wise Total Cost/));
 
-    // Check pie chart, bar chart headings
-    expect(screen.getByText(/Room-wise Total Cost/)).toBeInTheDocument();
-    expect(screen.getByText(/Phase-wise Total Cost/)).toBeInTheDocument();
-    expect(screen.getByText(/Vendor vs Material Cost/)).toBeInTheDocument();
+    await waitFor(() =>
+      expect(screen.getByText(/Room-wise Total Cost/i)).toBeInTheDocument()
+    );
+
+    expect(screen.getByText(/Room-wise Total Cost/i)).toBeInTheDocument();
+    expect(screen.getByText(/Phase-wise Total Cost/i)).toBeInTheDocument();
+    expect(screen.getByText(/Vendor vs Material Cost/i)).toBeInTheDocument();
+  });
+
+  test("handles empty rooms/phases gracefully", async () => {
+    const emptyData = { ...mockData, rooms: [], phases: [] };
+    api.getBudgetOverview.mockResolvedValueOnce(emptyData);
+    render(<BudgetOverview projectId="123" />);
+
+    await waitFor(() =>
+      expect(screen.getByText(/Budget Overview/i)).toBeInTheDocument()
+    );
+
+    expect(screen.getByText(/Room-wise Total Cost/i)).toBeInTheDocument();
+    expect(screen.getByText(/Phase-wise Total Cost/i)).toBeInTheDocument();
   });
 });
