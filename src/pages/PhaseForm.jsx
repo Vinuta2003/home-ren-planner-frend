@@ -150,7 +150,7 @@ console.log("payload",payload);
       } else {
         await createPhaseApi(payload);
 
-        navigate(`/phase/room/${formData.room}`);
+        navigate(`/phase/room/${exposedId}`);
       }
     } catch (err) {
       console.error("Error creating phase", err);
