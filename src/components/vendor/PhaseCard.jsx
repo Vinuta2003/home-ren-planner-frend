@@ -8,7 +8,7 @@ const PhaseCard = ({ phase, quote, setQuotes, submitQuote }) => {
         <h2 className="text-xl font-semibold text-blue-700">{phase.phaseName}</h2>
         <span
           className={
-            `text-sm px-3 py-1 rounded-full font-semibold border ` +
+            `text-sm px-3 py-1 rounded-lg font-semibold border ` +
             (phase.phaseStatus === "NOTSTARTED"
               ? "bg-red-100 text-red-800 border-red-200"
               : phase.phaseStatus === "INPROGRESS"

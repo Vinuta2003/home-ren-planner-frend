@@ -75,7 +75,7 @@ export default function RegisterForm() {
             email: responseData?.email,
             role: responseData?.role,
             accessToken: responseData?.accessToken,
-            url: responseData?.url
+            url: responseData?.url,
           })
         );
       }
@@ -90,11 +90,13 @@ export default function RegisterForm() {
             if (responseData?.role === "VENDOR") navigate("/vendor-dashboard");
             else navigate("/");
           },
-          autoClose: 2500
+          autoClose: 2500,
         });
       } else toast.message("Registration Unsuccessful!");
     } catch (e) {
-      if (e.response && e.response.data) {
+      if (e.response && e.response.status === 409) {
+        toast.error("A user already exists with this email.");
+      } else if (e.response && e.response.data) {
         console.log("Error Response", e.response.data);
         toast.error(e.response.data.message || "Registration Unsuccessful!");
       } else {
@@ -208,19 +210,27 @@ export default function RegisterForm() {
             </label>
             {skills.map((skill, index) => {
               // Exclude already selected skills except for the current one
-              const selectedSkills = skills.map(s => s.skillName).filter((_, i) => i !== index);
-              const availableOptions = allSkillOptions.filter(opt => !selectedSkills.includes(opt.value));
+              const selectedSkills = skills
+                .map((s) => s.skillName)
+                .filter((_, i) => i !== index);
+              const availableOptions = allSkillOptions.filter(
+                (opt) => !selectedSkills.includes(opt.value)
+              );
               return (
                 <div key={index} className="flex gap-2 mt-2">
                   <select
                     value={skill.skillName}
                     required
-                    onChange={e => handleSkillChange(index, "skillName", e.target.value)}
+                    onChange={(e) =>
+                      handleSkillChange(index, "skillName", e.target.value)
+                    }
                     className="w-1/2 px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
                     <option value="">-- Select Skill --</option>
-                    {availableOptions.map(opt => (
-                      <option key={opt.value} value={opt.value}>{opt.label}</option>
+                    {availableOptions.map((opt) => (
+                      <option key={opt.value} value={opt.value}>
+                        {opt.label}
+                      </option>
                     ))}
                   </select>
                   <input
@@ -229,13 +239,17 @@ export default function RegisterForm() {
                     value={skill.basePrice}
                     disabled={!skill.skillName}
                     required
-                    onChange={e => handleSkillChange(index, "basePrice", e.target.value)}
+                    onChange={(e) =>
+                      handleSkillChange(index, "basePrice", e.target.value)
+                    }
                     className="w-1/2 px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
               );
             })}
-            {skillError && <div className="text-red-600 text-sm mt-2">{skillError}</div>}
+            {skillError && (
+              <div className="text-red-600 text-sm mt-2">{skillError}</div>
+            )}
             <button
               type="button"
               onClick={addSkill}
@@ -253,8 +267,13 @@ export default function RegisterForm() {
           Submit
         </button>
         <div className="mt-6 text-center text-blue-900 text-sm">
-          Already have an account?{' '}
-          <a href="/login" className="text-blue-600 font-semibold hover:underline">Login here</a>
+          Already have an account?{" "}
+          <a
+            href="/login"
+            className="text-blue-600 font-semibold hover:underline"
+          >
+            Login here
+          </a>
         </div>
       </form>
     </div>

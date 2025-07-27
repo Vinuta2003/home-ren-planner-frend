@@ -1,16 +1,16 @@
 import { useDispatch } from "react-redux";
-import { Navigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { logout } from "../../redux/auth/authSlice";
 import { Users, Building2, Package, LogOut, LayoutDashboard } from "lucide-react";
 
-export default function SideBar({ setActiveTab, activeTab }) {
+import logo from "../../assets/imgs/logo.png";
 
+export default function SideBar({ setActiveTab, activeTab }) {
   const dispatch = useDispatch();
 
   const handleLogout = () => {
     dispatch(logout());
-    <Navigate to="/login" replace/>
-  }
+  };
 
   const tabs = [
     { name: "dashboard", label: "Dashboard", icon: <LayoutDashboard size={18} /> },
@@ -21,7 +21,20 @@ export default function SideBar({ setActiveTab, activeTab }) {
 
   return (
     <div className="h-screen w-64 bg-blue-100 text-blue-900 flex flex-col shadow-md fixed top-0 left-0 z-20">
-      <div className="p-6 font-bold text-xl text-center border-b border-blue-200">
+      <Link
+        to="/"
+        className="flex flex-col items-center justify-center py-6 gap-2 cursor-pointer select-none border-b border-blue-200"
+      >
+        <img
+          src={logo}
+          alt="Logo"
+          className="h-14 w-14 object-cover rounded-full border-2 border-[#005eb8] bg-white shadow-sm"
+        />
+        <span className="text-2xl font-bold text-[#002169] tracking-tight leading-none">
+          RenoBase
+        </span>
+      </Link>
+      <div className="font-bold text-xl text-center py-4 border-b border-blue-200">
         Admin Dashboard
       </div>
 
