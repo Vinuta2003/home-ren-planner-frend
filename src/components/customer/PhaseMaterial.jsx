@@ -73,7 +73,7 @@ export function PhaseMaterial({ phaseMaterial, phaseStatus }) {
   };
 
   return (
-    <div className="rounded-2xl shadow-md border border-gray-200 hover:shadow-lg transition-shadow duration-300 p-4 bg-white space-y-4 text-left">
+    <div className="rounded-2xl shadow-md border border-gray-200 hover:shadow-lg transition-shadow duration-300 p-4 bg-white space-y-4 text-left" data-testid={`phase-material-card-${phaseMaterial.name}`}>
       {/* Title */}
       <div className="text-xl font-semibold text-gray-800">{phaseMaterial.name}</div>
       <div className="border-t border-black-200" />

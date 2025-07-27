@@ -106,7 +106,7 @@ export function Material({ material }) {
   };
 
   return (
-    <div className="rounded-2xl shadow-md border border-gray-200 hover:shadow-lg transition-shadow duration-300 p-4 bg-white space-y-4">
+    <div className="rounded-2xl shadow-md border border-gray-200 hover:shadow-lg transition-shadow duration-300 p-4 bg-white space-y-4" data-testid={`material-card-${material.name}`}>
       {/* Title */}
       <div className="text-xl font-semibold text-gray-800">
         {material.name}
