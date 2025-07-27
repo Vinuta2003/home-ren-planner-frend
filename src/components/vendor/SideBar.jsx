@@ -5,7 +5,7 @@ import { LogOut, User, ClipboardList } from "lucide-react";
 export default function SideBar({setActiveTab, handleLogout}) {
   return (
     <aside className="w-64 sticky top-0 h-screen bg-gradient-to-b from-blue-50 to-white border-r border-blue-100 shadow-xl rounded-r-2xl flex flex-col justify-between px-4 py-8">
-      <div className="space-y-6">
+      <div className="space-y-3">
         {/* Logo and Name Section */}
         <Link
           to="/"
@@ -20,7 +20,7 @@ export default function SideBar({setActiveTab, handleLogout}) {
             RenoBase
           </span>
         </Link>
-        <div className="font-bold text-blue-900 text-xl text-center py-4 border-b border-blue-200">
+        <div className="font-bold text-blue-900 text-xl text-center py-3 border-b border-blue-200 pb-6">
           Vendor Dashboard
         </div>
         <div

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 import { logout } from "../redux/auth/authSlice";
 import PhaseCard from "../components/vendor/PhaseCard";
@@ -10,6 +11,7 @@ import NavBar from "../components/NavBar";
 
 const VendorDashboard = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [phases, setPhases] = useState([]);
   const [quotes, setQuotes] = useState({});
   const [approval, setApproval] = useState(null);
@@ -51,9 +53,10 @@ const VendorDashboard = () => {
   const fetchPhases = async () => {
     try {
       const res = await axiosInstance.get("/vendor/phases");
-      setAllPhases(res.data);
+      setAllPhases(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
       console.error("Error fetching phases:", err);
+      setAllPhases([]);
     }
   };
 
