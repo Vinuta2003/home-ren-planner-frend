@@ -36,3 +36,4 @@ cypress/e2e/phasePage.cy.js
 # Cypress artifacts
 cypress/screenshots/
 cypress/videos/
+cypress/fixtures/phaseId.js

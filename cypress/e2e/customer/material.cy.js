@@ -1,10 +1,12 @@
+import { phaseId } from "../../fixtures/phaseId";
+
 const customer = {
   email: 'raomukund87@gmail.com',
   password: 'password',
 };
 
 const phase = {
-  id: "1759fbcc-c4c2-47db-92f1-138bd0b046f1", // replace this with actual phase id
+  id: phaseId,
   type: "CIVIL",
   status: "INSPECTION",
 };
