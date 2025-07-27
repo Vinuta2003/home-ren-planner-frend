@@ -75,15 +75,19 @@ export default function Material({ onAction }) {
 
   useEffect(() => {
     setPage(0);
-  }, [pageSize]);
+  }, [pageSize, activeTab]);
 
   useEffect(() => {
-    fetchMaterials(page, pageSize);
-  }, [page, pageSize]);
+    fetchMaterials(page, pageSize, activeTab);
+  }, [page, pageSize, activeTab]);
 
-  const fetchMaterials = async (page = 0, size = pageSize) => {
+  const fetchMaterials = async (page = 0, size = pageSize, phaseType = activeTab) => {
     try {
-      const res = await axiosInstance.get(`/admin/materials?page=${page}&size=${size}`);
+      let url = `/admin/materials?page=${page}&size=${size}`;
+      if (phaseType && phaseType !== "ALL") {
+        url += `&phaseType=${phaseType}`;
+      }
+      const res = await axiosInstance.get(url);
       setMaterials(res.data.content);
       setTotalPages(res.data.totalPages);
     } catch (err) {
@@ -338,7 +342,7 @@ export default function Material({ onAction }) {
                   </tr>
                 </thead>
                 <tbody>
-                  {getMaterialsForActiveTab(materials).map((material) => (
+                  {materials.map((material) => (
                     <tr key={material.exposedId} className="border-t border-blue-200 hover:bg-blue-50 transition-colors">
                       <td className="p-3 text-left align-middle whitespace-normal break-words">{material.name}</td>
                       <td className="p-3 text-center align-middle whitespace-normal break-words">{material.unit}</td>

@@ -11,7 +11,7 @@ import {
   Minus,
 } from "lucide-react";
 
-export function PhaseMaterial({ phaseMaterial }) {
+export function PhaseMaterial({ phaseMaterial, phaseStatus }) {
   const [editMode, updateEditMode] = useState(false);
   const [quantity, updateQuantity] = useState(phaseMaterial.quantity);
   const [showDeleteModal, updateShowDeleteModal] = useState(false);
@@ -73,7 +73,7 @@ export function PhaseMaterial({ phaseMaterial }) {
   };
 
   return (
-    <div className="rounded-2xl shadow-md border border-gray-200 hover:shadow-lg transition-shadow duration-300 p-4 bg-white space-y-4 text-left">
+    <div className="rounded-2xl shadow-md border border-gray-200 hover:shadow-lg transition-shadow duration-300 p-4 bg-white space-y-4 text-left" data-testid={`phase-material-card-${phaseMaterial.name}`}>
       {/* Title */}
       <div className="text-xl font-semibold text-gray-800">{phaseMaterial.name}</div>
       <div className="border-t border-black-200" />
@@ -84,6 +84,7 @@ export function PhaseMaterial({ phaseMaterial }) {
           <div className="flex items-center space-x-2">
             <span className="font-medium text-blue-600">Quantity:</span>
             <button
+              data-testid="decrement-btn"
               onClick={decrement}
               className="w-10 h-10 flex items-center justify-center bg-gray-300 rounded"
             >
@@ -97,6 +98,7 @@ export function PhaseMaterial({ phaseMaterial }) {
               className="h-10 w-16 px-2 border border-gray-300 rounded text-center appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
             />
             <button
+              data-testid="increment-btn"
               onClick={increment}
               className="w-10 h-10 flex px-3 items-center bg-gray-300 rounded"
             >
@@ -127,7 +129,7 @@ export function PhaseMaterial({ phaseMaterial }) {
       </div>
 
       {/* Action Buttons */}
-      <div className="space-x-3 pt-2">
+      {phaseStatus!="COMPLETED" && <div className="space-x-3 pt-2">
         {editMode ? (
           <>
             {quantity !== "" && (
@@ -157,6 +159,7 @@ export function PhaseMaterial({ phaseMaterial }) {
               Edit
             </button>
             <button
+            data-testid="delete-btn"
               onClick={deleteButtonOnClickHandler}
               className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 inline-flex items-center"
             >
@@ -165,7 +168,7 @@ export function PhaseMaterial({ phaseMaterial }) {
             </button>
           </>
         )}
-      </div>
+      </div>}
 
       {/* Confirmation Modal */}
       {showDeleteModal && (
@@ -190,6 +193,7 @@ export function PhaseMaterial({ phaseMaterial }) {
                 Cancel
               </button>
               <button
+              data-testid="delete-btn-modal"
                 onClick={confirmDeleteButtonOnClickHandler}
                 className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 inline-flex items-center"
               >

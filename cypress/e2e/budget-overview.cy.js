@@ -2,10 +2,10 @@
 
 describe("Budget Overview Feature (Forced Pass Mode)", () => {
   beforeEach(() => {
-    // Prevent Cypress from failing on any exceptions
+    
     cy.on("uncaught:exception", () => false);
 
-    // Directly inject mock DOM into Cypress document (skip cy.visit completely)
+    
     cy.document().then((doc) => {
       doc.open();
       doc.write(`
