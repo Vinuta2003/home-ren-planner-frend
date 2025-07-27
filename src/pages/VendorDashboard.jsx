@@ -22,6 +22,8 @@ const VendorDashboard = () => {
   const [phasesPerPage, setPhasesPerPage] = useState(3);
   const [allPhases, setAllPhases] = useState([]);
 
+  const [modal, setModal] = useState({ open: false, type: "success", message: "" });
+
   useEffect(() => {
     fetchVendorDetails();
     fetchPhases();
@@ -62,17 +64,19 @@ const VendorDashboard = () => {
 
   const submitQuote = async (phaseId) => {
     const vendorCost = quotes[phaseId];
-    if (!vendorCost || isNaN(vendorCost)) return alert("Enter valid cost");
-
+    if (!vendorCost || isNaN(vendorCost)) {
+      setModal({ open: true, type: "error", message: "Enter valid cost" });
+      return;
+    }
     try {
       await axiosInstance.post(`/vendor/phase/${phaseId}/quote`, {
         vendorCost,
       });
-      alert("Quote submitted successfully!");
+      setModal({ open: true, type: "success", message: "Quote submitted successfully!" });
       fetchPhases();
     } catch (err) {
       console.error("Error submitting quote:", err);
-      alert("Failed to submit quote.");
+      setModal({ open: true, type: "error", message: "Failed to submit quote." });
     }
   };
 
@@ -163,6 +167,40 @@ const VendorDashboard = () => {
             </>
           )}
         </main>
+      )}
+      {modal.open && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70">
+          <div className="bg-white rounded-lg shadow-lg p-8 max-w-sm w-full">
+            <h3 className={`text-lg font-semibold mb-4 ${modal.type === 'success' ? 'text-green-700' : 'text-red-700'}`}>{modal.type === 'success' ? 'Quote Submitted' : 'Submission Error'}</h3>
+            <p className="mb-6 text-gray-700">{modal.message}</p>
+            <div className="flex justify-end gap-3">
+              {modal.type === 'error' && (
+                <button
+                  className="px-4 py-2 rounded bg-gray-200 text-gray-700 hover:bg-gray-300 font-semibold cursor-pointer"
+                  onClick={() => setModal({ ...modal, open: false })}
+                >
+                  Close
+                </button>
+              )}
+              {modal.type === 'error' && (
+                <button
+                  className="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700 font-semibold cursor-pointer"
+                  onClick={() => setModal({ ...modal, open: false })}
+                >
+                  Try Again
+                </button>
+              )}
+              {modal.type === 'success' && (
+                <button
+                  className="px-4 py-2 rounded bg-green-600 text-white hover:bg-green-700 font-semibold cursor-pointer"
+                  onClick={() => setModal({ ...modal, open: false })}
+                >
+                  Close
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
       )}
     </div>
   ) : approval === false ? (
