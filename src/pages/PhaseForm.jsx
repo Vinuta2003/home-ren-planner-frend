@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation, useParams } from "react-router-dom";
 import { createPhaseApi } from "../axios/phaseListAPIs";
-import axios from "axios";
+import axiosInstance from "../axios/axiosInstance";
 
 function PhaseForm() {
   const navigate = useNavigate();
@@ -23,9 +23,7 @@ function PhaseForm() {
     vendorName: "",
     room: ""
   });
-console.log(formData);
 
-  
   useEffect(() => {
     if (location.state?.formData) {
       setFormData(location.state.formData);
@@ -33,44 +31,44 @@ console.log(formData);
   }, [location.state]);
 
   useEffect(() => {
-  if (!exposedId) {console.log("no exposed"); return;}
-  axios.get(`http://localhost:8080/rooms/${exposedId}`)
-    .then(res => {
-      console.log("full room response",res.data);
-      const type = res.data.renovationType;
-      if (type) {
-        setRenovationType(type);
-        setFormData(prev => ({ ...prev, room: exposedId }));
-      } else {
-        console.warn("No renovationType found in room data.");
-      }
-    })
-    .catch(err => console.error("Error fetching room:", err));
-}, [exposedId]);
-console.log("phase name is",formData.phaseName);
-const validate = () => {
-  const newErrors = {};
-  if (formData.phaseName == "") {
-    newErrors.phaseName = "Please enter phase name";
-  }
-  if (formData.phaseStatus == "") {
-    newErrors.phaseStatus = "Please select phase status";
-  }
-  if (formData.phaseType == "") {
-    newErrors.phaseType = "Please select phase type";
-  }
-  if (formData.startDate == "") {
-    newErrors.startDate = "Please enter start date";
-  }
-  if (formData.endDate == "") {
-    newErrors.endDate = "Please enter end date";
-  }
-  if(new Date(formData.endDate)<new Date(formData.startDate)){
-    newErrors.endDate="End date cannot be before start date";
-  }
+    if (!exposedId) { console.log("no exposed"); return; }
+    axiosInstance.get(`http://localhost:8080/rooms/${exposedId}`)
+      .then(res => {
+        console.log("full room response", res.data);
+        const type = res.data.renovationType;
+        if (type) {
+          setRenovationType(type);
+          setFormData(prev => ({ ...prev, room: exposedId }));
+        } else {
+          console.warn("No renovationType found in room data.");
+        }
+      })
+      .catch(err => console.error("Error fetching room:", err));
+  }, [exposedId]);
 
-  return newErrors;
-};
+  const validate = () => {
+    const newErrors = {};
+    if (formData.phaseName == "") {
+      newErrors.phaseName = "Please enter phase name";
+    }
+    if (formData.phaseStatus == "") {
+      newErrors.phaseStatus = "Please select phase status";
+    }
+    if (formData.phaseType == "") {
+      newErrors.phaseType = "Please select phase type";
+    }
+    if (formData.startDate == "") {
+      newErrors.startDate = "Please enter start date";
+    }
+    if (formData.endDate == "") {
+      newErrors.endDate = "Please enter end date";
+    }
+    if (new Date(formData.endDate) < new Date(formData.startDate)) {
+      newErrors.endDate = "End date cannot be before start date";
+    }
+
+    return newErrors;
+  };
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const vendorId = params.get("vendorId");
@@ -85,27 +83,27 @@ const validate = () => {
   }, [location.search]);
 
   useEffect(() => {
-    axios.get("http://localhost:8080/api/enums/phase-statuses")
+    axiosInstance.get("http://localhost:8080/api/enums/phase-statuses")
       .then(res => setPhaseStatuses(res.data))
       .catch(err => console.error(err));
   }, []);
 
   useEffect(() => {
-  console.log("RENOVATION TYPE:", renovationType); 
-
-  if (renovationType) {
-    axios
-      .get(`http://localhost:8080/phase/phases/by-renovation-type/${renovationType}`)
-      .then(res => {
-  console.log("Phase Types Response:", res.data);
-  setPhaseTypes(res.data);
-})
 
 
-  } else {
-    setPhaseTypes([]);
-  }
-}, [renovationType]);
+    if (renovationType) {
+      axiosInstance
+        .get(`http://localhost:8080/phase/phases/by-renovation-type/${renovationType}`)
+        .then(res => {
+
+          setPhaseTypes(res.data);
+        })
+
+
+    } else {
+      setPhaseTypes([]);
+    }
+  }, [renovationType]);
 
 
   const handleChange = (e) => {
@@ -124,11 +122,12 @@ const validate = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     const validationErrors = validate();
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
-      return;}
+      return;
+    }
     const payload = {
       vendorId: formData.vendorId,
       roomId: exposedId,
@@ -139,9 +138,9 @@ const validate = () => {
       phaseType: formData.phaseType,
       phaseStatus: formData.phaseStatus,
     };
-console.log("payload",payload);
+
     try {
-      const res = await axios.get(
+      const res = await axiosInstance.get(
         `http://localhost:8080/phase/phase/exists?roomId=${exposedId}&phaseType=${formData.phaseType}`
       );
 
@@ -158,16 +157,16 @@ console.log("payload",payload);
     }
   };
 
-  
+
 
   return (
     <div className="min-h-screen bg-blue-50 flex justify-center items-center pt-23">
       <form onSubmit={handleSubmit} className="bg-white p-8 rounded-xl shadow-md w-full max-w-xl">
         <h2 className="text-2xl font-bold text-blue-600 mb-6 text-center">Create Phase</h2>
 
-        <input  name="phaseName" placeholder="Phase Name" value={formData.phaseName} onChange={handleChange}
-  className="w-full px-4 py-2 border border-gray-300 rounded mb-3" />
-{errors.phaseName && (
+        <input name="phaseName" placeholder="Phase Name" value={formData.phaseName} onChange={handleChange}
+          className="w-full px-4 py-2 border border-gray-300 rounded mb-3" />
+        {errors.phaseName && (
           <p className="text-red-500 text-sm mb-3">{errors.phaseName}</p>
         )}
 
@@ -178,13 +177,13 @@ console.log("payload",payload);
         <input type="date" name="startDate" value={formData.startDate} onChange={handleChange}
           min={new Date().toISOString().split("T")[0]}
           className="w-full px-4 py-2 border border-gray-300 rounded mb-3 text-gray-500" />
-{errors.startDate && (
+        {errors.startDate && (
           <p className="text-red-500 text-sm mb-3">{errors.startDate}</p>
         )}
         <input type="date" name="endDate" value={formData.endDate} onChange={handleChange}
           min={new Date().toISOString().split("T")[0]}
           className="w-full px-4 py-2 border border-gray-300 rounded mb-3 text-gray-500" />
-{errors.endDate && (
+        {errors.endDate && (
           <p className="text-red-500 text-sm mb-3">{errors.endDate}</p>
         )}
         <select name="phaseType" value={formData.phaseType} onChange={handleChange}
@@ -211,15 +210,15 @@ console.log("payload",payload);
           className="w-full px-4 py-2 border border-gray-300 rounded mb-5 bg-white">
           <option value="">-- Select Phase Status --</option>
           {phaseStatuses
-    .filter((status) => status !== "COMPLETED")
-    .map((status) => (
-      <option key={status} value={status}>
-        {status.replaceAll("_", " ")}
-      </option>
-      
-    ))}
-</select>
-{errors.phaseStatus && (
+            .filter((status) => status !== "COMPLETED")
+            .map((status) => (
+              <option key={status} value={status}>
+                {status.replaceAll("_", " ")}
+              </option>
+
+            ))}
+        </select>
+        {errors.phaseStatus && (
           <p className="text-red-500 text-sm mb-3">{errors.phaseStatus}</p>
         )}
         <button type="submit"

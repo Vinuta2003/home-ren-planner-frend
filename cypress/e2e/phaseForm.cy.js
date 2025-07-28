@@ -1,3 +1,6 @@
+// Import Cypress commands and utilities
+/// <reference types="cypress" />
+
 describe('PhaseForm E2E Tests', () => {
   const testRoomId = 'test-room-123';
   const mockRoomData = {
@@ -9,7 +12,6 @@ describe('PhaseForm E2E Tests', () => {
   const mockPhaseStatuses = ['NOTSTARTED', 'INPROGRESS', 'INSPECTION'];
 
   beforeEach(() => {
-    // Setup authentication
     const mockJwtPayload = {
       sub: 'test-user-123',
       role: 'CUSTOMER',
@@ -18,7 +20,7 @@ describe('PhaseForm E2E Tests', () => {
     };
     
     const mockToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.' + 
-      Buffer.from(JSON.stringify(mockJwtPayload)).toString('base64') + 
+      btoa(JSON.stringify(mockJwtPayload)) + 
       '.mock-signature';
 
     cy.visit('/');
@@ -45,7 +47,6 @@ describe('PhaseForm E2E Tests', () => {
     cy.reload();
     cy.wait(1000);
 
-    // Mock API calls
     cy.intercept('GET', `http://localhost:8080/rooms/${testRoomId}`, {
       statusCode: 200,
       body: mockRoomData
@@ -66,15 +67,12 @@ describe('PhaseForm E2E Tests', () => {
     it('should render the form with all required fields', () => {
       cy.visit(`/phase-form/${testRoomId}`);
       
-      // Wait for API calls
       cy.wait('@getRoomData');
       cy.wait('@getPhaseStatuses');
       cy.wait('@getPhaseTypes');
 
-      // Check form title
       cy.contains('h2', 'Create Phase').should('be.visible');
 
-      // Check all form fields are present
       cy.get('input[name="phaseName"]').should('be.visible');
       cy.get('textarea[name="description"]').should('be.visible');
       cy.get('input[name="startDate"]').should('be.visible');
@@ -83,7 +81,6 @@ describe('PhaseForm E2E Tests', () => {
       cy.get('input[name="vendorName"]').should('be.visible').and('be.disabled');
       cy.get('select[name="phaseStatus"]').should('be.visible');
 
-      // Check buttons
       cy.contains('button', 'Choose Vendor From List').should('be.visible');
       cy.contains('button', 'Create Phase').should('be.visible');
     });
@@ -95,17 +92,13 @@ describe('PhaseForm E2E Tests', () => {
       cy.wait('@getPhaseStatuses');
       cy.wait('@getPhaseTypes');
 
-      // Check phase types dropdown
       mockPhaseTypes.forEach(type => {
         cy.get('select[name="phaseType"]').should('contain', type.replaceAll('_', ' '));
       });
-
-      // Check phase status dropdown
       mockPhaseStatuses.forEach(status => {
         cy.get('select[name="phaseStatus"]').should('contain', status.replaceAll('_', ' '));
       });
 
-      // Should not contain COMPLETED status
       cy.get('select[name="phaseStatus"]').should('not.contain', 'COMPLETED');
     });
 
@@ -119,7 +112,6 @@ describe('PhaseForm E2E Tests', () => {
       
       cy.wait('@getRoomError');
 
-      // Form should still render even if API fails
       cy.contains('h2', 'Create Phase').should('be.visible');
       cy.get('input[name="phaseName"]').should('be.visible');
     });
@@ -134,10 +126,8 @@ describe('PhaseForm E2E Tests', () => {
     });
 
     it('should show validation errors for empty required fields', () => {
-      // Try to submit empty form
-      cy.get('button[type="submit"]').click();
+        cy.get('button[type="submit"]').click();
 
-      // Check validation error messages
       cy.contains('Please enter phase name').should('be.visible');
       cy.contains('Please select phase status').should('be.visible');
       cy.contains('Please select phase type').should('be.visible');
@@ -146,28 +136,22 @@ describe('PhaseForm E2E Tests', () => {
     });
 
     it('should validate date logic (end date after start date)', () => {
-      // Fill ALL required fields properly, but with invalid date logic
       cy.get('input[name="phaseName"]').type('Test Phase');
       cy.get('select[name="phaseType"]').select('CIVIL');
       cy.get('select[name="phaseStatus"]').select('NOTSTARTED');
       
-      // Set dates with end date BEFORE start date to trigger validation
       cy.get('input[name="startDate"]').type('2025-02-01');
-      cy.get('input[name="endDate"]').type('2025-01-15'); // End date before start date
+      cy.get('input[name="endDate"]').type('2025-01-15'); 
 
-      // Verify the dates are set correctly
       cy.get('input[name="startDate"]').should('have.value', '2025-02-01');
       cy.get('input[name="endDate"]').should('have.value', '2025-01-15');
 
-      // Submit the form
       cy.get('button[type="submit"]').click();
       cy.wait(1000);
       
-      // Debug: Check what's actually on the page after submission
       cy.get('body').invoke('text').then((text) => {
         console.log('Page content after form submission:', text);
         
-        // Check if we can find any error messages at all
         const hasAnyErrors = text.includes('Please') || text.includes('Error') || text.includes('error');
         console.log('Has any error messages:', hasAnyErrors);
         
@@ -175,29 +159,22 @@ describe('PhaseForm E2E Tests', () => {
         const hasDateText = text.includes('date') || text.includes('Date');
         console.log('Has date-related text:', hasDateText);
         
-        // Check if form stayed on same page (validation prevented submission)
         cy.url().then((url) => {
           console.log('Current URL after submission:', url);
         });
       });
       
-      // For now, let's just check if the form stayed on the same page
-      // If validation worked, it should prevent navigation
       cy.url().should('include', '/phase-form');
     });
 
     it('should clear validation errors when fields are filled correctly', () => {
-      // Submit empty form to show errors
       cy.get('button[type="submit"]').click();
       cy.contains('Please enter phase name').should('be.visible');
 
-      // Fill the field
       cy.get('input[name="phaseName"]').type('Test Phase');
       
-      // Submit again
       cy.get('button[type="submit"]').click();
       
-      // Phase name error should be gone
       cy.contains('Please enter phase name').should('not.exist');
     });
 
@@ -218,28 +195,19 @@ describe('PhaseForm E2E Tests', () => {
     });
 
     it('should require phase type selection before vendor selection', () => {
-      // Stub window.alert
       cy.window().then((win) => {
         cy.stub(win, 'alert').as('windowAlert');
       });
-
-      // Try to select vendor without phase type
       cy.contains('button', 'Choose Vendor From List').click();
-
-      // Should show alert
       cy.get('@windowAlert').should('have.been.calledWith', 'Please select a phase type first');
     });
 
     it('should navigate to vendor list with form state when phase type is selected', () => {
-      // Fill form partially
       cy.get('input[name="phaseName"]').type('Test Phase');
       cy.get('textarea[name="description"]').type('Test description');
       cy.get('select[name="phaseType"]').select('CIVIL');
-
-      // Click vendor selection
       cy.contains('button', 'Choose Vendor From List').click();
 
-      // Should navigate to vendor list with query params
       cy.url().should('include', '/vendor-list?phaseType=CIVIL');
     });
 
@@ -252,14 +220,12 @@ describe('PhaseForm E2E Tests', () => {
       cy.wait('@getPhaseStatuses');
       cy.wait('@getPhaseTypes');
 
-      // Check vendor name is displayed
       cy.get('input[name="vendorName"]').should('have.value', vendorName);
     });
   });
 
   describe('Form Submission', () => {
     beforeEach(() => {
-      // Visit with vendor parameters to simulate vendor selection
       cy.visit(`/phase-form/${testRoomId}?vendorId=test-vendor-123&vendorName=Test%20Vendor`);
       cy.wait('@getRoomData');
       cy.wait('@getPhaseStatuses');
@@ -267,23 +233,18 @@ describe('PhaseForm E2E Tests', () => {
     });
 
     it('should successfully create a phase with valid data', () => {
-      // Mock phase existence check - no existing phase
       cy.intercept('GET', `http://localhost:8080/phase/phase/exists?roomId=${testRoomId}&phaseType=CIVIL`, {
         statusCode: 200,
         body: false
       }).as('checkPhaseExists');
-
-      // Mock successful phase creation - correct endpoint
       cy.intercept('POST', 'http://localhost:8080/phase', {
         statusCode: 201,
         body: { id: 'phase-123', message: 'Phase created successfully' }
       }).as('createPhase');
 
-      // First, check if vendor data is loaded from URL parameters
       cy.get('input[name="vendorName"]').should('have.value', 'Test Vendor');
       cy.log('Vendor data loaded successfully');
 
-      // Fill form with valid data
       cy.get('input[name="phaseName"]').type('Civil Work');
       cy.get('textarea[name="description"]').type('Civil construction and structural work');
       cy.get('input[name="startDate"]').type('2025-03-01');
@@ -291,7 +252,6 @@ describe('PhaseForm E2E Tests', () => {
       cy.get('select[name="phaseType"]').select('CIVIL');
       cy.get('select[name="phaseStatus"]').select('NOTSTARTED');
 
-      // Verify all form fields are filled correctly
       cy.get('input[name="phaseName"]').should('have.value', 'Civil Work');
       cy.get('textarea[name="description"]').should('have.value', 'Civil construction and structural work');
       cy.get('input[name="startDate"]').should('have.value', '2025-03-01');
@@ -300,12 +260,9 @@ describe('PhaseForm E2E Tests', () => {
       cy.get('select[name="phaseStatus"]').should('have.value', 'NOTSTARTED');
       cy.get('input[name="vendorName"]').should('have.value', 'Test Vendor');
 
-      // Monitor console logs to see if handleSubmit is called
       cy.window().then((win) => {
         cy.stub(win.console, 'log').as('consoleLog');
       });
-      
-      // Submit form and wait for any potential API calls
       cy.get('button[type="submit"]').click();
       
       // Wait a moment for any async operations

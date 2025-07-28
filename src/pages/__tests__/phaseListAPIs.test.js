@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axiosInstance from '../../axios/axiosInstance';
 import {
   createPhaseApi,
   updatePhaseApi,
@@ -7,11 +7,11 @@ import {
   setVendorCostApi
 } from '../../axios/phaseListAPIs';
 
-jest.mock('axios');
-const mockedAxios = axios;
+jest.mock('../../axios/axiosInstance');
+const mockedAxios = axiosInstance;
 
 describe('PhaseList APIs', () => {
-  const BASE_URL = 'http://localhost:8080/phase';
+  const BASE_URL = '/phase';
 
   beforeEach(() => {
     jest.clearAllMocks();

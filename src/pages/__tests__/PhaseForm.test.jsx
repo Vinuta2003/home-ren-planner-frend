@@ -2,11 +2,11 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
-import axios from 'axios';
+import axiosInstance from '../../axios/axiosInstance';
 
 // Mock axios
-const mockedAxios = axios;
-jest.mock('axios');
+const mockedAxios = axiosInstance;
+jest.mock('../../axios/axiosInstance');
 
 // Mock createPhaseApi
 const mockCreatePhaseApi = jest.fn();
@@ -318,5 +318,127 @@ describe('PhaseForm Component', () => {
     expect(mockCreatePhaseApi).not.toHaveBeenCalled();
 
     alertSpy.mockRestore();
+  });
+
+  describe('API Error Handling', () => {
+    test('handles room data without renovation type', async () => {
+      const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+      
+      // Setup mocks where room data exists but has no renovationType
+      setupMocks({ 
+        roomData: { id: 'room-id' }, // No renovationType property
+        phaseTypes: ['TILING', 'PAINTING'],
+        phaseStatuses: ['NOTSTARTED', 'INPROGRESS']
+      });
+      
+      render(<PhaseForm />);
+
+      // Wait for the warning to be logged
+      await waitFor(() => {
+        expect(consoleWarnSpy).toHaveBeenCalledWith('No renovationType found in room data.');
+      }, { timeout: 3000 });
+
+      consoleWarnSpy.mockRestore();
+    });
+
+    test('handles phase statuses API error', async () => {
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+      
+      // Mock phase statuses API to reject
+      mockedAxios.get.mockImplementation((url) => {
+        if (url.includes('/room/')) {
+          return Promise.resolve({ data: { renovationType: 'KITCHEN_RENOVATION' } });
+        }
+        if (url.includes('/api/enums/phase-statuses')) {
+          return Promise.reject(new Error('Phase statuses fetch failed'));
+        }
+        return Promise.resolve({ data: [] });
+      });
+
+      render(<PhaseForm />);
+
+      await waitFor(() => {
+        expect(consoleErrorSpy).toHaveBeenCalledWith(expect.any(Error));
+      });
+
+      consoleErrorSpy.mockRestore();
+    });
+
+    test('handles phase statuses API error', async () => {
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+      
+      // Mock phase statuses API to reject
+      mockedAxios.get.mockImplementation((url) => {
+        if (url.includes('/room/')) {
+          return Promise.resolve({ data: { renovationType: 'KITCHEN_RENOVATION' } });
+        }
+        if (url.includes('/api/enums/phase-statuses')) {
+          return Promise.reject(new Error('Phase statuses fetch failed'));
+        }
+        if (url.includes('/api/enums/phase-types')) {
+          return Promise.resolve({ data: ['TILING', 'PAINTING'] });
+        }
+        return Promise.resolve({ data: [] });
+      });
+
+      render(<PhaseForm />);
+
+      // Wait for the error to be logged
+      await waitFor(() => {
+        expect(consoleErrorSpy).toHaveBeenCalledWith(expect.any(Error));
+      }, { timeout: 3000 });
+
+      consoleErrorSpy.mockRestore();
+    });
+  });
+
+  describe('Navigation and Success Scenarios', () => {
+    test('handles phase types API error gracefully', async () => {
+      // Mock phase types API to reject
+      mockedAxios.get.mockImplementation((url) => {
+        if (url.includes('/room/')) {
+          return Promise.resolve({ data: { renovationType: 'KITCHEN_RENOVATION' } });
+        }
+        if (url.includes('/api/enums/phase-statuses')) {
+          return Promise.resolve({ data: ['NOTSTARTED', 'INPROGRESS'] });
+        }
+        if (url.includes('/phase/phases/by-renovation-type/')) {
+          return Promise.reject(new Error('Phase types fetch failed'));
+        }
+        return Promise.resolve({ data: [] });
+      });
+
+      const { container } = render(<PhaseForm />);
+
+      // Wait for the component to render and verify phase types select is empty
+      await waitFor(() => {
+        const phaseTypeSelect = container.querySelector('select[name="phaseType"]');
+        expect(phaseTypeSelect).toBeInTheDocument();
+        // Should only have the default option when API fails
+        expect(phaseTypeSelect.children).toHaveLength(1);
+        expect(phaseTypeSelect.children[0].textContent).toBe('-- Select Phase Type --');
+      }, { timeout: 3000 });
+    });
+
+    test('handles empty arrays for phase types and statuses', async () => {
+      setupMocks({ 
+        phaseTypes: [], 
+        phaseStatuses: [] 
+      });
+      
+      const { container } = render(<PhaseForm />);
+
+      // Wait for initial loading
+      await waitFor(() => {
+        expect(screen.getByPlaceholderText('Phase Name')).toBeInTheDocument();
+      });
+
+      // Check that selects are present but empty
+      const phaseTypeSelect = container.querySelector('select[name="phaseType"]');
+      const phaseStatusSelect = container.querySelector('select[name="phaseStatus"]');
+      
+      expect(phaseTypeSelect.children).toHaveLength(1); // Only default option
+      expect(phaseStatusSelect.children).toHaveLength(1); // Only default option
+    });
   });
 });

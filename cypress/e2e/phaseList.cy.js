@@ -25,7 +25,6 @@ describe('PhaseList E2E Tests', () => {
   ];
 
   beforeEach(() => {
-    // Setup authentication
     const mockJwtPayload = {
       sub: 'test-user-123',
       role: 'CUSTOMER',
@@ -102,8 +101,8 @@ describe('PhaseList E2E Tests', () => {
       cy.contains('Foundation Work').should('be.visible');
       cy.contains('Framing').should('be.visible');
       cy.contains('Electrical Work').should('be.visible');
-      cy.contains('Start Date: 2025-01-01').should('be.visible');
-      cy.contains('End Date: 2025-01-15').should('be.visible');
+      cy.contains('Start Date: 01-01-2025').should('be.visible');
+      cy.contains('End Date: 15-01-2025').should('be.visible');
       cy.contains('INPROGRESS').should('have.class', 'bg-green-100');
       cy.contains('NOTSTARTED').should('have.class', 'bg-red-100');
       cy.contains('INSPECTION').should('have.class', 'bg-yellow-100');
@@ -272,19 +271,15 @@ describe('PhaseList E2E Tests', () => {
     });
 
     it('should support keyboard navigation', () => {
-      // Focus on the first interactive element (phase link)
       cy.get('a').first().focus();
       cy.focused().should('contain', 'Foundation Work');
       
-      // Test that delete buttons are focusable
       cy.get('[title="Delete Phase"]').first().focus();
       cy.focused().should('have.attr', 'title', 'Delete Phase');
       
-      // Test that create button is focusable
       cy.get('button.fixed.bottom-6.right-6').focus();
       cy.focused().should('exist');
       
-      // Test that focused create button can be activated (using click instead of enter key)
       cy.get('button.fixed.bottom-6.right-6').focus().click();
       cy.url().should('include', `/phase-form/${testRoomId}`);
     });

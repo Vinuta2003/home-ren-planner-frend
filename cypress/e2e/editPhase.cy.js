@@ -1,3 +1,6 @@
+// Import Cypress commands and utilities
+/// <reference types="cypress" />
+
 describe('EditPhase Component', () => {
   const testPhaseId = 'test-phase-123';
   
@@ -22,7 +25,7 @@ describe('EditPhase Component', () => {
     };
     
     const mockToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.' + 
-      Buffer.from(JSON.stringify(mockJwtPayload)).toString('base64') + 
+      btoa(JSON.stringify(mockJwtPayload)) + 
       '.mock-signature';
 
     cy.visit('/');
@@ -35,8 +38,7 @@ describe('EditPhase Component', () => {
       win.localStorage.setItem('userRole', 'CUSTOMER');
       win.localStorage.setItem('role', 'CUSTOMER');
       win.localStorage.setItem('email', 'test@example.com');
-      
-      // Add the critical persist:root data that PhaseForm uses
+     
       const persistData = {
         email: '"test@example.com"',
         role: '"CUSTOMER"',

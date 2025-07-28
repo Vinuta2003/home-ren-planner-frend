@@ -44,7 +44,7 @@ describe('PhasePage E2E Tests (Simplified)', () => {
         id: testPhaseId,
         phaseName: 'Foundation Work',
         description: 'Building foundation and basement',
-        phaseType: 'FOUNDATION',
+        phaseType: 'CIVIL',
         startDate: '2025-01-01',
         endDate: '2025-01-15',
         phaseStatus: 'INPROGRESS',
@@ -82,7 +82,7 @@ describe('PhasePage E2E Tests (Simplified)', () => {
       }
     }).as('getPhaseDetails');
 
-    cy.intercept('GET', 'http://localhost:8080/api/user/materials?phaseType=FOUNDATION', {
+    cy.intercept('GET', 'http://localhost:8080/api/user/materials?phaseType=CIVIL', {
       statusCode: 200,
       body: [
         {
@@ -139,7 +139,7 @@ describe('PhasePage E2E Tests (Simplified)', () => {
       
       cy.contains('Foundation Work').should('be.visible');
       cy.contains('Building foundation and basement').should('be.visible');
-      cy.contains('FOUNDATION').should('be.visible');
+      cy.contains('CIVIL').should('be.visible');
       cy.contains('INPROGRESS').should('be.visible');
       cy.contains('Construction Co').should('be.visible');
       
@@ -174,7 +174,7 @@ describe('PhasePage E2E Tests (Simplified)', () => {
       
       cy.wait('@getMaterialsByPhaseType');
       
-      cy.contains('Materials Available To Add').should('be.visible');
+      cy.contains('Available Materials To Add').should('be.visible');
       cy.contains('Cancel').should('be.visible');
     });
 
@@ -194,10 +194,10 @@ describe('PhasePage E2E Tests (Simplified)', () => {
       cy.contains('Add Materials').click();
       cy.wait('@getMaterialsByPhaseType');
       
-      cy.contains('Materials Available To Add').should('be.visible');
+      cy.contains('Available Materials To Add').should('be.visible');
       cy.contains('Cancel').click();
       
-      cy.contains('Materials Available To Add').should('not.exist');
+      cy.contains('Available Materials To Add').should('not.exist');
       cy.contains('Add Materials').should('be.visible');
     });
   });
@@ -227,7 +227,7 @@ describe('PhasePage E2E Tests (Simplified)', () => {
       cy.wait('@getPhaseDetails');
       
       // Mock materials API error with full backend URL
-      cy.intercept('GET', 'http://localhost:8080/api/user/materials?phaseType=FOUNDATION', {
+      cy.intercept('GET', 'http://localhost:8080/api/user/materials?phaseType=CIVIL', {
         statusCode: 500,
         body: { error: 'Failed to fetch materials' }
       }).as('getMaterialsError');
@@ -235,7 +235,7 @@ describe('PhasePage E2E Tests (Simplified)', () => {
       cy.contains('Add Materials').click();
       cy.wait('@getMaterialsError');
       
-      cy.contains('Materials Available To Add').should('be.visible');
+      cy.contains('Available Materials To Add').should('be.visible');
     });
   });
 
@@ -247,7 +247,7 @@ describe('PhasePage E2E Tests (Simplified)', () => {
           id: testPhaseId,
           phaseName: 'Completed Foundation',
           description: 'Foundation work completed',
-          phaseType: 'FOUNDATION',
+          phaseType: 'CIVIL',
           startDate: '2025-01-01',
           endDate: '2025-01-15',
           phaseStatus: 'COMPLETED',

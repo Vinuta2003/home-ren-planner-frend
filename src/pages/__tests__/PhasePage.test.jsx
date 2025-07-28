@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen,waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import '@testing-library/jest-dom';
@@ -92,7 +92,7 @@ describe('PhasePage Component', () => {
     const mockPhase = {
       phaseName: 'Foundation Work',
       description: 'Building foundation and basement',
-      phaseType: 'FOUNDATION',
+      phaseType: 'CIVIL',
       startDate: '2025-01-01',
       endDate: '2025-01-15',
       phaseStatus: 'INPROGRESS',
@@ -120,9 +120,9 @@ describe('PhasePage Component', () => {
     expect(screen.getByText('Phase Details')).toBeInTheDocument();
     expect(screen.getByText('Foundation Work')).toBeInTheDocument();
     expect(screen.getByText('Building foundation and basement')).toBeInTheDocument();
-    expect(screen.getByText('FOUNDATION')).toBeInTheDocument();
-    expect(screen.getByText('2025-01-01')).toBeInTheDocument();
-    expect(screen.getByText('2025-01-15')).toBeInTheDocument();
+    expect(screen.getByText('CIVIL')).toBeInTheDocument();
+    expect(screen.getByText('01-01-2025')).toBeInTheDocument();
+    expect(screen.getByText('15-01-2025')).toBeInTheDocument();
     expect(screen.getByText('INPROGRESS')).toBeInTheDocument();
     expect(screen.getByText('Construction Co')).toBeInTheDocument();
     expect(screen.getByText('₹30000')).toBeInTheDocument();
@@ -206,7 +206,7 @@ describe('PhasePage Component', () => {
 
     renderPhasePage();
 
-    expect(screen.getByText('No Phase Materials Added')).toBeInTheDocument();
+    expect(screen.getByText('No Materials Added')).toBeInTheDocument();
   });
 
   test('navigates to edit phase when edit button is clicked', async () => {
@@ -250,7 +250,7 @@ describe('PhasePage Component', () => {
     const user = userEvent.setup();
     const mockPhase = {
       phaseName: 'Test Phase',
-      phaseType: 'FOUNDATION',
+      phaseType: 'CIVIL',
       phaseMaterialList: [{ materialExposedId: 'existing-1' }],
     };
 
@@ -269,8 +269,8 @@ describe('PhasePage Component', () => {
     await user.click(screen.getByRole('button', { name: /add materials/i }));
 
     await waitFor(() => {
-      expect(phaseApis.getMaterialsByPhaseType).toHaveBeenCalledWith('FOUNDATION');
-      expect(screen.getByText('Materials Available To Add')).toBeInTheDocument();
+      expect(phaseApis.getMaterialsByPhaseType).toHaveBeenCalledWith('CIVIL');
+      expect(screen.getByText('Available Materials To Add')).toBeInTheDocument();
     });
   });
 
@@ -278,7 +278,7 @@ describe('PhasePage Component', () => {
     const user = userEvent.setup();
     const mockPhase = {
       phaseName: 'Test Phase',
-      phaseType: 'FOUNDATION',
+      phaseType: 'CIVIL',
       phaseMaterialList: [],
     };
 
@@ -309,7 +309,7 @@ describe('PhasePage Component', () => {
     useSelector.mockImplementation((selector) => {
       return selector({
         phase: {
-          currentPhase: { phaseName: 'Test Phase', phaseType: 'FOUNDATION' },
+          currentPhase: { phaseName: 'Test Phase', phaseType: 'CIVIL' },
           loaded: true,
           chosenMaterialsList: [],
         },
@@ -331,7 +331,7 @@ describe('PhasePage Component', () => {
     useSelector.mockImplementation((selector) => {
       return selector({
         phase: {
-          currentPhase: { phaseName: 'Test Phase', phaseType: 'FOUNDATION' },
+          currentPhase: { phaseName: 'Test Phase', phaseType: 'CIVIL' },
           loaded: true,
           chosenMaterialsList: [],
         },
@@ -343,20 +343,20 @@ describe('PhasePage Component', () => {
     await user.click(screen.getByRole('button', { name: /add materials/i }));
     
     await waitFor(() => {
-      expect(screen.getByText('Materials Available To Add')).toBeInTheDocument();
+      expect(screen.getByText('Available Materials To Add')).toBeInTheDocument();
     });
 
     await user.click(screen.getByRole('button', { name: /cancel/i }));
 
     expect(mockDispatch).toHaveBeenCalledWith({ type: 'clearChosenMaterialsList' });
-    expect(screen.queryByText('Materials Available To Add')).not.toBeInTheDocument();
+    expect(screen.queryByText('Available Materials To Add')).not.toBeInTheDocument();
   });
 
   test('shows add chosen materials button when materials are selected', () => {
     useSelector.mockImplementation((selector) => {
       return selector({
         phase: {
-          currentPhase: { phaseName: 'Test Phase', phaseType: 'FOUNDATION' },
+          currentPhase: { phaseName: 'Test Phase', phaseType: 'CIVIL' },
           loaded: true,
           chosenMaterialsList: [{ exposedId: 'chosen-1' }],
         },
@@ -377,7 +377,7 @@ describe('PhasePage Component', () => {
     useSelector.mockImplementation((selector) => {
       return selector({
         phase: {
-          currentPhase: { phaseName: 'Test Phase', phaseType: 'FOUNDATION' },
+          currentPhase: { phaseName: 'Test Phase', phaseType: 'CIVIL' },
           loaded: true,
           chosenMaterialsList: [{ exposedId: 'chosen-1', name: 'Chosen Material' }],
         },
@@ -391,14 +391,14 @@ describe('PhasePage Component', () => {
     
     // Wait for add mode to be active and then simulate having chosen materials
     await waitFor(() => {
-      expect(screen.getByText('Materials Available To Add')).toBeInTheDocument();
+      expect(screen.getByText('Available Materials To Add')).toBeInTheDocument();
     });
 
     // Re-render with chosen materials
     useSelector.mockImplementation((selector) => {
       return selector({
         phase: {
-          currentPhase: { phaseName: 'Test Phase', phaseType: 'FOUNDATION' },
+          currentPhase: { phaseName: 'Test Phase', phaseType: 'CIVIL' },
           loaded: true,
           chosenMaterialsList: [{ exposedId: 'chosen-1', name: 'Chosen Material' }],
         },
@@ -418,7 +418,7 @@ describe('PhasePage Component', () => {
     useSelector.mockImplementation((selector) => {
       return selector({
         phase: {
-          currentPhase: { phaseName: 'Test Phase', phaseType: 'FOUNDATION' },
+          currentPhase: { phaseName: 'Test Phase', phaseType: 'CIVIL' },
           loaded: true,
           chosenMaterialsList: [],
         },
@@ -572,15 +572,15 @@ describe('PhasePage Component', () => {
 
     renderPhasePage();
 
-    // Check for all three ₹0 values that should be displayed
+
+    
     expect(screen.getAllByText('₹0')).toHaveLength(3);
-    expect(screen.getByText('Total PhaseMaterial Cost:')).toBeInTheDocument();
+    expect(screen.getByText('Total Materials Cost:')).toBeInTheDocument();
     expect(screen.getByText('Total Vendor Cost:')).toBeInTheDocument();
     expect(screen.getByText('Total Cost:')).toBeInTheDocument();
     consoleLogSpy.mockRestore();
   });
 
-  // ===== ENHANCED TEST COVERAGE =====
 
   describe('Enhanced Edge Cases and Error Handling', () => {
     test('handles undefined phaseMaterialList gracefully', () => {
@@ -603,42 +603,15 @@ describe('PhasePage Component', () => {
 
       renderPhasePage();
 
-      expect(screen.getByText('No Phase Materials Added')).toBeInTheDocument();
+      expect(screen.getByText('No Materials Added')).toBeInTheDocument();
       consoleLogSpy.mockRestore();
-    });
-
-    test('handles null phaseMaterialList gracefully', () => {
-      const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
-      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-      const mockPhase = {
-        phaseName: 'Test Phase',
-        phaseMaterialList: null,
-        vendor: { name: 'Test Vendor' },
-      };
-
-      useSelector.mockImplementation((selector) => {
-        return selector({
-          phase: {
-            currentPhase: mockPhase,
-            loaded: true,
-            chosenMaterialsList: [],
-          },
-        });
-      });
-
-      // This test reveals a bug in the component - it doesn't handle null phaseMaterialList
-      // The component should use the safeArray function or add null checking
-      expect(() => renderPhasePage()).toThrow('Cannot read properties of null');
-      
-      consoleLogSpy.mockRestore();
-      consoleErrorSpy.mockRestore();
     });
 
     test('handles materials with missing materialExposedId', async () => {
       const user = userEvent.setup();
       const mockPhase = {
         phaseName: 'Test Phase',
-        phaseType: 'FOUNDATION',
+        phaseType: 'CIVIL',
         phaseMaterialList: [
           { materialExposedId: null, exposedId: 'pm-1' },
           { materialExposedId: undefined, exposedId: 'pm-2' },
@@ -660,9 +633,9 @@ describe('PhasePage Component', () => {
       await user.click(screen.getByRole('button', { name: /add materials/i }));
 
       await waitFor(() => {
-        expect(phaseApis.getMaterialsByPhaseType).toHaveBeenCalledWith('FOUNDATION');
+        expect(phaseApis.getMaterialsByPhaseType).toHaveBeenCalledWith('CIVIL');
         // Should still show available materials since filtering handles null/undefined gracefully
-        expect(screen.getByText('Materials Available To Add')).toBeInTheDocument();
+        expect(screen.getByText('Available Materials To Add')).toBeInTheDocument();
       });
     });
 
@@ -672,7 +645,7 @@ describe('PhasePage Component', () => {
       
       const mockPhase = {
         phaseName: 'Test Phase',
-        phaseType: 'FOUNDATION',
+        phaseType: 'CIVIL',
         phaseMaterialList: [],
       };
 
@@ -705,7 +678,7 @@ describe('PhasePage Component', () => {
       
       const mockPhase = {
         phaseName: 'Test Phase',
-        phaseType: 'FOUNDATION',
+        phaseType: 'CIVIL',
         phaseMaterialList: [],
       };
 
@@ -741,7 +714,7 @@ describe('PhasePage Component', () => {
       
       const mockPhase = {
         phaseName: 'Test Phase',
-        phaseType: 'FOUNDATION',
+        phaseType: 'CIVIL',
         phaseMaterialList: [
           { materialExposedId: 'material-2', exposedId: 'pm-1' },
         ],
@@ -805,7 +778,7 @@ describe('PhasePage Component', () => {
       
       const mockPhase = {
         phaseName: 'Test Phase',
-        phaseType: 'FOUNDATION',
+        phaseType: 'CIVIL',
         phaseMaterialList: [],
       };
 
@@ -823,9 +796,9 @@ describe('PhasePage Component', () => {
       await user.click(screen.getByRole('button', { name: /add materials/i }));
 
       await waitFor(() => {
-        expect(screen.getByText('Materials Available To Add')).toBeInTheDocument();
+        expect(screen.getByText('Available Materials To Add')).toBeInTheDocument();
         // Verify that the add materials functionality is working
-        expect(phaseApis.getMaterialsByPhaseType).toHaveBeenCalledWith('FOUNDATION');
+        expect(phaseApis.getMaterialsByPhaseType).toHaveBeenCalledWith('CIVIL');
       });
     });
 
@@ -869,7 +842,7 @@ describe('PhasePage Component', () => {
       const mockPhase = {
         phaseName: 'Foundation Phase',
         description: 'Complete foundation work including excavation',
-        phaseType: 'FOUNDATION',
+        phaseType: 'CIVIL',
         startDate: '2025-01-15',
         endDate: '2025-02-15',
         phaseStatus: 'INPROGRESS',
@@ -895,9 +868,9 @@ describe('PhasePage Component', () => {
       // Verify all phase information is displayed
       expect(screen.getByText('Foundation Phase')).toBeInTheDocument();
       expect(screen.getByText('Complete foundation work including excavation')).toBeInTheDocument();
-      expect(screen.getByText('FOUNDATION')).toBeInTheDocument();
-      expect(screen.getByText('2025-01-15')).toBeInTheDocument();
-      expect(screen.getByText('2025-02-15')).toBeInTheDocument();
+      expect(screen.getByText('CIVIL')).toBeInTheDocument();
+      expect(screen.getByText('15-01-2025')).toBeInTheDocument();
+      expect(screen.getByText('15-02-2025')).toBeInTheDocument();
       expect(screen.getByText('INPROGRESS')).toBeInTheDocument();
       expect(screen.getByText('Foundation Experts Ltd')).toBeInTheDocument();
       expect(screen.getByText('₹45000')).toBeInTheDocument();
@@ -911,7 +884,7 @@ describe('PhasePage Component', () => {
       const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
       const mockPhase = {
         phaseName: 'Test Phase',
-        phaseType: 'FOUNDATION',
+        phaseType: 'CIVIL',
         startDate: '2025-01-01',
         endDate: '2025-01-15',
         phaseStatus: 'INPROGRESS',
@@ -936,7 +909,7 @@ describe('PhasePage Component', () => {
       expect(screen.queryByText('Vendor:')).not.toBeInTheDocument();
       // Other information should still be displayed
       expect(screen.getByText('Test Phase')).toBeInTheDocument();
-      expect(screen.getByText('FOUNDATION')).toBeInTheDocument();
+      expect(screen.getByText('CIVIL')).toBeInTheDocument();
       
       consoleLogSpy.mockRestore();
     });
@@ -981,7 +954,7 @@ describe('PhasePage Component', () => {
       renderPhasePage();
 
       expect(screen.getByText('Loading Materials...')).toBeInTheDocument();
-      expect(screen.queryByText('No Phase Materials Added')).not.toBeInTheDocument();
+      expect(screen.queryByText('No Materials Added')).not.toBeInTheDocument();
     });
   });
 
@@ -989,7 +962,6 @@ describe('PhasePage Component', () => {
     test('logs phase status, vendor, and review submission state', () => {
       const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
       const mockPhase = {
-        phaseName: 'Test Phase',
         phaseStatus: 'COMPLETED',
         vendor: { name: 'Test Vendor' },
       };
@@ -1016,8 +988,7 @@ describe('PhasePage Component', () => {
     test('handles console logging with undefined vendor safely', () => {
       const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
       const mockPhase = {
-        phaseName: 'Test Phase',
-        phaseStatus: 'INPROGRESS',
+        phaseStatus: undefined,
         vendor: undefined,
       };
 
@@ -1033,11 +1004,270 @@ describe('PhasePage Component', () => {
 
       renderPhasePage();
 
-      expect(consoleLogSpy).toHaveBeenCalledWith('phaseStatus:', 'INPROGRESS');
+      expect(consoleLogSpy).toHaveBeenCalledWith('phaseStatus:', undefined);
       expect(consoleLogSpy).toHaveBeenCalledWith('vendor:', undefined);
       expect(consoleLogSpy).toHaveBeenCalledWith('hasSubmittedReview:', false);
       
       consoleLogSpy.mockRestore();
+    });
+  });
+
+  describe('Enhanced Coverage - Add Materials Functionality', () => {
+    test('calls dispatch when add chosen materials button is clicked with materials selected', async () => {
+      const user = userEvent.setup();
+      const mockPhase = {
+        phaseName: 'Test Phase',
+        phaseType: 'CIVIL',
+        phaseMaterialList: [],
+      };
+
+      useSelector.mockImplementation((selector) => {
+        return selector({
+          phase: {
+            currentPhase: mockPhase,
+            loaded: true,
+            chosenMaterialsList: [
+              { exposedId: 'material-1', name: 'Steel Beam' },
+              { exposedId: 'material-2', name: 'Concrete' }
+            ],
+          },
+        });
+      });
+
+      phaseApis.getMaterialsByPhaseType.mockResolvedValue([
+        { exposedId: 'material-1', name: 'Steel Beam' },
+        { exposedId: 'material-2', name: 'Concrete' },
+      ]);
+
+      renderPhasePage();
+      
+      // Enter add mode
+      await user.click(screen.getByRole('button', { name: /add materials/i }));
+      
+      await waitFor(() => {
+        expect(screen.getByText('Available Materials To Add')).toBeInTheDocument();
+      });
+
+      // Click add chosen materials button - this should trigger the dispatch since chosenMaterialsList has items
+      const addChosenButton = screen.getByRole('button', { name: /add chosen materials/i });
+      await user.click(addChosenButton);
+
+      // Verify the dispatch calls for adding materials and refreshing phase data
+      await waitFor(() => {
+        expect(mockDispatch).toHaveBeenCalledWith(expect.objectContaining({
+          type: expect.stringContaining('addPhaseMaterialsToPhase')
+        }));
+        expect(mockDispatch).toHaveBeenCalledWith(expect.objectContaining({
+          type: expect.stringContaining('getPhaseById')
+        }));
+      });
+    });
+
+    test('does not add materials when chosenMaterialsList is empty', async () => {
+      const user = userEvent.setup();
+      const mockDispatch = jest.fn();
+      const mockPhase = {
+        phaseName: 'Test Phase',
+        phaseType: 'CIVIL',
+        phaseMaterialList: [],
+      };
+
+      useSelector.mockImplementation((selector) => {
+        return selector({
+          phase: {
+            currentPhase: mockPhase,
+            loaded: true,
+            chosenMaterialsList: [], 
+          },
+        });
+      });
+
+      phaseApis.getMaterialsByPhaseType.mockResolvedValue([
+        { exposedId: 'material-1', name: 'Steel Beam' },
+      ]);
+
+      renderPhasePage();
+      
+      // Enter add mode
+      await user.click(screen.getByRole('button', { name: /add materials/i }));
+      
+      await waitFor(() => {
+        expect(screen.getByText('Available Materials To Add')).toBeInTheDocument();
+      });
+
+      // The add chosen materials button should not be visible when no materials are chosen
+      expect(screen.queryByRole('button', { name: /add chosen materials/i })).not.toBeInTheDocument();
+    });
+
+    test('handles error in materials fetching during add mode', async () => {
+      const user = userEvent.setup();
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+      const mockPhase = {
+        phaseName: 'Test Phase',
+        phaseType: 'CIVIL',
+        phaseMaterialList: [],
+      };
+
+      useSelector.mockImplementation((selector) => {
+        return selector({
+          phase: {
+            currentPhase: mockPhase,
+            loaded: true,
+            chosenMaterialsList: [],
+          },
+        });
+      });
+
+      // Mock API to throw an error
+      phaseApis.getMaterialsByPhaseType.mockRejectedValue(new Error('API Error'));
+
+      renderPhasePage();
+      
+      // Enter add mode to trigger the error
+      await user.click(screen.getByRole('button', { name: /add materials/i }));
+      
+      await waitFor(() => {
+        expect(consoleErrorSpy).toHaveBeenCalledWith('Error fetching materials:', expect.any(Error));
+      });
+
+      consoleErrorSpy.mockRestore();
+    });
+  });
+
+  describe('Enhanced Coverage - Date Formatting', () => {
+    test('formatDate handles various date formats correctly', () => {
+      const mockPhase = {
+        phaseName: 'Test Phase',
+        phaseType: 'CIVIL',
+        startDate: '2025-12-25',
+        endDate: '2025-01-01',
+        phaseMaterialList: [],
+      };
+
+      useSelector.mockImplementation((selector) => {
+        return selector({
+          phase: {
+            currentPhase: mockPhase,
+            loaded: true,
+            chosenMaterialsList: [],
+          },
+        });
+      });
+
+      renderPhasePage();
+
+      // Verify dates are formatted correctly
+      expect(screen.getByText('25-12-2025')).toBeInTheDocument();
+      expect(screen.getByText('01-01-2025')).toBeInTheDocument();
+    });
+
+    test('formatDate handles invalid dates gracefully', () => {
+      const mockPhase = {
+        phaseName: 'Test Phase',
+        phaseType: 'CIVIL',
+        startDate: 'invalid-date',
+        endDate: null,
+        phaseMaterialList: [],
+      };
+
+      useSelector.mockImplementation((selector) => {
+        return selector({
+          phase: {
+            currentPhase: mockPhase,
+            loaded: true,
+            chosenMaterialsList: [],
+          },
+        });
+      });
+
+      renderPhasePage();
+
+      // Verify invalid date is returned as-is and null date is handled
+      expect(screen.getByText('invalid-date')).toBeInTheDocument();
+      // For null/empty dates, the component should show empty content
+      const startDateElements = screen.getAllByText(/Start Date:/i);
+      expect(startDateElements.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('Enhanced Coverage - Component State Management', () => {
+    test('handles null phaseMaterialList gracefully', () => {
+      const mockPhase = {
+        phaseName: 'Test Phase',
+        phaseType: 'CIVIL',
+        phaseMaterialList: null, // Non-array value
+      };
+
+      useSelector.mockImplementation((selector) => {
+        return selector({
+          phase: {
+            currentPhase: mockPhase,
+            loaded: true,
+            chosenMaterialsList: [],
+          },
+        });
+      });
+
+      // After fixing the component to use safeArray, it should handle null gracefully
+      expect(() => renderPhasePage()).not.toThrow();
+      expect(screen.getByText('No Materials Added')).toBeInTheDocument();
+    });
+
+    test('handles phase with all possible field combinations', () => {
+      const mockPhase = {
+        phaseName: 'Complete Test Phase',
+        description: 'Full description text',
+        phaseType: 'ELECTRICAL',
+        startDate: '2025-06-15',
+        endDate: '2025-07-30',
+        phaseStatus: 'INPROGRESS',
+        totalPhaseCost: 100000,
+        totalPhaseMaterialCost: 60000,
+        vendorCost: 40000,
+        vendor: { name: 'Expert Electricians' },
+        phaseMaterialList: [
+          { 
+            exposedId: 'pm-1', 
+            name: 'Copper Wire', 
+            materialExposedId: 'mat-1',
+            quantity: 100,
+            unit: 'KG'
+          },
+          { 
+            exposedId: 'pm-2', 
+            name: 'Circuit Breaker', 
+            materialExposedId: 'mat-2',
+            quantity: 5,
+            unit: 'UNITS'
+          }
+        ],
+      };
+
+      useSelector.mockImplementation((selector) => {
+        return selector({
+          phase: {
+            currentPhase: mockPhase,
+            loaded: true,
+            chosenMaterialsList: [],
+          },
+        });
+      });
+
+      renderPhasePage();
+
+      // Verify all fields are displayed correctly
+      expect(screen.getByText('Complete Test Phase')).toBeInTheDocument();
+      expect(screen.getByText('Full description text')).toBeInTheDocument();
+      expect(screen.getByText('ELECTRICAL')).toBeInTheDocument();
+      expect(screen.getByText('15-06-2025')).toBeInTheDocument();
+      expect(screen.getByText('30-07-2025')).toBeInTheDocument();
+      expect(screen.getByText('INPROGRESS')).toBeInTheDocument();
+      expect(screen.getByText('Expert Electricians')).toBeInTheDocument();
+      expect(screen.getByText('₹60000')).toBeInTheDocument();
+      expect(screen.getByText('₹40000')).toBeInTheDocument();
+      expect(screen.getByText('₹100000')).toBeInTheDocument();
+      expect(screen.getByText('Copper Wire')).toBeInTheDocument();
+      expect(screen.getByText('Circuit Breaker')).toBeInTheDocument();
     });
   });
 });

@@ -1,5 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
-import axios from 'axios';
+import axiosInstance from '../../axios/axiosInstance';
 import {
   phaseListReducer,
   getPhaseById,
@@ -15,8 +15,8 @@ import {
 } from '../../redux/phase/phaseListSlice.jsx';
 
 // Mock axios
-jest.mock('axios');
-const mockedAxios = axios;
+jest.mock('../../axios/axiosInstance');
+const mockedAxios = axiosInstance;
 
 // Helper function to create test store
 const createTestStore = (initialState = {}) => {
@@ -114,7 +114,7 @@ describe('phaseListSlice', () => {
 
         const result = await store.dispatch(getPhaseById('phase-123'));
 
-        expect(mockedAxios.get).toHaveBeenCalledWith('http://localhost:8080/phase/phase-123');
+        expect(mockedAxios.get).toHaveBeenCalledWith('/phase/phase-123');
         expect(result.type).toBe('getPhaseById/fulfilled');
         expect(result.payload).toEqual(mockPhase);
 
@@ -146,7 +146,7 @@ describe('phaseListSlice', () => {
 
         const result = await store.dispatch(getPhasesByRoom('room-123'));
 
-        expect(mockedAxios.get).toHaveBeenCalledWith('http://localhost:8080/phase/room/room-123');
+        expect(mockedAxios.get).toHaveBeenCalledWith('/phase/room/room-123');
         expect(result.type).toBe('getPhasesByRoom/fulfilled');
         expect(result.payload).toEqual(mockPhases);
 
@@ -208,7 +208,7 @@ describe('phaseListSlice', () => {
 
         const result = await store.dispatch(createPhase(phaseRequestDTO));
 
-        expect(mockedAxios.post).toHaveBeenCalledWith('http://localhost:8080/phase', phaseRequestDTO);
+        expect(mockedAxios.post).toHaveBeenCalledWith('/phase', phaseRequestDTO);
         expect(result.type).toBe('createPhase/fulfilled');
         expect(result.payload).toEqual(newPhase);
 
@@ -241,7 +241,7 @@ describe('phaseListSlice', () => {
         const result = await store.dispatch(updatePhase(updateData));
 
         expect(mockedAxios.put).toHaveBeenCalledWith(
-          'http://localhost:8080/phase/phase-123',
+          '/phase/phase-123',
           updateData.updatedPhaseRequestDTO
         );
         expect(result.type).toBe('updatePhase/fulfilled');
@@ -267,7 +267,7 @@ describe('phaseListSlice', () => {
 
         const result = await store.dispatch(deletePhase('phase-123'));
 
-        expect(mockedAxios.delete).toHaveBeenCalledWith('http://localhost:8080/phase/phase-123');
+        expect(mockedAxios.delete).toHaveBeenCalledWith('/phase/phase-123');
         expect(result.type).toBe('deletePhase/fulfilled');
         expect(result.payload).toEqual(deleteResponse);
       });
@@ -293,7 +293,7 @@ describe('phaseListSlice', () => {
 
         const result = await store.dispatch(getPhaseMaterialsByPhaseId('phase-123'));
 
-        expect(mockedAxios.get).toHaveBeenCalledWith('http://localhost:8080/phase/materials?id=phase-123');
+        expect(mockedAxios.get).toHaveBeenCalledWith('/phase/materials?id=phase-123');
         expect(result.type).toBe('getPhaseMaterialsByPhaseId/fulfilled');
         expect(result.payload).toEqual(mockMaterials);
       });
@@ -317,7 +317,7 @@ describe('phaseListSlice', () => {
         const result = await store.dispatch(getPhasesByRenovationType('KITCHEN_RENOVATION'));
 
         expect(mockedAxios.get).toHaveBeenCalledWith(
-          'http://localhost:8080/phase/phases/by-renovation-type/KITCHEN_RENOVATION'
+          '/phase/phases/by-renovation-type/KITCHEN_RENOVATION'
         );
         expect(result.type).toBe('getPhasesByRenovationType/fulfilled');
         expect(result.payload).toEqual(mockPhaseTypes);
@@ -347,7 +347,7 @@ describe('phaseListSlice', () => {
 
         const result = await store.dispatch(getPhaseTotalCost('phase-123'));
 
-        expect(mockedAxios.get).toHaveBeenCalledWith('http://localhost:8080/phase/phase-123/total-cost');
+        expect(mockedAxios.get).toHaveBeenCalledWith('/phase/phase-123/total-cost');
         expect(result.type).toBe('getPhaseTotalCost/fulfilled');
         expect(result.payload).toBe(mockCost);
 
@@ -378,7 +378,7 @@ describe('phaseListSlice', () => {
         const result = await store.dispatch(setVendorCost(costData));
 
         expect(mockedAxios.post).toHaveBeenCalledWith(
-          'http://localhost:8080/phase/vendor/vendor-123/phase/phase-123/cost?cost=25000'
+          '/phase/vendor/vendor-123/phase/phase-123/cost?cost=25000'
         );
         expect(result.type).toBe('setVendorCost/fulfilled');
         expect(result.payload).toEqual(mockResponse);
@@ -403,7 +403,7 @@ describe('phaseListSlice', () => {
         const result = await store.dispatch(setVendorCost(costData));
 
         expect(mockedAxios.post).toHaveBeenCalledWith(
-          'http://localhost:8080/phase/vendor/vendor-123/phase/phase-123/cost?cost=0'
+          '/phase/vendor/vendor-123/phase/phase-123/cost?cost=0'
         );
         expect(result.payload).toEqual(mockResponse);
       });
@@ -416,7 +416,7 @@ describe('phaseListSlice', () => {
         const result = await store.dispatch(setVendorCost(costData));
 
         expect(mockedAxios.post).toHaveBeenCalledWith(
-          'http://localhost:8080/phase/vendor/vendor-123/phase/phase-123/cost?cost=1234.56'
+          '/phase/vendor/vendor-123/phase/phase-123/cost?cost=1234.56'
         );
         expect(result.payload).toEqual(mockResponse);
       });
@@ -519,7 +519,7 @@ describe('phaseListSlice', () => {
 
       const result = await store.dispatch(getPhasesByRoom(''));
 
-      expect(mockedAxios.get).toHaveBeenCalledWith('http://localhost:8080/phase/room/');
+      expect(mockedAxios.get).toHaveBeenCalledWith('/phase/room/');
       expect(result.type).toBe('getPhasesByRoom/fulfilled');
     });
   });
