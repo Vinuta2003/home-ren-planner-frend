@@ -30,9 +30,6 @@ coverage-cypress
 coverage-merged
 .nyc_output
 
-# Specific Cypress test file to exclude
-cypress/e2e/phasePage.cy.js
-
 # Cypress artifacts
 cypress/screenshots/
 cypress/videos/

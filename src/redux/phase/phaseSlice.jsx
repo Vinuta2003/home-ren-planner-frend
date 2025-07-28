@@ -1,9 +1,8 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
 import axiosInstance from "../../axios/axiosInstance";
 
 export const getPhaseById = createAsyncThunk('getPhaseById', async (phaseId) => {
-    const res = await axios.get(`http://localhost:8080/phase/${phaseId}`)
+    const res = await axiosInstance.get(`/phase/${phaseId}`)
     const data = res.data;
     return data;
 })

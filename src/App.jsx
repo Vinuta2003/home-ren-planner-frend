@@ -60,19 +60,19 @@ function App() {
           <ProtectedRoute allowedRoles={["CUSTOMER"]}>
             <CreateProject />
           </ProtectedRoute>
-        }/>
+        } />
 
         <Route path="/:projectId/budget-overview" element={
           <ProtectedRoute allowedRoles={["CUSTOMER"]}>
             <BudgetOverviewPage />
           </ProtectedRoute>
-        }/>
+        } />
 
         <Route path="/userdashboard" element={
           <ProtectedRoute allowedRoles={["CUSTOMER"]}>
             <UserDashboard />
           </ProtectedRoute>
-        }/>
+        } />
 
         <Route path="/vendorlist" element={<VendorListDisplay />} />
         <Route path="/vendor-list" element={<VendorListDisplay />} />
@@ -95,11 +95,16 @@ function App() {
           }
         />
 
-        <Route path="/phase-form/:exposedId" element={<PhaseForm />} />
-        <Route path="/phase/room/:exposedId" element={<PhaseList />} />
+        <Route path="/phase-form/:exposedId" element={
+          <ProtectedRoute allowedRoles={["CUSTOMER"]}><PhaseForm /></ProtectedRoute>
+        } />
+        <Route path="/phase/room/:exposedId" element={
+          <ProtectedRoute allowedRoles={["CUSTOMER"]}><PhaseList /></ProtectedRoute>} />
         <Route path="/editphase/:id" element={<EditPhaseForm />} />
 
-        <Route path="/phase/:phaseId" element={<ProtectedRoute allowedRoles={["CUSTOMER"]}><PhasePage/></ProtectedRoute>}/>
+        <Route path="/phase/:phaseId" element={
+          <ProtectedRoute allowedRoles={["CUSTOMER"]}><PhasePage /></ProtectedRoute>
+        } />
         <Route path="*" element={<PageNotFound />} />
       </Routes>
 

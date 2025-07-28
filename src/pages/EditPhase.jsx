@@ -1,33 +1,54 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
+import axiosInstance from "../axios/axiosInstance";
 
 function EditPhaseForm() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [phaseData, setPhaseData] = useState([]);
   const [statuses, setStatuses] = useState([]);
-
+  const [errors, setErrors] = useState({});
   useEffect(() => {
-    axios.get(`http://localhost:8080/phase/${id}`)
+    axiosInstance.get(`http://localhost:8080/phase/${id}`)
       .then((res) => {
         setPhaseData(res.data);
         console.log("res", res.data);
       })
       .catch((err) => console.error("Phase fetch error:", err));
 
-    axios.get("http://localhost:8080/api/enums/phase-statuses")
+    axiosInstance.get("http://localhost:8080/api/enums/phase-statuses")
       .then((res) => setStatuses(res.data));
   }, [id]);
-
+  const validate = (formData) => {
+    const newErrors = {};
+    if (formData.phaseName == "") {
+      newErrors.phaseName = "Please enter phase name";
+    }
+    if (formData.startDate == "") {
+      newErrors.startDate = "Please enter start date";
+    }
+    if (formData.endDate == "") {
+      newErrors.endDate = "Please enter end date";
+    }
+    if(new Date(formData.endDate)<new Date(formData.startDate)){
+      newErrors.endDate="End date cannot be before start date";
+    }
+  
+    return newErrors;
+  };
   const handleChange = (e) => {
     setPhaseData({ ...phaseData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    axios.put(`http://localhost:8080/phase/${id}`, phaseData)
+    const validationErrors = validate(phaseData);
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+    axiosInstance.put(`http://localhost:8080/phase/${id}`, phaseData)
       .then(() => navigate(`/phase/${id}`))
       .catch((err) => {
         console.error("Phase update error:", err);
@@ -52,7 +73,9 @@ function EditPhaseForm() {
                 value={phaseData.phaseName || ''}
                 onChange={handleChange}
                 className="w-full border border-gray-300 rounded px-3 py-2 mt-1"
-              />
+              />{errors.phaseName && (
+                <p className="text-red-500 text-sm mb-3">{errors.phaseName}</p>
+              )}
             </div>
 
             <div>
@@ -63,7 +86,9 @@ function EditPhaseForm() {
                 value={phaseData.startDate || ''}
                 onChange={handleChange}
                 className="w-full border border-gray-300 rounded px-3 py-2 mt-1"
-              />
+              />{errors.startDate && (
+                <p className="text-red-500 text-sm mb-3">{errors.startDate}</p>
+              )}
             </div>
 
             <div>
@@ -101,7 +126,9 @@ function EditPhaseForm() {
                 value={phaseData.endDate || ''}
                 onChange={handleChange}
                 className="w-full border border-gray-300 rounded px-3 py-2 mt-1"
-              />
+              />{errors.endDate && (
+                <p className="text-red-500 text-sm mb-3">{errors.endDate}</p>
+              )}
             </div>
           </div>
 
