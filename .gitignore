@@ -26,7 +26,11 @@ dist-ssr
 # Test coverage reports
 coverage/
 coverage
+coverage-cypress
+coverage-merged
+.nyc_output
 
 # Cypress artifacts
 cypress/screenshots/
 cypress/videos/
+cypress/fixtures/phaseId.js

@@ -12,6 +12,7 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     login: (state, action) => {
+      if (!action.payload) return state;
       state.email = action.payload.email;
       state.role = action.payload.role;
       state.accessToken = action.payload.accessToken;
@@ -24,7 +25,11 @@ const authSlice = createSlice({
       state.url = null;
     },
     updateAccessToken: (state, action) => {
-      state.accessToken = action.payload.newAccessToken
+      if (!action.payload) {
+        state.accessToken = undefined;
+      } else {
+        state.accessToken = action.payload.newAccessToken;
+      }
     }
   },
 });
