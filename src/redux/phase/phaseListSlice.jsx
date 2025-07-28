@@ -1,53 +1,53 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
+import axiosInstance from "../../axios/axiosInstance";
 
 export const getPhaseById = createAsyncThunk("getPhaseById", async (id) => {
-  const res = await axios.get(`http://localhost:8080/phase/${id}`);
+  const res = await axiosInstance.get(`/phase/${id}`);
   return res.data;
 });
 
 export const getPhasesByRoom = createAsyncThunk("getPhasesByRoom", async (roomId) => {
-  const res = await axios.get(`http://localhost:8080/phase/room/${roomId}`);
+  const res = await axiosInstance.get(`/phase/room/${roomId}`);
    return Array.isArray(res.data) ? res.data : [];
 });
 
 export const createPhase = createAsyncThunk("createPhase", async (phaseRequestDTO) => {
-  const res = await axios.post(`http://localhost:8080/phase`, phaseRequestDTO);
+  const res = await axiosInstance.post(`/phase`, phaseRequestDTO);
   return res.data;
 });
 
 export const updatePhase = createAsyncThunk("updatePhase", async ({ id, updatedPhaseRequestDTO }) => {
-  const res = await axios.put(`http://localhost:8080/phase/${id}`, updatedPhaseRequestDTO);
+  const res = await axiosInstance.put(`/phase/${id}`, updatedPhaseRequestDTO);
   return res.data;
 });
 
 
 export const deletePhase = createAsyncThunk("deletePhase", async (id) => {
-  const res = await axios.delete(`http://localhost:8080/phase/${id}`);
+  const res = await axiosInstance.delete(`/phase/${id}`);
   return res.data;
 });
 
 
 export const getPhaseMaterialsByPhaseId = createAsyncThunk("getPhaseMaterialsByPhaseId", async (id) => {
-  const res = await axios.get(`http://localhost:8080/phase/materials?id=${id}`);
+  const res = await axiosInstance.get(`/phase/materials?id=${id}`);
   return res.data;
 });
 
 
 export const getPhasesByRenovationType = createAsyncThunk("getPhasesByRenovationType", async (type) => {
-  const res = await axios.get(`http://localhost:8080/phase/phases/by-renovation-type/${type}`);
+  const res = await axiosInstance.get(`/phase/phases/by-renovation-type/${type}`);
   return res.data;
 });
 
 
 export const getPhaseTotalCost = createAsyncThunk("getPhaseTotalCost", async (phaseId) => {
-  const res = await axios.get(`http://localhost:8080/phase/${phaseId}/total-cost`);
+  const res = await axiosInstance.get(`/phase/${phaseId}/total-cost`);
   return res.data;
 });
 
 export const setVendorCost = createAsyncThunk("setVendorCost", async ({ vendorId, phaseId, cost }) => {
-  const res = await axios.post(
-    `http://localhost:8080/phase/vendor/${vendorId}/phase/${phaseId}/cost?cost=${cost}`
+  const res = await axiosInstance.post(
+    `/phase/vendor/${vendorId}/phase/${phaseId}/cost?cost=${cost}`
   );
   return res.data;
 });
