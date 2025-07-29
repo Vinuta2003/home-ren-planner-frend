@@ -17,6 +17,7 @@ jest.mock("axios");
 jest.mock("../../../axios/axiosInstance", () => ({
   __esModule: true,
   default: {
+    get: jest.fn(),
     post: jest.fn(),
   },
 }));
@@ -162,7 +163,7 @@ describe("phaseSlice reducers", () => {
 
 describe("phaseSlice async thunks", () => {
   it("should handle fulfilled getPhaseById", async () => {
-    axios.get.mockResolvedValueOnce({ data: phaseResponse });
+    axiosInstance.get.mockResolvedValueOnce({ data: phaseResponse });
 
     const store = configureStore({
       reducer: { phase: reducer },

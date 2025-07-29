@@ -5,7 +5,6 @@ import {
   getMaterialsByPhaseType,
 } from "../phaseApis";
 
-
 jest.mock("../axiosInstance", () => ({
   patch: jest.fn(),
   delete: jest.fn(),
@@ -13,13 +12,13 @@ jest.mock("../axiosInstance", () => ({
 }));
 
 const phase = {
-    phaseType : "CIVIL"
-}
+  phaseType: "CIVIL",
+};
 
 const samplePhaseMaterial = {
   exposedId: "7534045f-45c5-4dd6-81cb-2cf06e19b2f8",
   phaseId: "e5d09e73-7f2d-4ab6-aff7-6d6f29f03c49",
-  materialId : "4233e8e6-d2fd-486f-aafe-ec5e633398db",
+  materialId: "4233e8e6-d2fd-486f-aafe-ec5e633398db",
   name: "Cement",
   unit: "KG",
   quantity: 10,
@@ -32,7 +31,7 @@ const materialUserResponse = {
   exposedId: "d5cd7930-a960-4078-b08a-5eaff632e749",
   pricePerQuantity: 50,
   unit: "KG",
-  phaseType: "CIVIL"
+  phaseType: "CIVIL",
 };
 
 describe("phaseApis", () => {
@@ -54,15 +53,16 @@ describe("phaseApis", () => {
     });
 
     test("should catch error and return undefined", async () => {
-      console.error = jest.fn(); 
+      const error = new Error("Patch failed");
+      console.error = jest.fn();
 
-      axiosInstance.patch.mockRejectedValueOnce(new Error("Patch failed"));
+      axiosInstance.patch.mockRejectedValueOnce(error);
 
       const result = await updatePhaseMaterialQuantity(samplePhaseMaterial.exposedId, 5);
 
       expect(console.error).toHaveBeenCalledWith(
         "Failed to update phase material quantity:",
-        expect.any(Error)
+        error
       );
       expect(result).toBeUndefined();
     });
@@ -82,15 +82,16 @@ describe("phaseApis", () => {
     });
 
     test("should catch error and return undefined", async () => {
+      const error = new Error("Delete failed");
       console.log = jest.fn();
 
-      axiosInstance.delete.mockRejectedValueOnce(new Error("Delete failed"));
+      axiosInstance.delete.mockRejectedValueOnce(error);
 
       const result = await deletePhaseMaterial(samplePhaseMaterial.exposedId);
 
       expect(console.log).toHaveBeenCalledWith(
         "failed to delete phase material",
-        expect.any(Error)
+        error
       );
       expect(result).toBeUndefined();
     });
@@ -110,15 +111,16 @@ describe("phaseApis", () => {
     });
 
     test("should catch error and return undefined", async () => {
+      const error = new Error("Get failed");
       console.log = jest.fn();
 
-      axiosInstance.get.mockRejectedValueOnce(new Error("Get failed"));
+      axiosInstance.get.mockRejectedValueOnce(error);
 
       const result = await getMaterialsByPhaseType(phase.phaseType);
 
       expect(console.log).toHaveBeenCalledWith(
         "failed to fetch materials",
-        expect.any(Error)
+        error
       );
       expect(result).toBeUndefined();
     });
