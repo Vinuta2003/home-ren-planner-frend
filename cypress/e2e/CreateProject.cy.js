@@ -12,8 +12,8 @@ describe('Create Project', () => {
         cy.get('input[type="text"]').type('Whole Home Renovation');
         cy.get('select[name="serviceType"]').select('WHOLE_HOUSE');
         cy.get('input[type="number"]').type('50000');
-        cy.get('input[name="startDate"]').type('2025-07-24');
-        cy.get('input[name="endDate"]').type('2025-08-06');
+        cy.get('input[name="startDate"]').type('2025-08-08');
+        cy.get('input[name="endDate"]').type('2025-09-30');
         cy.get('button[type="submit"]').click();
         cy.get('h2[class="text-2xl font-bold text-blue-900"]').should('be.visible');
         cy.contains('Add First Room').click();
