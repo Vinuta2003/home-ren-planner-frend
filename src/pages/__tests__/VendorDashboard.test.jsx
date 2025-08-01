@@ -33,13 +33,6 @@ describe('VendorDashboard', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    jest.spyOn(window, 'alert').mockImplementation(() => {});
-  });
-
-  afterEach(() => {
-    if (window.alert.mockRestore) {
-      window.alert.mockRestore();
-    }
   });
 
   test('shows approval pending message by default', async () => {
@@ -340,7 +333,7 @@ describe('VendorDashboard', () => {
   });
 
   // Additional tests for uncovered lines
-  test('submitQuote with invalid input shows alert', async () => {
+  test('submitQuote with invalid input shows modal', async () => {
     axiosInstance.get.mockReset();
     axiosInstance.get
       .mockResolvedValueOnce({ data: { approval: true } })
@@ -359,11 +352,13 @@ describe('VendorDashboard', () => {
     // Wait for the input to appear
     const input = await screen.findByPlaceholderText('Enter quote (e.g., 5000)');
     fireEvent.change(input, { target: { value: '' } });
-    fireEvent.click(screen.getByRole('button', { name: /submit quote/i }));
-    expect(window.alert).toHaveBeenCalledWith('Enter valid cost');
+    fireEvent.click(screen.getByRole('button', { name: /Submit Quote/i }));
+    await waitFor(() => {
+      expect(screen.getByText('Enter valid cost')).toBeInTheDocument();
+    });
   });
 
-  test('submitQuote with non-numeric input shows alert', async () => {
+  test('submitQuote with non-numeric input shows modal', async () => {
     axiosInstance.get.mockReset();
     axiosInstance.get
       .mockResolvedValueOnce({ data: { approval: true } })
@@ -381,11 +376,13 @@ describe('VendorDashboard', () => {
     await waitFor(() => expect(screen.getByRole('heading', { name: 'Assigned Phases' })).toBeInTheDocument());
     const input = await screen.findByPlaceholderText('Enter quote (e.g., 5000)');
     fireEvent.change(input, { target: { value: 'abc' } });
-    fireEvent.click(screen.getByRole('button', { name: /submit quote/i }));
-    expect(window.alert).toHaveBeenCalledWith('Enter valid cost');
+    fireEvent.click(screen.getByRole('button', { name: /Submit Quote/i }));
+    await waitFor(() => {
+      expect(screen.getByText('Enter valid cost')).toBeInTheDocument();
+    });
   });
 
-  test('submitQuote with API error shows alert', async () => {
+  test('submitQuote with API error shows modal', async () => {
     axiosInstance.get.mockReset();
     axiosInstance.post.mockReset();
     axiosInstance.get
@@ -405,13 +402,13 @@ describe('VendorDashboard', () => {
     await waitFor(() => expect(screen.getByRole('heading', { name: 'Assigned Phases' })).toBeInTheDocument());
     const input = await screen.findByPlaceholderText('Enter quote (e.g., 5000)');
     fireEvent.change(input, { target: { value: '1234' } });
-    fireEvent.click(screen.getByRole('button', { name: /submit quote/i }));
+    fireEvent.click(screen.getByRole('button', { name: /Submit Quote/i }));
     await waitFor(() => {
-      expect(window.alert).toHaveBeenCalledWith('Failed to submit quote.');
+      expect(screen.getByText('Failed to submit quote.')).toBeInTheDocument();
     });
   });
 
-  test('submitQuote with success calls fetchPhases', async () => {
+  test('submitQuote with success shows modal', async () => {
     axiosInstance.get.mockReset();
     axiosInstance.post.mockReset();
     axiosInstance.get
@@ -441,9 +438,9 @@ describe('VendorDashboard', () => {
     await waitFor(() => expect(screen.getByRole('heading', { name: 'Assigned Phases' })).toBeInTheDocument());
     const input = await screen.findByPlaceholderText('Enter quote (e.g., 5000)');
     fireEvent.change(input, { target: { value: '1234' } });
-    fireEvent.click(screen.getByRole('button', { name: /submit quote/i }));
+    fireEvent.click(screen.getByRole('button', { name: /Submit Quote/i }));
     await waitFor(() => {
-      expect(window.alert).toHaveBeenCalledWith('Quote submitted successfully!');
+      expect(screen.getByText('Quote submitted successfully!')).toBeInTheDocument();
     });
   });
 
@@ -480,5 +477,74 @@ describe('VendorDashboard', () => {
     expect(mockDispatch).toHaveBeenCalled();
     expect(mockNavigate).toHaveBeenCalledWith('/login');
     jest.restoreAllMocks();
+  });
+
+  test('modal close functionality works', async () => {
+    axiosInstance.get.mockReset();
+    axiosInstance.get
+      .mockResolvedValueOnce({ data: { approval: true } })
+      .mockResolvedValueOnce({ data: [{
+        id: 1,
+        phaseName: 'Phase 1',
+        phaseStatus: 'INSPECTION',
+        description: 'Test phase 1',
+        startDate: '2024-01-01',
+        endDate: '2024-01-31',
+        phaseType: 'Electrical',
+        vendorCost: null
+      }] });
+    renderWithProviders(<VendorDashboard />);
+    await waitFor(() => expect(screen.getByRole('heading', { name: 'Assigned Phases' })).toBeInTheDocument());
+    const input = await screen.findByPlaceholderText('Enter quote (e.g., 5000)');
+    fireEvent.change(input, { target: { value: '' } });
+    fireEvent.click(screen.getByRole('button', { name: /Submit Quote/i }));
+    await waitFor(() => {
+      expect(screen.getByText('Enter valid cost')).toBeInTheDocument();
+    });
+    // Close the modal
+    fireEvent.click(screen.getByText('Close'));
+    await waitFor(() => {
+      expect(screen.queryByText('Enter valid cost')).not.toBeInTheDocument();
+    });
+  });
+
+  test('quote input only shows for INSPECTION status with null vendorCost', async () => {
+    axiosInstance.get.mockReset();
+    axiosInstance.get
+      .mockResolvedValueOnce({ data: { approval: true } })
+      .mockResolvedValueOnce({ data: [{
+        id: 1,
+        phaseName: 'Phase 1',
+        phaseStatus: 'INPROGRESS', // Not INSPECTION
+        description: 'Test phase 1',
+        startDate: '2024-01-01',
+        endDate: '2024-01-31',
+        phaseType: 'Electrical',
+        vendorCost: null
+      }] });
+    renderWithProviders(<VendorDashboard />);
+    await waitFor(() => expect(screen.getByRole('heading', { name: 'Assigned Phases' })).toBeInTheDocument());
+    // Should not show quote input for INPROGRESS status
+    expect(screen.queryByPlaceholderText('Enter quote (e.g., 5000)')).not.toBeInTheDocument();
+  });
+
+  test('quote input does not show when vendorCost is not null', async () => {
+    axiosInstance.get.mockReset();
+    axiosInstance.get
+      .mockResolvedValueOnce({ data: { approval: true } })
+      .mockResolvedValueOnce({ data: [{
+        id: 1,
+        phaseName: 'Phase 1',
+        phaseStatus: 'INSPECTION',
+        description: 'Test phase 1',
+        startDate: '2024-01-01',
+        endDate: '2024-01-31',
+        phaseType: 'Electrical',
+        vendorCost: 1000 // Not null
+      }] });
+    renderWithProviders(<VendorDashboard />);
+    await waitFor(() => expect(screen.getByRole('heading', { name: 'Assigned Phases' })).toBeInTheDocument());
+    // Should not show quote input when vendorCost is not null
+    expect(screen.queryByPlaceholderText('Enter quote (e.g., 5000)')).not.toBeInTheDocument();
   });
 }); 
