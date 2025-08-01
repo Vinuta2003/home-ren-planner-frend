@@ -26,10 +26,11 @@ dist-ssr
 # Test coverage reports
 coverage/
 coverage
-
-# Specific Cypress test file to exclude
-cypress/e2e/phasePage.cy.js
+coverage-cypress
+coverage-merged
+.nyc_output
 
 # Cypress artifacts
 cypress/screenshots/
 cypress/videos/
+cypress/fixtures/phaseId.js

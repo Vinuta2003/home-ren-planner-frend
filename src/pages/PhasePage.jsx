@@ -24,6 +24,17 @@ export function PhasePage() {
 
   const safeArray = (value) => Array.isArray(value) ? value : [];
 
+
+  const formatDate = (dateString) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return dateString; 
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+  };
+
   const {
     currentPhase,
     loaded,
@@ -121,8 +132,8 @@ export function PhasePage() {
         <div className="grid grid-cols-2 text-blue-900 mb-8 py-2">
           <div className="space-y-2 text-left p-6 px-18">
             <p><span className="font-semibold">Phase Type:</span> {phaseType}</p>
-            <p><span className="font-semibold">Start Date:</span> {startDate}</p>
-            <p><span className="font-semibold">End Date:</span> {endDate}</p>
+            <p><span className="font-semibold">Start Date:</span> {formatDate(startDate)}</p>
+            <p><span className="font-semibold">End Date:</span> {formatDate(endDate)}</p>
             {vendor && <p><span className="font-semibold">Vendor:</span> {vendor.name}</p>}
           </div>
           <div className="space-y-2 text-right p-6 px-18">
@@ -137,8 +148,8 @@ export function PhasePage() {
         {phaseStatus!="NOTSTARTED" && <h2 className="text-2xl font-semibold text-blue-800">Materials Added To Phase</h2>}
         {phaseStatus!="NOTSTARTED" && <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {loaded ? (
-            phaseMaterialList.length > 0 ? (
-              phaseMaterialList.map((val) => (
+            safeArray(phaseMaterialList).length > 0 ? (
+              safeArray(phaseMaterialList).map((val) => (
                 <PhaseMaterial phaseMaterial={val} phaseStatus={phaseStatus} key={val.exposedId} />
               ))
             ) : (
@@ -153,6 +164,7 @@ export function PhasePage() {
         (!addMode ? (
           (phaseStatus!="COMPLETED" && <button
             onClick={addButtonOnClickHandler}
+            id="add-materials-btn"
             className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 inline-flex items-center"
           >
             <PlusCircle className="w-5 h-5 mr-2" />
@@ -175,10 +187,11 @@ export function PhasePage() {
               {chosenMaterialsList.length > 0 && (
                 <button
                   onClick={addPhaseMaterialsOnClickHandler}
+                  id="add-chosen-materials-btn"
                   className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 inline-flex items-center"
                 >
                   <CheckCircle className="w-5 h-5 mr-2" />
-                  Add Chosen Materials to Phase
+                  Add Chosen Materials To Phase
                 </button>
               )}
               <button

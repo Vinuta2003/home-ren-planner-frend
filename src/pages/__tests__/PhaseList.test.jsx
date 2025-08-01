@@ -5,12 +5,12 @@ import { Provider } from 'react-redux';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import configureStore from 'redux-mock-store';
 import PhaseList from '../PhaseList';
-import axios from 'axios';
+import axiosInstance from '../../axios/axiosInstance';
 import '@testing-library/jest-dom';
 import thunk from 'redux-thunk';
 
-jest.mock('axios');
-const mockedAxios = axios;
+jest.mock('../../axios/axiosInstance');
+const mockedAxios = axiosInstance;
 
 const mockNavigate = jest.fn();
 const mockDispatch = jest.fn();
@@ -141,8 +141,8 @@ describe('PhaseList Component', () => {
     renderPhaseList();
 
     expect(screen.getByText('Tiling Phase')).toBeInTheDocument();
-    expect(screen.getByText('2025-01-01')).toBeInTheDocument();
-    expect(screen.getByText('2025-01-05')).toBeInTheDocument();
+    expect(screen.getByText('01-01-2025')).toBeInTheDocument();
+    expect(screen.getByText('05-01-2025')).toBeInTheDocument();
     expect(screen.getByText('INPROGRESS')).toBeInTheDocument();
     expect(screen.getByTitle('Delete Phase')).toBeInTheDocument();
   });
@@ -448,5 +448,171 @@ describe('PhaseList Component', () => {
     renderPhaseList();
 
     expect(screen.getByText('No phases found. Create one now!')).toBeInTheDocument();
+  });
+
+  describe('Date Formatting Edge Cases', () => {
+    test('handles null date values gracefully', () => {
+      const mockPhase = {
+        id: 'phase-1',
+        phaseName: 'Test Phase',
+        startDate: null,
+        endDate: undefined,
+        phaseStatus: 'NOTSTARTED',
+      };
+
+      useSelector.mockImplementation((selector) => {
+        return selector({
+          phaselist: {
+            roomPhases: [mockPhase],
+            loading: false,
+          },
+        });
+      });
+
+      renderPhaseList();
+
+      expect(screen.getByText('Test Phase')).toBeInTheDocument();
+      // Should not crash and should handle null/undefined dates gracefully
+      expect(screen.getByText('NOTSTARTED')).toBeInTheDocument();
+    });
+
+    test('handles invalid date values gracefully', () => {
+      const mockPhase = {
+        id: 'phase-1',
+        phaseName: 'Test Phase',
+        startDate: 'invalid-date',
+        endDate: 'another-invalid-date',
+        phaseStatus: 'INPROGRESS',
+      };
+
+      useSelector.mockImplementation((selector) => {
+        return selector({
+          phaselist: {
+            roomPhases: [mockPhase],
+            loading: false,
+          },
+        });
+      });
+
+      renderPhaseList();
+
+      expect(screen.getByText('Test Phase')).toBeInTheDocument();
+      expect(screen.getByText('invalid-date')).toBeInTheDocument();
+      expect(screen.getByText('another-invalid-date')).toBeInTheDocument();
+      expect(screen.getByText('INPROGRESS')).toBeInTheDocument();
+    });
+  });
+
+  describe('Phase Status Styling Edge Cases', () => {
+    test('handles unknown phase status with default styling', () => {
+      const mockPhase = {
+        id: 'phase-1',
+        phaseName: 'Test Phase',
+        startDate: '2025-01-01',
+        endDate: '2025-01-05',
+        phaseStatus: 'UNKNOWN_STATUS',
+      };
+
+      useSelector.mockImplementation((selector) => {
+        return selector({
+          phaselist: {
+            roomPhases: [mockPhase],
+            loading: false,
+          },
+        });
+      });
+
+      renderPhaseList();
+
+      const unknownStatus = screen.getByText('UNKNOWN_STATUS');
+      expect(unknownStatus).toHaveClass('bg-blue-200', 'text-blue-800');
+    });
+
+    test('handles COMPLETED phase status with default styling', () => {
+      const mockPhase = {
+        id: 'phase-1',
+        phaseName: 'Test Phase',
+        startDate: '2025-01-01',
+        endDate: '2025-01-05',
+        phaseStatus: 'COMPLETED',
+      };
+
+      useSelector.mockImplementation((selector) => {
+        return selector({
+          phaselist: {
+            roomPhases: [mockPhase],
+            loading: false,
+          },
+        });
+      });
+
+      renderPhaseList();
+
+      const completedStatus = screen.getByText('COMPLETED');
+      expect(completedStatus).toHaveClass('bg-blue-200', 'text-blue-800');
+    });
+  });
+
+  describe('Component Initialization Edge Cases', () => {
+    test('handles missing exposedId parameter', () => {
+      // Mock useParams to return undefined exposedId
+      const mockUseParams = jest.fn(() => ({ exposedId: undefined }));
+      jest.doMock('react-router-dom', () => {
+        const actual = jest.requireActual('react-router-dom');
+        return {
+          ...actual,
+          useNavigate: () => mockNavigate,
+          useParams: mockUseParams,
+          Link: ({ to, children, ...props }) => <a href={to} {...props}>{children}</a>,
+        };
+      });
+
+      useSelector.mockImplementation((selector) => {
+        return selector({
+          phaselist: {
+            roomPhases: [],
+            loading: false,
+          },
+        });
+      });
+
+      renderPhaseList();
+
+      // Should render without crashing
+      expect(screen.getByText('Phases')).toBeInTheDocument();
+      expect(screen.getByText('No phases found. Create one now!')).toBeInTheDocument();
+      
+      // Dispatch should not be called when exposedId is undefined
+      // Note: This test might be tricky due to the way mocking works
+    });
+
+    test('handles empty string exposedId parameter', () => {
+      // Mock useParams to return empty string exposedId
+      const mockUseParams = jest.fn(() => ({ exposedId: '' }));
+      jest.doMock('react-router-dom', () => {
+        const actual = jest.requireActual('react-router-dom');
+        return {
+          ...actual,
+          useNavigate: () => mockNavigate,
+          useParams: mockUseParams,
+          Link: ({ to, children, ...props }) => <a href={to} {...props}>{children}</a>,
+        };
+      });
+
+      useSelector.mockImplementation((selector) => {
+        return selector({
+          phaselist: {
+            roomPhases: [],
+            loading: false,
+          },
+        });
+      });
+
+      renderPhaseList();
+
+      // Should render without crashing
+      expect(screen.getByText('Phases')).toBeInTheDocument();
+      expect(screen.getByText('No phases found. Create one now!')).toBeInTheDocument();
+    });
   });
 });

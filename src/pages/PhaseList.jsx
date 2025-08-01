@@ -5,7 +5,7 @@ import { getPhasesByRoom } from "../redux/phase/phaseListSlice";
 import { Plus } from "lucide-react";
 import { Link } from "react-router-dom";
 import { FaTrash } from "react-icons/fa";
-import axios from "axios";
+import axiosInstance from "../axios/axiosInstance";
 
 function PhaseList() {
   const { exposedId } = useParams();
@@ -13,6 +13,15 @@ function PhaseList() {
   const dispatch = useDispatch();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [phaseToDelete, setPhaseToDelete] = useState(null);
+  const formatDate = (dateString) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return dateString;
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+  };
 
   const roomPhases = useSelector((state) => state.phaselist?.roomPhases);
   const phases = useMemo(() => roomPhases || [], [roomPhases]);
@@ -28,7 +37,7 @@ function PhaseList() {
   };
 
   const confirmDelete = () => {
-    axios
+    axiosInstance
       .delete(`http://localhost:8080/phase/delete/${phaseToDelete}`)
       .then(() => {
         dispatch(getPhasesByRoom(exposedId));
@@ -71,8 +80,8 @@ function PhaseList() {
                       {phase.phaseName}
                     </h3>
                     <div className="space-y-2 text-left p-4 px-2">
-                      <p><span className="font-semibold text-blue-800">Start Date:</span> {phase.startDate}</p>
-                      <p><span className="font-semibold text-blue-800 ">End Date:</span> {phase.endDate}</p>
+                      <p><span className="font-semibold text-blue-800">Start Date:</span> {formatDate(phase.startDate)}</p>
+                      <p><span className="font-semibold text-blue-800 ">End Date:</span> {formatDate(phase.endDate)}</p>
                     </div></Link>
 
                   <div className="flex items-center gap-2 py-3">
